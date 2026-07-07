@@ -4,4 +4,7 @@ export enum COLORS {
   lightGray = "#EDF1F2",
   SIDEBAR_TEXT_COLOR = "#5A7A8A",
   SIDEBAR_ICON_COLOR = "#7A9BAB",
+  PRIMARY = "#E7BA49",
+  BLACK = "#000000",
+  SECONDARY = "#013547",
 }
