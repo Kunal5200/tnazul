@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 
 const LayoutWrapper = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
-  
+
   // Routes that should NOT render the default GuestSidebar and Header
   const excludeDefaultLayout =
     pathname === "/login" || pathname === "/dashboard/contracts/create";
@@ -24,6 +24,8 @@ const LayoutWrapper = ({ children }: { children: ReactNode }) => {
           minHeight: "100vh",
           backgroundColor: "#F9F8F6EB",
           transition: "margin 0.3s ease",
+          px: 3,
+          pt: 3,
         }}
       >
         {children}
@@ -33,4 +35,3 @@ const LayoutWrapper = ({ children }: { children: ReactNode }) => {
 };
 
 export default LayoutWrapper;
-
