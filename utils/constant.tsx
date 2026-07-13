@@ -85,11 +85,13 @@ export const SIDEBAR_PROFILE_LINKS: LINK_BOX[] = [
     icon: ChatBubbleOutlineOutlined,
     label: "Messages",
     url: "/dashboard/messages",
+    badge: 5,
   },
   {
     icon: NotificationsNoneOutlined,
     label: "Notifications",
-    url: "dashboard/notifications",
+    url: "/dashboard/notifications",
+    badge: 5,
   },
   {
     icon: SettingsOutlined,

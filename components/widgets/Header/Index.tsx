@@ -1,76 +1,142 @@
-import { Add, NotificationsNoneOutlined, Search } from "@mui/icons-material";
+import { Add, NotificationsNoneOutlined, Login, PersonAddAlt1 } from "@mui/icons-material";
 import {
   Box,
   IconButton,
-  InputAdornment,
   Stack,
-  TextField,
-  Typography,
+  Button,
 } from "@mui/material";
 import React from "react";
 import SearchBar from "./SearchBar";
-import FilledButton from "../FilledButton";
 import { COLORS } from "@/utils/enum";
-import { poppins, poppins700 } from "@/utils/fonts";
+import { poppins700 } from "@/utils/fonts";
 import Link from "next/link";
 
 const Header = () => {
   return (
-    <div>
-      <Box
+    <Box
+      sx={{
+        left: "276px",
+        right: 0,
+        position: "fixed",
+        top: 0,
+        background: "#FFFFFF",
+        height: "70px",
+        borderBottom: "1px solid #01354714",
+        px: 3,
+        display: "flex",
+        alignItems: "center",
+        zIndex: 1100,
+      }}
+    >
+      <Stack
+        direction={"row"}
         sx={{
-          left: "276px",
-          position: "fixed",
-          top: 0,
-          width: "calc(97.7% - 276px)",
-          background: "#F9F8F6EB",
-          py: 1,
-          borderBottom: "1px solid #01354714",
-          px: 2,
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
         }}
       >
-        <Stack
-          direction={"row"}
-          sx={{ alignItems: "center", justifyContent: "space-between" }}
-        >
-          <SearchBar />
-          <Link href={"/dashboard/contracts/create"}>
-            <FilledButton
-              startIcon={<Add />}
+        {/* Search Bar on the Left */}
+        <SearchBar />
+
+        {/* Action Buttons Group on the Right */}
+        <Stack direction={"row"} spacing={1.2} sx={{ alignItems: "center", flexShrink: 0 }}>
+          {/* Add Contract Button */}
+          <Link href={"/dashboard/contracts/create"} style={{ textDecoration: "none" }}>
+            <Button
+              variant="contained"
+              disableElevation
+              startIcon={<Add sx={{ color: COLORS.SECONDARY, fontSize: 20 }} />}
               sx={{
                 backgroundColor: COLORS.PRIMARY,
-
-                borderRadius: "20px",
-                padding: "13px 21px",
+                color: COLORS.SECONDARY,
+                borderRadius: "100px",
+                px: 2,
+                height: "46px",
                 textTransform: "none",
-                color: COLORS.BLACK,
+                fontFamily: poppins700.style.fontFamily,
+                fontWeight: 700,
+                fontSize: "14px",
+                "&:hover": {
+                  backgroundColor: "#E5B033",
+                },
               }}
             >
-              <Typography
-                sx={{
-                  fontFamily: poppins700.style.fontFamily,
-                  fontWeight: 700,
-                  color: COLORS.BLACK,
-                }}
-              >
-                Add Contract
-              </Typography>
-            </FilledButton>
+              Add Contract
+            </Button>
           </Link>
+
+          {/* Notifications Button */}
           <IconButton
             sx={{
-              borderRadius: "20px",
-              height: 50,
-              width: 50,
-              backgroundColor: "#0135470A",
+              borderRadius: "100px",
+              height: 46,
+              width: 46,
+              backgroundColor: "#FFFFFF",
+              border: "1px solid #01354714",
+              "&:hover": {
+                backgroundColor: "#EEF6FA",
+              },
             }}
           >
-            <NotificationsNoneOutlined />
+            <NotificationsNoneOutlined sx={{ color: "#7A9BAB", fontSize: 22 }} />
           </IconButton>
+
+          {/* Login Button */}
+          <Link href={"/login"} style={{ textDecoration: "none" }}>
+            <Button
+              variant="outlined"
+              startIcon={<Login sx={{ color: COLORS.SECONDARY }} />}
+              sx={{
+                color: COLORS.SECONDARY,
+                borderColor: "#01354724",
+                borderRadius: "100px",
+                px: 2,
+                height: "46px",
+                textTransform: "none",
+                fontFamily: poppins700.style.fontFamily,
+                fontWeight: 700,
+                fontSize: "14px",
+                backgroundColor: "#FFFFFF",
+                "&:hover": {
+                  borderColor: "#0135473D",
+                  backgroundColor: "#EEF6FA",
+                },
+              }}
+            >
+              Login
+            </Button>
+          </Link>
+
+          {/* Create Account Button */}
+          <Link href={"/register"} style={{ textDecoration: "none" }}>
+            <Button
+              variant="contained"
+              disableElevation
+              startIcon={<PersonAddAlt1 sx={{ color: COLORS.WHITE }} />}
+              sx={{
+                backgroundColor: COLORS.SECONDARY,
+                color: COLORS.WHITE,
+                borderRadius: "100px",
+                px: 2,
+                height: "46px",
+                textTransform: "none",
+                fontFamily: poppins700.style.fontFamily,
+                fontWeight: 700,
+                fontSize: "14px",
+                "&:hover": {
+                  backgroundColor: "#002432",
+                },
+              }}
+            >
+              Create Account
+            </Button>
+          </Link>
         </Stack>
-      </Box>
-    </div>
+      </Stack>
+    </Box>
   );
 };
 
 export default Header;
+

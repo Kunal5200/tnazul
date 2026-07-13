@@ -5,5 +5,6 @@ export interface LINK_BOX {
   icon: React.ComponentType<SvgIconProps>;
   label: string;
   url: string;
+  badge?: number;
 }
 
