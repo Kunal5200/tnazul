@@ -16,6 +16,7 @@ import {
 } from "@mui/icons-material";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
+import Link from "next/link";
 
 // WhatsApp Icon component
 const WhatsAppIcon = (props: SvgIconProps) => (
@@ -248,24 +249,26 @@ const ProductCard: React.FC<ProductCardProps> = ({
     <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, height: "100%", justifyContent: "space-between" }}>
       <Box>
         {/* Title */}
-        <Typography
-          sx={{
-            fontSize: "20px",
-            fontWeight: 800,
-            color: COLORS.SECONDARY,
-            fontFamily: poppins700.style.fontFamily,
-            lineHeight: 1.25,
-            mb: 0.8,
-            letterSpacing: "-0.2px",
-            "&:hover": {
-              color: COLORS.PRIMARY,
-            },
-            cursor: "pointer",
-            transition: "color 0.2s ease",
-          }}
-        >
-          {title}
-        </Typography>
+        <Link href="/dashboard/contracts/detail" passHref style={{ textDecoration: "none" }}>
+          <Typography
+            sx={{
+              fontSize: "20px",
+              fontWeight: 800,
+              color: COLORS.SECONDARY,
+              fontFamily: poppins700.style.fontFamily,
+              lineHeight: 1.25,
+              mb: 0.8,
+              letterSpacing: "-0.2px",
+              "&:hover": {
+                color: COLORS.PRIMARY,
+              },
+              cursor: "pointer",
+              transition: "color 0.2s ease",
+            }}
+          >
+            {title}
+          </Typography>
+        </Link>
 
         {/* Location */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 2 }}>

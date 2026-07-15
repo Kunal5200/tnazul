@@ -13,7 +13,8 @@ import {
   Collapse,
   FormControlLabel,
   Checkbox,
-  Fade
+  Fade,
+  Divider
 } from "@mui/material";
 import { 
   ArrowBackIosNew, 
@@ -26,12 +27,21 @@ import {
   Apartment,
   DirectionsCar,
   BusinessCenter,
-  FilterList
+  FilterList,
+  PersonOutlined,
+  DescriptionOutlined,
+  HandshakeOutlined,
+  CheckCircleOutlined,
+  VerifiedUserOutlined,
+  Autorenew,
+  LockOutlined,
+  Language
 } from "@mui/icons-material";
 
 import WelcomeBanner from "@/components/widgets/dashboard/WelcomeBanner";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
+import Link from "next/link";
 import Category from "./components/Category";
 import ProductCard, { ProductCardProps } from "./components/Product-Card";
 
@@ -628,6 +638,640 @@ const Dashboard = () => {
           </Grid>
         </Fade>
       )}
+
+      {/* Center Load More Contracts Divider */}
+      <Stack
+        direction="row"
+        sx={{
+          alignItems: "center",
+          justifyContent: "center",
+          mt: 7,
+          mb: 9,
+          position: "relative",
+        }}
+      >
+        <Divider
+          sx={{
+            width: "100%",
+            borderColor: "#0135470D",
+            position: "absolute",
+            zIndex: 1,
+          }}
+        />
+        <Link href="/dashboard/marketplace" passHref style={{ textDecoration: "none", zIndex: 2 }}>
+          <Button
+            variant="outlined"
+            sx={{
+              backgroundColor: "#FFFFFF",
+              borderColor: "#0135471F",
+              color: COLORS.SECONDARY,
+              borderRadius: "100px",
+              px: 4,
+              py: 1.5,
+              fontFamily: poppins700.style.fontFamily,
+              fontWeight: 700,
+              fontSize: "14px",
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "#F4F7F8",
+                borderColor: COLORS.SECONDARY,
+              },
+            }}
+          >
+            Load More Contracts
+          </Button>
+        </Link>
+      </Stack>
+
+      {/* How It Works Section */}
+      <Box sx={{ mb: 10 }}>
+        <Typography
+          sx={{
+            color: COLORS.PRIMARY,
+            fontSize: "12px",
+            fontWeight: 700,
+            fontFamily: poppins700.style.fontFamily,
+            letterSpacing: "1.5px",
+            textTransform: "uppercase",
+            mb: 1,
+          }}
+        >
+          Simple Process
+        </Typography>
+        <Typography
+          sx={{
+            color: COLORS.SECONDARY,
+            fontSize: "36px",
+            fontWeight: 800,
+            fontFamily: poppins700.style.fontFamily,
+            mb: 5,
+          }}
+        >
+          How It Works
+        </Typography>
+
+        <Grid container spacing={4.5}>
+          {/* Step 1 */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Box sx={{ position: "relative", display: "inline-block", mb: 3 }}>
+              <Box
+                sx={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: "50%",
+                  backgroundColor: "#EEF6FA",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "1.38px solid #0135470D",
+                }}
+              >
+                <PersonOutlined sx={{ color: "#166CA9", fontSize: 28 }} />
+              </Box>
+              <Box
+                sx={{
+                  width: 22,
+                  height: 22,
+                  borderRadius: "50%",
+                  backgroundColor: "#166CA9",
+                  color: "#FFFFFF",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  position: "absolute",
+                  top: -2,
+                  right: -2,
+                  border: "2px solid #FFFFFF",
+                }}
+              >
+                1
+              </Box>
+            </Box>
+            <Typography
+              sx={{
+                fontFamily: poppins700.style.fontFamily,
+                fontWeight: 700,
+                fontSize: "16px",
+                color: COLORS.SECONDARY,
+                mb: 1.5,
+              }}
+            >
+              Register & Verify Identity
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: poppins.style.fontFamily,
+                fontWeight: 500,
+                fontSize: "13.5px",
+                color: "#7A9BAB",
+                lineHeight: 1.6,
+                mb: 2.5,
+              }}
+            >
+              Create your account and complete Nafath verification in minutes.
+            </Typography>
+            <Box
+              sx={{
+                width: 24,
+                height: 3,
+                backgroundColor: "#166CA9",
+                borderRadius: "2px",
+              }}
+            />
+          </Grid>
+
+          {/* Step 2 */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Box sx={{ position: "relative", display: "inline-block", mb: 3 }}>
+              <Box
+                sx={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: "50%",
+                  backgroundColor: "#FCF8EE",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "1.38px solid #0135470D",
+                }}
+              >
+                <DescriptionOutlined sx={{ color: COLORS.PRIMARY, fontSize: 28 }} />
+              </Box>
+              <Box
+                sx={{
+                  width: 22,
+                  height: 22,
+                  borderRadius: "50%",
+                  backgroundColor: COLORS.PRIMARY,
+                  color: "#FFFFFF",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  position: "absolute",
+                  top: -2,
+                  right: -2,
+                  border: "2px solid #FFFFFF",
+                }}
+              >
+                2
+              </Box>
+            </Box>
+            <Typography
+              sx={{
+                fontFamily: poppins700.style.fontFamily,
+                fontWeight: 700,
+                fontSize: "16px",
+                color: COLORS.SECONDARY,
+                mb: 1.5,
+              }}
+            >
+              Post Your Contract
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: poppins.style.fontFamily,
+                fontWeight: 500,
+                fontSize: "13.5px",
+                color: "#7A9BAB",
+                lineHeight: 1.6,
+                mb: 2.5,
+              }}
+            >
+              List your contract with pricing, details, and remaining duration.
+            </Typography>
+            <Box
+              sx={{
+                width: 24,
+                height: 3,
+                backgroundColor: COLORS.PRIMARY,
+                borderRadius: "2px",
+              }}
+            />
+          </Grid>
+
+          {/* Step 3 */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Box sx={{ position: "relative", display: "inline-block", mb: 3 }}>
+              <Box
+                sx={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: "50%",
+                  backgroundColor: "#EEFAF7",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "1.38px solid #0135470D",
+                }}
+              >
+                <HandshakeOutlined sx={{ color: "#009688", fontSize: 28 }} />
+              </Box>
+              <Box
+                sx={{
+                  width: 22,
+                  height: 22,
+                  borderRadius: "50%",
+                  backgroundColor: "#009688",
+                  color: "#FFFFFF",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  position: "absolute",
+                  top: -2,
+                  right: -2,
+                  border: "2px solid #FFFFFF",
+                }}
+              >
+                3
+              </Box>
+            </Box>
+            <Typography
+              sx={{
+                fontFamily: poppins700.style.fontFamily,
+                fontWeight: 700,
+                fontSize: "16px",
+                color: COLORS.SECONDARY,
+                mb: 1.5,
+              }}
+            >
+              Connect with Interested Party
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: poppins.style.fontFamily,
+                fontWeight: 500,
+                fontSize: "13.5px",
+                color: "#7A9BAB",
+                lineHeight: 1.6,
+                mb: 2.5,
+              }}
+            >
+              Receive inquiries and negotiate terms securely on-platform.
+            </Typography>
+            <Box
+              sx={{
+                width: 24,
+                height: 3,
+                backgroundColor: "#009688",
+                borderRadius: "2px",
+              }}
+            />
+          </Grid>
+
+          {/* Step 4 */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Box sx={{ position: "relative", display: "inline-block", mb: 3 }}>
+              <Box
+                sx={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: "50%",
+                  backgroundColor: "#EEFAF0",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "1.38px solid #0135470D",
+                }}
+              >
+                <CheckCircleOutlined sx={{ color: "#10753E", fontSize: 28 }} />
+              </Box>
+              <Box
+                sx={{
+                  width: 22,
+                  height: 22,
+                  borderRadius: "50%",
+                  backgroundColor: "#10753E",
+                  color: "#FFFFFF",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  position: "absolute",
+                  top: -2,
+                  right: -2,
+                  border: "2px solid #FFFFFF",
+                }}
+              >
+                4
+              </Box>
+            </Box>
+            <Typography
+              sx={{
+                fontFamily: poppins700.style.fontFamily,
+                fontWeight: 700,
+                fontSize: "16px",
+                color: COLORS.SECONDARY,
+                mb: 1.5,
+              }}
+            >
+              Complete the Transfer
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: poppins.style.fontFamily,
+                fontWeight: 500,
+                fontSize: "13.5px",
+                color: "#7A9BAB",
+                lineHeight: 1.6,
+                mb: 2.5,
+              }}
+            >
+              Finalize via our verified process with full documentation.
+            </Typography>
+            <Box
+              sx={{
+                width: 24,
+                height: 3,
+                backgroundColor: "#10753E",
+                borderRadius: "2px",
+              }}
+            />
+          </Grid>
+        </Grid>
+      </Box>
+
+      {/* Foundation of Trust Section */}
+      <Box>
+        <Typography
+          sx={{
+            color: COLORS.PRIMARY,
+            fontSize: "12px",
+            fontWeight: 700,
+            fontFamily: poppins700.style.fontFamily,
+            letterSpacing: "1.5px",
+            textTransform: "uppercase",
+            mb: 1,
+          }}
+        >
+          Trust & Security
+        </Typography>
+        <Typography
+          sx={{
+            color: COLORS.SECONDARY,
+            fontSize: "36px",
+            fontWeight: 800,
+            fontFamily: poppins700.style.fontFamily,
+            mb: 5,
+          }}
+        >
+          We've built a foundation of trust.
+        </Typography>
+
+        <Grid container spacing={3.5}>
+          {/* Card 1: Nafath Verified */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Box
+              sx={{
+                backgroundColor: "#FFFFFF",
+                borderRadius: "24px",
+                border: "1.38px solid #0135470D",
+                boxShadow: "0px 4px 20px rgba(1, 53, 71, 0.02)",
+                p: 3.5,
+                height: 320,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontFamily: poppins700.style.fontFamily,
+                  fontWeight: 800,
+                  fontSize: "56px",
+                  color: "#0135470D",
+                  lineHeight: 1,
+                }}
+              >
+                01.
+              </Typography>
+              <Stack spacing={1.5}>
+                <Box
+                  sx={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: "12px",
+                    backgroundColor: "#EEFAF0",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <VerifiedUserOutlined sx={{ color: "#10753E", fontSize: 22 }} />
+                </Box>
+                <Typography
+                  sx={{
+                    fontFamily: poppins700.style.fontFamily,
+                    fontWeight: 700,
+                    fontSize: "18px",
+                    color: COLORS.SECONDARY,
+                  }}
+                >
+                  Nafath Verified
+                </Typography>
+              </Stack>
+            </Box>
+          </Grid>
+
+          {/* Card 2: Vetted Listings (Cover gradient wavy layout) */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Box
+              sx={{
+                backgroundColor: "#FFFFFF",
+                borderRadius: "24px",
+                border: "1.38px solid #0135470D",
+                boxShadow: "0px 4px 20px rgba(1, 53, 71, 0.02)",
+                p: 3,
+                height: 320,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                overflow: "hidden",
+              }}
+            >
+              {/* Cover Gradient Graphic with wave path SVG */}
+              <Box
+                sx={{
+                  height: 124,
+                  width: "calc(100% + 48px)",
+                  margin: "-24px -24px 0 -24px",
+                  position: "relative",
+                  background: "linear-gradient(135deg, #013547 0%, #166CA9 50%, #E7BA49 100%)",
+                  overflow: "hidden",
+                }}
+              >
+                {/* Wavy lines SVG decoration */}
+                <svg
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                  style={{
+                    position: "absolute",
+                    width: "100%",
+                    height: "100%",
+                    opacity: 0.25,
+                  }}
+                >
+                  <path d="M0,45 C30,75 70,25 100,45 L100,100 L0,100 Z" fill="#FFFFFF" />
+                  <path d="M0,55 C35,35 65,75 100,55 L100,100 L0,100 Z" fill="#FFFFFF" />
+                </svg>
+              </Box>
+
+              <Stack spacing={1} sx={{ mt: 1 }}>
+                <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+                  <Box
+                    sx={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: "10px",
+                      backgroundColor: "#F4F7F8",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Autorenew sx={{ color: COLORS.SECONDARY, fontSize: 18 }} />
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontFamily: poppins700.style.fontFamily,
+                      fontWeight: 700,
+                      fontSize: "17px",
+                      color: COLORS.SECONDARY,
+                    }}
+                  >
+                    Vetted Listings
+                  </Typography>
+                </Stack>
+                <Typography
+                  sx={{
+                    fontFamily: poppins.style.fontFamily,
+                    fontWeight: 500,
+                    fontSize: "12px",
+                    color: "#7A9BAB",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  Each contract listing is manually reviewed and approved by our team before publishing.
+                </Typography>
+              </Stack>
+            </Box>
+          </Grid>
+
+          {/* Card 3: Data Protection */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Box
+              sx={{
+                backgroundColor: "#FFFFFF",
+                borderRadius: "24px",
+                border: "1.38px solid #0135470D",
+                boxShadow: "0px 4px 20px rgba(1, 53, 71, 0.02)",
+                p: 3.5,
+                height: 320,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontFamily: poppins700.style.fontFamily,
+                  fontWeight: 800,
+                  fontSize: "56px",
+                  color: "#0135470D",
+                  lineHeight: 1,
+                }}
+              >
+                03.
+              </Typography>
+              <Stack spacing={1.5}>
+                <Box
+                  sx={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: "12px",
+                    backgroundColor: "#F4F7F8",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <LockOutlined sx={{ color: COLORS.SECONDARY, fontSize: 22 }} />
+                </Box>
+                <Typography
+                  sx={{
+                    fontFamily: poppins700.style.fontFamily,
+                    fontWeight: 700,
+                    fontSize: "18px",
+                    color: COLORS.SECONDARY,
+                  }}
+                >
+                  Data Protection
+                </Typography>
+              </Stack>
+            </Box>
+          </Grid>
+
+          {/* Card 4: Arabic Support */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Box
+              sx={{
+                backgroundColor: "#FFFFFF",
+                borderRadius: "24px",
+                border: "1.38px solid #0135470D",
+                boxShadow: "0px 4px 20px rgba(1, 53, 71, 0.02)",
+                p: 3.5,
+                height: 320,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontFamily: poppins700.style.fontFamily,
+                  fontWeight: 800,
+                  fontSize: "56px",
+                  color: "#0135470D",
+                  lineHeight: 1,
+                }}
+              >
+                04.
+              </Typography>
+              <Stack spacing={1.5}>
+                <Box
+                  sx={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: "12px",
+                    backgroundColor: "#F4F7F8",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Language sx={{ color: COLORS.SECONDARY, fontSize: 22 }} />
+                </Box>
+                <Typography
+                  sx={{
+                    fontFamily: poppins700.style.fontFamily,
+                    fontWeight: 700,
+                    fontSize: "18px",
+                    color: COLORS.SECONDARY,
+                  }}
+                >
+                  Arabic Support
+                </Typography>
+              </Stack>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
     </Box>
   );
 };
