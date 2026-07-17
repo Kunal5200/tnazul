@@ -1,28 +1,28 @@
 "use client";
 
 import React, { useState } from "react";
-import { 
-  Box, 
-  Paper, 
-  Typography, 
-  Stack, 
-  Button, 
-  Collapse, 
-  Grid, 
+import {
+  Box,
+  Paper,
+  Typography,
+  Stack,
+  Button,
+  Collapse,
+  Grid,
   TextField,
   Divider,
-  Chip
+  Chip,
 } from "@mui/material";
-import { 
-  LocationOn, 
-  AttachFile, 
-  KeyboardArrowDown, 
+import {
+  LocationOn,
+  AttachFile,
+  KeyboardArrowDown,
   KeyboardArrowUp,
   Check,
   Close,
   Refresh,
   CheckCircle,
-  Error
+  Error,
 } from "@mui/icons-material";
 import { poppins, poppins700 } from "@/utils/fonts";
 import { COLORS } from "@/utils/enum";
@@ -53,7 +53,12 @@ interface QueueItemProps {
   onRevision: (id: string, reason: string) => void;
 }
 
-const QueueItem = ({ item, onApprove, onReject, onRevision }: QueueItemProps) => {
+const QueueItem = ({
+  item,
+  onApprove,
+  onReject,
+  onRevision,
+}: QueueItemProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
 
@@ -76,8 +81,16 @@ const QueueItem = ({ item, onApprove, onReject, onRevision }: QueueItemProps) =>
     >
       {/* Upper Header Block (Always visible) */}
       <Box sx={{ p: 3 }}>
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={2.5} sx={{ alignItems: "flex-start", justifyContent: "space-between" }}>
-          <Stack direction="row" spacing={2.5} sx={{ alignItems: "flex-start", flexGrow: 1 }}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2.5}
+          sx={{ alignItems: "flex-start", justifyContent: "space-between" }}
+        >
+          <Stack
+            direction="row"
+            spacing={2.5}
+            sx={{ alignItems: "flex-start", flexGrow: 1 }}
+          >
             {/* Preview Image */}
             <Box
               component="img"
@@ -89,13 +102,17 @@ const QueueItem = ({ item, onApprove, onReject, onRevision }: QueueItemProps) =>
                 borderRadius: "16px",
                 objectFit: "cover",
                 backgroundColor: "#F4F7F8",
-                flexShrink: 0
+                flexShrink: 0,
               }}
             />
 
             {/* Core Info */}
             <Box>
-              <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", mb: 1, flexWrap: "wrap", gap: 1 }}>
+              <Stack
+                direction="row"
+                spacing={1.5}
+                sx={{ alignItems: "center", mb: 1, flexWrap: "wrap", gap: 1 }}
+              >
                 <Typography
                   sx={{
                     fontFamily: poppins700.style.fontFamily,
@@ -106,9 +123,9 @@ const QueueItem = ({ item, onApprove, onReject, onRevision }: QueueItemProps) =>
                 >
                   {item.title}
                 </Typography>
-                
+
                 {/* Category tag */}
-                <Chip 
+                <Chip
                   label={item.categoryLabel}
                   size="small"
                   sx={{
@@ -124,7 +141,7 @@ const QueueItem = ({ item, onApprove, onReject, onRevision }: QueueItemProps) =>
 
                 {/* Verification Status Tag (Item 3 in screenshot has ID Not Verified tag) */}
                 {!item.sellerVerified && (
-                  <Chip 
+                  <Chip
                     label="ID Not Verified"
                     size="small"
                     variant="outlined"
@@ -143,21 +160,23 @@ const QueueItem = ({ item, onApprove, onReject, onRevision }: QueueItemProps) =>
               </Stack>
 
               {/* Sub-details (location, financials, documents, timestamp) */}
-              <Stack 
-                direction="row" 
-                spacing={1.5} 
-                sx={{ 
-                  alignItems: "center", 
-                  color: "#7A9BAB", 
+              <Stack
+                direction="row"
+                spacing={1.5}
+                sx={{
+                  alignItems: "center",
+                  color: "#7A9BAB",
                   fontFamily: poppins.style.fontFamily,
                   fontSize: "13px",
                   flexWrap: "wrap",
-                  rowGap: 0.5
+                  rowGap: 0.5,
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                   <LocationOn sx={{ fontSize: 16 }} />
-                  <Typography sx={{ fontSize: "13px" }}>{item.location}</Typography>
+                  <Typography sx={{ fontSize: "13px" }}>
+                    {item.location}
+                  </Typography>
                 </Box>
                 <Typography>•</Typography>
                 <Typography sx={{ fontWeight: 600, color: COLORS.SECONDARY }}>
@@ -170,10 +189,14 @@ const QueueItem = ({ item, onApprove, onReject, onRevision }: QueueItemProps) =>
                 <Typography>•</Typography>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                   <AttachFile sx={{ fontSize: 16 }} />
-                  <Typography sx={{ fontSize: "13px" }}>{item.docsCount} documents</Typography>
+                  <Typography sx={{ fontSize: "13px" }}>
+                    {item.docsCount} documents
+                  </Typography>
                 </Box>
                 <Typography>•</Typography>
-                <Typography sx={{ fontSize: "13px" }}>{item.timestamp}</Typography>
+                <Typography sx={{ fontSize: "13px" }}>
+                  {item.timestamp}
+                </Typography>
               </Stack>
             </Box>
           </Stack>
@@ -208,7 +231,7 @@ const QueueItem = ({ item, onApprove, onReject, onRevision }: QueueItemProps) =>
       {/* Expanded Block (Collapsible) */}
       <Collapse in={isExpanded} timeout="auto" unmountOnExit>
         <Divider sx={{ borderColor: "#0135470F" }} />
-        
+
         {/* Expanded Description & Seller Info */}
         <Box sx={{ p: 4, backgroundColor: "#FAFAFA" }}>
           <Grid container spacing={4} sx={{ mb: 4 }}>
@@ -275,9 +298,13 @@ const QueueItem = ({ item, onApprove, onReject, onRevision }: QueueItemProps) =>
               >
                 {item.sellerPhone}
               </Typography>
-              
+
               {/* Verification Status */}
-              <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
+              <Stack
+                direction="row"
+                spacing={0.5}
+                sx={{ alignItems: "center" }}
+              >
                 {item.sellerVerified ? (
                   <>
                     <CheckCircle sx={{ color: "#2E7D32", fontSize: 16 }} />
@@ -335,8 +362,8 @@ const QueueItem = ({ item, onApprove, onReject, onRevision }: QueueItemProps) =>
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                       borderColor: COLORS.SECONDARY,
                     },
-                  }
-                }
+                  },
+                },
               }}
             />
           </Box>
@@ -347,9 +374,17 @@ const QueueItem = ({ item, onApprove, onReject, onRevision }: QueueItemProps) =>
 
       {/* Footer / Action Row (Always visible) */}
       <Box sx={{ p: 2.5, px: 3 }}>
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ alignItems: "center", justifyContent: "space-between" }}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          sx={{ alignItems: "center", justifyContent: "space-between" }}
+        >
           {/* Action Buttons */}
-          <Stack direction="row" spacing={1.5} sx={{ width: { xs: "100%", sm: "auto" } }}>
+          <Stack
+            direction="row"
+            spacing={1.5}
+            sx={{ width: { xs: "100%", sm: "auto" } }}
+          >
             <Button
               variant="contained"
               disableElevation
@@ -372,7 +407,7 @@ const QueueItem = ({ item, onApprove, onReject, onRevision }: QueueItemProps) =>
             >
               Approve
             </Button>
-            
+
             <Button
               variant="outlined"
               startIcon={<Close />}
@@ -396,7 +431,7 @@ const QueueItem = ({ item, onApprove, onReject, onRevision }: QueueItemProps) =>
             >
               Reject
             </Button>
-            
+
             <Button
               variant="outlined"
               startIcon={<Refresh />}

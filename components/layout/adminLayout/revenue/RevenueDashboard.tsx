@@ -1,25 +1,21 @@
 "use client";
 
 import React, { useState } from "react";
-import { 
-  Box, 
-  Container, 
-  Grid, 
-  Typography, 
-  Stack, 
+import {
+  Box,
+  Container,
+  Grid,
+  Typography,
+  Stack,
   Paper,
   TableContainer,
   Table,
   TableHead,
   TableRow,
   TableCell,
-  TableBody
+  TableBody,
 } from "@mui/material";
-import { 
-  AttachMoney, 
-  Description, 
-  Star 
-} from "@mui/icons-material";
+import { AttachMoney, Description, Star } from "@mui/icons-material";
 import AdminSidebar from "@/components/widgets/Sidebar/AdminSidebar";
 import MetricCard from "../overview/MetricCard";
 import TransactionRow, { TransactionData } from "./TransactionRow";
@@ -34,7 +30,7 @@ const initialTransactions: TransactionData[] = [
     type: "Featured Listing",
     amount: "SAR 75",
     method: "Mada",
-    status: "Paid"
+    status: "Paid",
   },
   {
     id: "2",
@@ -43,7 +39,7 @@ const initialTransactions: TransactionData[] = [
     type: "Standard Listing",
     amount: "SAR 25",
     method: "Apple Pay",
-    status: "Paid"
+    status: "Paid",
   },
   {
     id: "3",
@@ -52,7 +48,7 @@ const initialTransactions: TransactionData[] = [
     type: "Featured Listing",
     amount: "SAR 75",
     method: "Visa",
-    status: "Paid"
+    status: "Paid",
   },
   {
     id: "4",
@@ -61,7 +57,7 @@ const initialTransactions: TransactionData[] = [
     type: "Standard Listing",
     amount: "SAR 25",
     method: "STC Pay",
-    status: "Refunded"
+    status: "Refunded",
   },
   {
     id: "5",
@@ -70,7 +66,7 @@ const initialTransactions: TransactionData[] = [
     type: "Featured Listing",
     amount: "SAR 75",
     method: "Mada",
-    status: "Paid"
+    status: "Paid",
   },
   {
     id: "6",
@@ -79,34 +75,36 @@ const initialTransactions: TransactionData[] = [
     type: "Standard Listing",
     amount: "SAR 25",
     method: "Visa",
-    status: "Pending"
-  }
+    status: "Pending",
+  },
 ];
 
 const RevenueDashboard = () => {
   const [transactions] = useState<TransactionData[]>(initialTransactions);
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", backgroundColor: "#F4F7F8" }}>
+    <Box
+      sx={{ display: "flex", minHeight: "100vh", backgroundColor: "#F4F7F8" }}
+    >
       {/* Sidebar fixed to the left */}
       <AdminSidebar />
 
       {/* Main Content Area */}
-      <Box 
-        sx={{ 
-          marginLeft: "276px", 
-          flexGrow: 1, 
-          display: "flex", 
-          flexDirection: "column" 
+      <Box
+        sx={{
+          marginLeft: "276px",
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         {/* Top Header Panel */}
-        <Box 
-          sx={{ 
-            backgroundColor: COLORS.WHITE, 
-            py: 2.5, 
-            px: { xs: 3, md: 5 }, 
-            borderBottom: "1px solid #0135470F" 
+        <Box
+          sx={{
+            backgroundColor: COLORS.WHITE,
+            py: 2.5,
+            px: { xs: 3, md: 5 },
+            borderBottom: "1px solid #0135470F",
           }}
         >
           <Typography
@@ -132,12 +130,12 @@ const RevenueDashboard = () => {
         </Box>
 
         {/* Revenue Content Panel */}
-        <Container 
-          maxWidth="xl" 
-          sx={{ 
-            py: 4, 
+        <Container
+          maxWidth="xl"
+          sx={{
+            py: 4,
             px: { xs: 3, md: 5 },
-            flexGrow: 1 
+            flexGrow: 1,
           }}
         >
           {/* Header Row */}
@@ -212,7 +210,7 @@ const RevenueDashboard = () => {
                   backgroundColor: COLORS.WHITE,
                   display: "flex",
                   alignItems: "center",
-                  gap: 3
+                  gap: 3,
                 }}
               >
                 <Box
@@ -227,7 +225,7 @@ const RevenueDashboard = () => {
                     color: "#166CA9",
                     fontFamily: poppins700.style.fontFamily,
                     fontWeight: 700,
-                    fontSize: "20px"
+                    fontSize: "20px",
                   }}
                 >
                   $
@@ -239,18 +237,22 @@ const RevenueDashboard = () => {
                       fontWeight: 700,
                       fontSize: "16px",
                       color: COLORS.SECONDARY,
-                      mb: 0.5
+                      mb: 0.5,
                     }}
                   >
                     Standard Listing
                   </Typography>
-                  <Stack direction="row" spacing={1} sx={{ alignItems: "baseline", mb: 0.5 }}>
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: "baseline", mb: 0.5 }}
+                  >
                     <Typography
                       sx={{
                         fontFamily: poppins700.style.fontFamily,
                         fontWeight: 800,
                         fontSize: "22px",
-                        color: "#166CA9"
+                        color: "#166CA9",
                       }}
                     >
                       SAR 25
@@ -261,7 +263,7 @@ const RevenueDashboard = () => {
                         fontWeight: 500,
                         fontSize: "15px",
                         color: "#7A9BAB",
-                        textDecoration: "line-through"
+                        textDecoration: "line-through",
                       }}
                     >
                       30
@@ -272,7 +274,7 @@ const RevenueDashboard = () => {
                       fontFamily: poppins.style.fontFamily,
                       fontWeight: 500,
                       fontSize: "12px",
-                      color: "#7A9BAB"
+                      color: "#7A9BAB",
                     }}
                   >
                     Appears in regular search results. 90–day active period.
@@ -292,7 +294,7 @@ const RevenueDashboard = () => {
                   backgroundColor: COLORS.WHITE,
                   display: "flex",
                   alignItems: "center",
-                  gap: 3
+                  gap: 3,
                 }}
               >
                 <Box
@@ -307,7 +309,7 @@ const RevenueDashboard = () => {
                     color: "#8A3FFC",
                     fontFamily: poppins700.style.fontFamily,
                     fontWeight: 700,
-                    fontSize: "20px"
+                    fontSize: "20px",
                   }}
                 >
                   $
@@ -319,18 +321,22 @@ const RevenueDashboard = () => {
                       fontWeight: 700,
                       fontSize: "16px",
                       color: COLORS.SECONDARY,
-                      mb: 0.5
+                      mb: 0.5,
                     }}
                   >
                     Featured Listing
                   </Typography>
-                  <Stack direction="row" spacing={1} sx={{ alignItems: "baseline", mb: 0.5 }}>
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: "baseline", mb: 0.5 }}
+                  >
                     <Typography
                       sx={{
                         fontFamily: poppins700.style.fontFamily,
                         fontWeight: 800,
                         fontSize: "22px",
-                        color: "#8A3FFC"
+                        color: "#8A3FFC",
                       }}
                     >
                       SAR 75
@@ -341,7 +347,7 @@ const RevenueDashboard = () => {
                         fontWeight: 500,
                         fontSize: "15px",
                         color: "#7A9BAB",
-                        textDecoration: "line-through"
+                        textDecoration: "line-through",
                       }}
                     >
                       100
@@ -352,7 +358,7 @@ const RevenueDashboard = () => {
                       fontFamily: poppins.style.fontFamily,
                       fontWeight: 500,
                       fontSize: "12px",
-                      color: "#7A9BAB"
+                      color: "#7A9BAB",
                     }}
                   >
                     Pinned at top with premium badge. 180–day active period.
@@ -370,78 +376,88 @@ const RevenueDashboard = () => {
                 fontWeight: 800,
                 fontSize: "20px",
                 color: COLORS.SECONDARY,
-                mb: 3
+                mb: 3,
               }}
             >
               Recent Transactions
             </Typography>
 
-            <TableContainer 
-              component={Paper} 
+            <TableContainer
+              component={Paper}
               elevation={0}
-              sx={{ 
+              sx={{
                 borderRadius: "24px",
                 border: "1px solid #0135470F",
                 overflow: "hidden",
-                backgroundColor: COLORS.WHITE
+                backgroundColor: COLORS.WHITE,
               }}
             >
               <Table aria-label="recent transactions table">
                 <TableHead sx={{ backgroundColor: "rgba(1, 53, 71, 0.02)" }}>
                   <TableRow>
-                    <TableCell sx={{ 
-                      fontFamily: poppins700.style.fontFamily, 
-                      fontWeight: 700, 
-                      fontSize: "12px", 
-                      color: "#7A9BAB",
-                      letterSpacing: "0.5px",
-                      py: 2.5
-                    }}>
+                    <TableCell
+                      sx={{
+                        fontFamily: poppins700.style.fontFamily,
+                        fontWeight: 700,
+                        fontSize: "12px",
+                        color: "#7A9BAB",
+                        letterSpacing: "0.5px",
+                        py: 2.5,
+                      }}
+                    >
                       USER
                     </TableCell>
-                    <TableCell sx={{ 
-                      fontFamily: poppins700.style.fontFamily, 
-                      fontWeight: 700, 
-                      fontSize: "12px", 
-                      color: "#7A9BAB",
-                      letterSpacing: "0.5px",
-                      py: 2.5
-                    }}>
+                    <TableCell
+                      sx={{
+                        fontFamily: poppins700.style.fontFamily,
+                        fontWeight: 700,
+                        fontSize: "12px",
+                        color: "#7A9BAB",
+                        letterSpacing: "0.5px",
+                        py: 2.5,
+                      }}
+                    >
                       TYPE
                     </TableCell>
-                    <TableCell sx={{ 
-                      fontFamily: poppins700.style.fontFamily, 
-                      fontWeight: 700, 
-                      fontSize: "12px", 
-                      color: "#7A9BAB",
-                      letterSpacing: "0.5px",
-                      py: 2.5
-                    }}>
+                    <TableCell
+                      sx={{
+                        fontFamily: poppins700.style.fontFamily,
+                        fontWeight: 700,
+                        fontSize: "12px",
+                        color: "#7A9BAB",
+                        letterSpacing: "0.5px",
+                        py: 2.5,
+                      }}
+                    >
                       AMOUNT
                     </TableCell>
-                    <TableCell sx={{ 
-                      fontFamily: poppins700.style.fontFamily, 
-                      fontWeight: 700, 
-                      fontSize: "12px", 
-                      color: "#7A9BAB",
-                      letterSpacing: "0.5px",
-                      py: 2.5
-                    }}>
+                    <TableCell
+                      sx={{
+                        fontFamily: poppins700.style.fontFamily,
+                        fontWeight: 700,
+                        fontSize: "12px",
+                        color: "#7A9BAB",
+                        letterSpacing: "0.5px",
+                        py: 2.5,
+                      }}
+                    >
                       METHOD
                     </TableCell>
-                    <TableCell sx={{ 
-                      fontFamily: poppins700.style.fontFamily, 
-                      fontWeight: 700, 
-                      fontSize: "12px", 
-                      color: "#7A9BAB",
-                      letterSpacing: "0.5px",
-                      py: 2.5
-                    }}>
+                    <TableCell
+                      sx={{
+                        fontFamily: poppins700.style.fontFamily,
+                        fontWeight: 700,
+                        fontSize: "12px",
+                        color: "#7A9BAB",
+                        letterSpacing: "0.5px",
+                        py: 2.5,
+                      }}
+                    >
                       STATUS
                     </TableCell>
                   </TableRow>
                 </TableHead>
-                
+
                 <TableBody>
                   {transactions.map((tx) => (
                     <TransactionRow key={tx.id} tx={tx} />

@@ -1,22 +1,17 @@
 "use client";
 
 import React from "react";
-import { 
-  TableRow, 
-  TableCell, 
-  Avatar, 
-  Typography, 
-  Stack, 
-  Chip, 
-  Button, 
-  Box 
+import {
+  TableRow,
+  TableCell,
+  Avatar,
+  Typography,
+  Stack,
+  Chip,
+  Button,
+  Box,
 } from "@mui/material";
-import { 
-  Block, 
-  Check, 
-  Cached, 
-  WarningAmber 
-} from "@mui/icons-material";
+import { Block, Check, Cached, WarningAmber } from "@mui/icons-material";
 import { poppins, poppins700 } from "@/utils/fonts";
 import { COLORS } from "@/utils/enum";
 
@@ -89,9 +84,19 @@ const UserRow = ({ user, onVerify, onSuspend, onReinstate }: UserRowProps) => {
               }}
             />
             {user.reportsCount && user.reportsCount > 0 ? (
-              <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", color: "#D32F2F" }}>
+              <Stack
+                direction="row"
+                spacing={0.5}
+                sx={{ alignItems: "center", color: "#D32F2F" }}
+              >
                 <WarningAmber sx={{ fontSize: 13 }} />
-                <Typography sx={{ fontFamily: poppins.style.fontFamily, fontSize: "11px", fontWeight: 600 }}>
+                <Typography
+                  sx={{
+                    fontFamily: poppins.style.fontFamily,
+                    fontSize: "11px",
+                    fontWeight: 600,
+                  }}
+                >
                   {user.reportsCount} reports
                 </Typography>
               </Stack>
@@ -106,15 +111,15 @@ const UserRow = ({ user, onVerify, onSuspend, onReinstate }: UserRowProps) => {
       {/* Col 1: USER */}
       <TableCell sx={{ py: 2 }}>
         <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-          <Avatar 
-            sx={{ 
-              backgroundColor: COLORS.SECONDARY, 
+          <Avatar
+            sx={{
+              backgroundColor: COLORS.SECONDARY,
               color: COLORS.WHITE,
               width: 44,
               height: 44,
               fontFamily: poppins700.style.fontFamily,
               fontWeight: 700,
-              fontSize: "15px"
+              fontSize: "15px",
             }}
           >
             {user.initials}
@@ -169,9 +174,7 @@ const UserRow = ({ user, onVerify, onSuspend, onReinstate }: UserRowProps) => {
       </TableCell>
 
       {/* Col 3: STATUS */}
-      <TableCell sx={{ py: 2 }}>
-        {getStatusChip(user.status)}
-      </TableCell>
+      <TableCell sx={{ py: 2 }}>{getStatusChip(user.status)}</TableCell>
 
       {/* Col 4: LISTINGS */}
       <TableCell sx={{ py: 2 }}>
@@ -181,7 +184,7 @@ const UserRow = ({ user, onVerify, onSuspend, onReinstate }: UserRowProps) => {
             fontWeight: 700,
             fontSize: "15px",
             color: COLORS.SECONDARY,
-            pl: 2
+            pl: 2,
           }}
         >
           {user.listingsCount}

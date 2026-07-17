@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { 
-  Box, 
-  Container, 
-  Typography, 
-  Stack, 
-  TextField, 
+import {
+  Box,
+  Container,
+  Typography,
+  Stack,
+  TextField,
   InputAdornment,
   TableContainer,
   Table,
@@ -16,7 +16,7 @@ import {
   TableBody,
   Paper,
   Snackbar,
-  Alert
+  Alert,
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import AdminSidebar from "@/components/widgets/Sidebar/AdminSidebar";
@@ -33,7 +33,7 @@ const initialUsers: UserData[] = [
     phone: "+966 5X XXX 1111",
     email: "ahmed@email.com",
     status: "Verified",
-    listingsCount: 3
+    listingsCount: 3,
   },
   {
     id: "2",
@@ -43,7 +43,7 @@ const initialUsers: UserData[] = [
     phone: "+966 5X XXX 2222",
     email: "sara@email.com",
     status: "Verified",
-    listingsCount: 1
+    listingsCount: 1,
   },
   {
     id: "3",
@@ -53,7 +53,7 @@ const initialUsers: UserData[] = [
     phone: "+966 5X XXX 3333",
     email: "mh@email.com",
     status: "Pending ID",
-    listingsCount: 0
+    listingsCount: 0,
   },
   {
     id: "4",
@@ -64,7 +64,7 @@ const initialUsers: UserData[] = [
     email: "khalid@email.com",
     status: "Suspended",
     listingsCount: 2,
-    reportsCount: 3
+    reportsCount: 3,
   },
   {
     id: "5",
@@ -74,17 +74,21 @@ const initialUsers: UserData[] = [
     phone: "+966 5X XXX 5555",
     email: "fatima@email.com",
     status: "Verified",
-    listingsCount: 1
-  }
+    listingsCount: 1,
+  },
 ];
 
 const UserManagement = () => {
   const [users, setUsers] = useState<UserData[]>(initialUsers);
   const [searchQuery, setSearchQuery] = useState("");
-  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "info" | "warning" | "error" }>({
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "info" | "warning" | "error";
+  }>({
     open: false,
     message: "",
-    severity: "success"
+    severity: "success",
   });
 
   const handleSnackbarClose = () => {
@@ -93,77 +97,89 @@ const UserManagement = () => {
 
   // Actions
   const handleVerify = (id: string) => {
-    setUsers((prev) => 
-      prev.map((user) => 
-        user.id === id ? { ...user, status: "Verified" } : user
-      )
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === id ? { ...user, status: "Verified" } : user,
+      ),
     );
-    const target = users.find(u => u.id === id);
+    const target = users.find((u) => u.id === id);
     setSnackbar({
       open: true,
       message: `User "${target?.name}" has been verified successfully.`,
-      severity: "success"
+      severity: "success",
     });
   };
 
   const handleSuspend = (id: string) => {
-    setUsers((prev) => 
-      prev.map((user) => 
-        user.id === id ? { ...user, status: "Suspended", reportsCount: user.reportsCount || 1 } : user
-      )
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === id
+          ? {
+              ...user,
+              status: "Suspended",
+              reportsCount: user.reportsCount || 1,
+            }
+          : user,
+      ),
     );
-    const target = users.find(u => u.id === id);
+    const target = users.find((u) => u.id === id);
     setSnackbar({
       open: true,
       message: `User "${target?.name}" has been suspended.`,
-      severity: "error"
+      severity: "error",
     });
   };
 
   const handleReinstate = (id: string) => {
-    setUsers((prev) => 
-      prev.map((user) => 
-        user.id === id ? { ...user, status: "Verified", reportsCount: undefined } : user
-      )
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === id
+          ? { ...user, status: "Verified", reportsCount: undefined }
+          : user,
+      ),
     );
-    const target = users.find(u => u.id === id);
+    const target = users.find((u) => u.id === id);
     setSnackbar({
       open: true,
       message: `User "${target?.name}" has been reinstated successfully.`,
-      severity: "success"
+      severity: "success",
     });
   };
 
   // Filtered List
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
-      const matchName = user.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchName = user.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
       const matchPhone = user.phone.includes(searchQuery);
       return matchName || matchPhone;
     });
   }, [users, searchQuery]);
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", backgroundColor: "#F4F7F8" }}>
+    <Box
+      sx={{ display: "flex", minHeight: "100vh", backgroundColor: "#F4F7F8" }}
+    >
       {/* Sidebar fixed to the left */}
       <AdminSidebar />
 
       {/* Main Content Area */}
-      <Box 
-        sx={{ 
-          marginLeft: "276px", 
-          flexGrow: 1, 
-          display: "flex", 
-          flexDirection: "column" 
+      <Box
+        sx={{
+          marginLeft: "276px",
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         {/* Top Header Panel */}
-        <Box 
-          sx={{ 
-            backgroundColor: COLORS.WHITE, 
-            py: 2.5, 
-            px: { xs: 3, md: 5 }, 
-            borderBottom: "1px solid #0135470F" 
+        <Box
+          sx={{
+            backgroundColor: COLORS.WHITE,
+            py: 2.5,
+            px: { xs: 3, md: 5 },
+            borderBottom: "1px solid #0135470F",
           }}
         >
           <Typography
@@ -189,22 +205,22 @@ const UserManagement = () => {
         </Box>
 
         {/* Users Management Panel */}
-        <Container 
-          maxWidth="xl" 
-          sx={{ 
-            py: 4, 
+        <Container
+          maxWidth="xl"
+          sx={{
+            py: 4,
             px: { xs: 3, md: 5 },
-            flexGrow: 1 
+            flexGrow: 1,
           }}
         >
           {/* Header Row */}
-          <Stack 
-            direction={{ xs: "column", sm: "row" }} 
-            spacing={2} 
-            sx={{ 
-              alignItems: { xs: "flex-start", sm: "center" }, 
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            sx={{
+              alignItems: { xs: "flex-start", sm: "center" },
               justifyContent: "space-between",
-              mb: 4 
+              mb: 4,
             }}
           >
             <Box>
@@ -261,79 +277,89 @@ const UserManagement = () => {
                     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                       borderColor: COLORS.SECONDARY,
                     },
-                  }
-                }
+                  },
+                },
               }}
             />
           </Stack>
 
           {/* Users Table Card */}
-          <TableContainer 
-            component={Paper} 
+          <TableContainer
+            component={Paper}
             elevation={0}
-            sx={{ 
+            sx={{
               borderRadius: "24px",
               border: "1px solid #0135470F",
               overflow: "hidden",
-              backgroundColor: COLORS.WHITE
+              backgroundColor: COLORS.WHITE,
             }}
           >
             <Table aria-label="user management table">
               <TableHead sx={{ backgroundColor: "rgba(1, 53, 71, 0.02)" }}>
                 <TableRow>
-                  <TableCell sx={{ 
-                    fontFamily: poppins700.style.fontFamily, 
-                    fontWeight: 700, 
-                    fontSize: "12px", 
-                    color: "#7A9BAB",
-                    letterSpacing: "0.5px",
-                    py: 2.5
-                  }}>
+                  <TableCell
+                    sx={{
+                      fontFamily: poppins700.style.fontFamily,
+                      fontWeight: 700,
+                      fontSize: "12px",
+                      color: "#7A9BAB",
+                      letterSpacing: "0.5px",
+                      py: 2.5,
+                    }}
+                  >
                     USER
                   </TableCell>
-                  <TableCell sx={{ 
-                    fontFamily: poppins700.style.fontFamily, 
-                    fontWeight: 700, 
-                    fontSize: "12px", 
-                    color: "#7A9BAB",
-                    letterSpacing: "0.5px",
-                    py: 2.5
-                  }}>
+                  <TableCell
+                    sx={{
+                      fontFamily: poppins700.style.fontFamily,
+                      fontWeight: 700,
+                      fontSize: "12px",
+                      color: "#7A9BAB",
+                      letterSpacing: "0.5px",
+                      py: 2.5,
+                    }}
+                  >
                     CONTACT
                   </TableCell>
-                  <TableCell sx={{ 
-                    fontFamily: poppins700.style.fontFamily, 
-                    fontWeight: 700, 
-                    fontSize: "12px", 
-                    color: "#7A9BAB",
-                    letterSpacing: "0.5px",
-                    py: 2.5
-                  }}>
+                  <TableCell
+                    sx={{
+                      fontFamily: poppins700.style.fontFamily,
+                      fontWeight: 700,
+                      fontSize: "12px",
+                      color: "#7A9BAB",
+                      letterSpacing: "0.5px",
+                      py: 2.5,
+                    }}
+                  >
                     STATUS
                   </TableCell>
-                  <TableCell sx={{ 
-                    fontFamily: poppins700.style.fontFamily, 
-                    fontWeight: 700, 
-                    fontSize: "12px", 
-                    color: "#7A9BAB",
-                    letterSpacing: "0.5px",
-                    py: 2.5
-                  }}>
+                  <TableCell
+                    sx={{
+                      fontFamily: poppins700.style.fontFamily,
+                      fontWeight: 700,
+                      fontSize: "12px",
+                      color: "#7A9BAB",
+                      letterSpacing: "0.5px",
+                      py: 2.5,
+                    }}
+                  >
                     LISTINGS
                   </TableCell>
-                  <TableCell sx={{ 
-                    fontFamily: poppins700.style.fontFamily, 
-                    fontWeight: 700, 
-                    fontSize: "12px", 
-                    color: "#7A9BAB",
-                    letterSpacing: "0.5px",
-                    py: 2.5
-                  }}>
+                  <TableCell
+                    sx={{
+                      fontFamily: poppins700.style.fontFamily,
+                      fontWeight: 700,
+                      fontSize: "12px",
+                      color: "#7A9BAB",
+                      letterSpacing: "0.5px",
+                      py: 2.5,
+                    }}
+                  >
                     ACTIONS
                   </TableCell>
                 </TableRow>
               </TableHead>
-              
+
               <TableBody>
                 {filteredUsers.length > 0 ? (
                   filteredUsers.map((user) => (
@@ -348,7 +374,13 @@ const UserManagement = () => {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={5} sx={{ py: 6, textAlign: "center" }}>
-                      <Typography sx={{ fontFamily: poppins.style.fontFamily, fontWeight: 500, color: "#7A9BAB" }}>
+                      <Typography
+                        sx={{
+                          fontFamily: poppins.style.fontFamily,
+                          fontWeight: 500,
+                          color: "#7A9BAB",
+                        }}
+                      >
                         No users found matching your search.
                       </Typography>
                     </TableCell>
@@ -361,20 +393,20 @@ const UserManagement = () => {
       </Box>
 
       {/* Snackbar alerts */}
-      <Snackbar 
-        open={snackbar.open} 
-        autoHideDuration={4000} 
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Alert 
-          onClose={handleSnackbarClose} 
-          severity={snackbar.severity} 
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
           variant="filled"
-          sx={{ 
-            borderRadius: "12px", 
+          sx={{
+            borderRadius: "12px",
             fontFamily: poppins.style.fontFamily,
-            fontSize: "14px"
+            fontSize: "14px",
           }}
         >
           {snackbar.message}

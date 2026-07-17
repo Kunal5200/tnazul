@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import { 
-  TableRow, 
-  TableCell, 
-  Typography, 
-  Stack, 
-  Chip, 
-  Box 
+import {
+  TableRow,
+  TableCell,
+  Typography,
+  Stack,
+  Chip,
+  Box,
 } from "@mui/material";
 import { poppins, poppins700 } from "@/utils/fonts";
 import { COLORS } from "@/utils/enum";
@@ -42,7 +42,7 @@ const TransactionRow = ({ tx }: TransactionRowProps) => {
               fontWeight: 700,
               fontSize: "12px",
               borderRadius: "6px",
-              px: 0.5
+              px: 0.5,
             }}
           />
         );
@@ -58,7 +58,7 @@ const TransactionRow = ({ tx }: TransactionRowProps) => {
               fontWeight: 700,
               fontSize: "12px",
               borderRadius: "6px",
-              px: 0.5
+              px: 0.5,
             }}
           />
         );
@@ -74,7 +74,7 @@ const TransactionRow = ({ tx }: TransactionRowProps) => {
               fontWeight: 700,
               fontSize: "12px",
               borderRadius: "6px",
-              px: 0.5
+              px: 0.5,
             }}
           />
         );
@@ -152,9 +152,7 @@ const TransactionRow = ({ tx }: TransactionRowProps) => {
       </TableCell>
 
       {/* Col 5: STATUS */}
-      <TableCell sx={{ py: 2.5 }}>
-        {getStatusChip(tx.status)}
-      </TableCell>
+      <TableCell sx={{ py: 2.5 }}>{getStatusChip(tx.status)}</TableCell>
     </TableRow>
   );
 };

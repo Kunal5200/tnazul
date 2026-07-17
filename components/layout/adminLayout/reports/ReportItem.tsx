@@ -1,21 +1,16 @@
 "use client";
 
 import React from "react";
-import { 
-  Box, 
-  Paper, 
-  Typography, 
-  Stack, 
-  Button, 
+import {
+  Box,
+  Paper,
+  Typography,
+  Stack,
+  Button,
   Chip,
-  Divider
+  Divider,
 } from "@mui/material";
-import { 
-  Description, 
-  Person, 
-  Visibility, 
-  Cancel 
-} from "@mui/icons-material";
+import { Description, Person, Visibility, Cancel } from "@mui/icons-material";
 import { poppins, poppins700 } from "@/utils/fonts";
 import { COLORS } from "@/utils/enum";
 
@@ -37,10 +32,17 @@ interface ReportItemProps {
   onDismiss: (id: string) => void;
 }
 
-const ReportItem = ({ item, onAction, onReview, onDismiss }: ReportItemProps) => {
+const ReportItem = ({
+  item,
+  onAction,
+  onReview,
+  onDismiss,
+}: ReportItemProps) => {
   // Configs based on type
   const isListing = item.type === "listing";
-  const iconBg = item.isUrgent ? "rgba(211, 47, 47, 0.1)" : "rgba(231, 186, 73, 0.1)";
+  const iconBg = item.isUrgent
+    ? "rgba(211, 47, 47, 0.1)"
+    : "rgba(231, 186, 73, 0.1)";
   const iconColor = item.isUrgent ? "#D32F2F" : "#E78B49";
 
   return (
@@ -49,17 +51,17 @@ const ReportItem = ({ item, onAction, onReview, onDismiss }: ReportItemProps) =>
       sx={{
         borderRadius: "24px",
         backgroundColor: COLORS.WHITE,
-        border: item.isUrgent 
-          ? "1px solid rgba(211, 47, 47, 0.3)" 
+        border: item.isUrgent
+          ? "1px solid rgba(211, 47, 47, 0.3)"
           : "1px solid #0135470F",
         overflow: "hidden",
         mb: 3,
         transition: "box-shadow 0.2s ease, transform 0.2s ease",
         "&:hover": {
-          boxShadow: item.isUrgent 
-            ? "0px 8px 24px rgba(211, 47, 47, 0.06)" 
+          boxShadow: item.isUrgent
+            ? "0px 8px 24px rgba(211, 47, 47, 0.06)"
             : "0px 8px 24px rgba(1, 53, 71, 0.04)",
-          transform: "translateY(-2px)"
+          transform: "translateY(-2px)",
         },
       }}
     >
@@ -77,7 +79,7 @@ const ReportItem = ({ item, onAction, onReview, onDismiss }: ReportItemProps) =>
               alignItems: "center",
               justifyContent: "center",
               color: iconColor,
-              flexShrink: 0
+              flexShrink: 0,
             }}
           >
             {isListing ? (
@@ -89,13 +91,19 @@ const ReportItem = ({ item, onAction, onReview, onDismiss }: ReportItemProps) =>
 
           {/* Info Details */}
           <Box sx={{ flexGrow: 1 }}>
-            <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", mb: 1, flexWrap: "wrap", gap: 1 }}>
+            <Stack
+              direction="row"
+              spacing={1.5}
+              sx={{ alignItems: "center", mb: 1, flexWrap: "wrap", gap: 1 }}
+            >
               {/* Type Chip */}
               <Chip
                 label={item.typeLabel}
                 size="small"
                 sx={{
-                  backgroundColor: isListing ? "rgba(46, 125, 50, 0.1)" : "rgba(22, 108, 170, 0.1)",
+                  backgroundColor: isListing
+                    ? "rgba(46, 125, 50, 0.1)"
+                    : "rgba(22, 108, 170, 0.1)",
                   color: isListing ? "#2E7D32" : "#166CA9",
                   fontFamily: poppins700.style.fontFamily,
                   fontWeight: 700,
@@ -104,7 +112,7 @@ const ReportItem = ({ item, onAction, onReview, onDismiss }: ReportItemProps) =>
                   height: "22px",
                 }}
               />
-              
+
               {/* Urgent Chip */}
               {item.isUrgent && (
                 <Chip
@@ -146,7 +154,12 @@ const ReportItem = ({ item, onAction, onReview, onDismiss }: ReportItemProps) =>
                 mb: 1,
               }}
             >
-              <Box component="span" sx={{ fontWeight: 700, color: COLORS.SECONDARY }}>Reason: </Box>
+              <Box
+                component="span"
+                sx={{ fontWeight: 700, color: COLORS.SECONDARY }}
+              >
+                Reason:{" "}
+              </Box>
               {item.reason}
             </Typography>
 
@@ -169,7 +182,11 @@ const ReportItem = ({ item, onAction, onReview, onDismiss }: ReportItemProps) =>
 
       {/* Action Buttons Row */}
       <Box sx={{ p: 2.5, px: 3, backgroundColor: "rgba(1, 53, 71, 0.01)" }}>
-        <Stack direction="row" spacing={2} sx={{ alignItems: "center", justifyContent: "space-between" }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{ alignItems: "center", justifyContent: "space-between" }}
+        >
           <Stack direction="row" spacing={1.5}>
             {/* Primary Action Button (Remove Listing / Warn User) */}
             <Button
