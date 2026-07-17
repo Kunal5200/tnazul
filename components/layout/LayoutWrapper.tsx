@@ -13,7 +13,8 @@ const LayoutWrapper = ({ children }: { children: ReactNode }) => {
   const excludeDefaultLayout =
     pathname === "/login" ||
     pathname === "/register" ||
-    pathname === "/dashboard/contracts/create";
+    pathname === "/dashboard/contracts/create" ||
+    pathname.startsWith("/admin");
 
   // Routes that should NOT render the default Guest Header, but still render Sidebar
   const excludeHeaderOnly =
