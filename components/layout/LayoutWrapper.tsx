@@ -14,6 +14,8 @@ const LayoutWrapper = ({ children }: { children: ReactNode }) => {
     pathname === "/login" ||
     pathname === "/register" ||
     pathname === "/dashboard/contracts/create" ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/checkout") ||
     pathname.startsWith("/dashboard/marketplace") ||
     pathname.startsWith("/dashboard/contracts/detail");
 
@@ -48,7 +50,7 @@ const LayoutWrapper = ({ children }: { children: ReactNode }) => {
           backgroundColor: "#F9F8F6EB",
           transition: "margin 0.3s ease",
           px: showSidebar ? 3 : 0,
-          pt: showHeader ? 3 : (excludeHeaderOnly ? (isFixedLayout ? 3 : 4) : 0),
+          pt: showHeader ? 3 : excludeHeaderOnly ? (isFixedLayout ? 3 : 4) : 0,
         }}
       >
         {children}
