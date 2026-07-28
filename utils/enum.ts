@@ -8,3 +8,8 @@ export enum COLORS {
   BLACK = "#000000",
   SECONDARY = "#013547",
 }
+
+export enum ACCOUNT_TYPE {
+  INDIVIDUAL = "Individual",
+  BUSINESS = "Business",
+}

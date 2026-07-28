@@ -8,3 +8,12 @@ export interface LINK_BOX {
   badge?: number;
 }
 
+export interface RegisterPayload {
+  email: string;
+  password: string;
+  name: string;
+  phoneNo: string;
+  countryCode: string;
+  accountType: string;
+}
+
