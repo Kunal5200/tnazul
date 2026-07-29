@@ -15,6 +15,7 @@ const createSecuredApi = (baseURL: string) => {
         localStorage.getItem("accessToken") || localStorage.getItem("token");
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+        config.headers.accesstoken = token;
       }
     }
     return config;
@@ -67,12 +68,20 @@ const createSecuredApi = (baseURL: string) => {
         }
       }
       return Promise.reject(error);
-    }
+    },
   );
 
   return instance;
 };
 
 const authPublicAPI = createPublicAPI(services.auth);
+const authSecuredAPI = createSecuredApi(services.auth);
+const userSecuredAPI = createSecuredApi(services.user);
 
-export { authPublicAPI, createPublicAPI, createSecuredApi };
+export {
+  authPublicAPI,
+  authSecuredAPI,
+  createPublicAPI,
+  createSecuredApi,
+  userSecuredAPI,
+};

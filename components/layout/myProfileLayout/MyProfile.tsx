@@ -23,7 +23,11 @@ import Image from "next/image";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
 
+import { useUserDetail } from "@/hooks/user/useUserDetail";
+
 const MyProfileLayout = () => {
+  const { userData, loading: userLoading } = useUserDetail();
+
   // Stepper steps configuration
   const steps = ["Listed", "Interested", "Docs Sent", "Approval", "Done"];
 
@@ -113,7 +117,7 @@ const MyProfileLayout = () => {
               mb: 0.5,
             }}
           >
-            Good morning
+            {userLoading ? "Loading profile..." : `Welcome back (${userData?.email || userData?.roleName || "User"})`}
           </Typography>
           <Typography
             sx={{
@@ -123,9 +127,11 @@ const MyProfileLayout = () => {
               color: COLORS.SECONDARY,
             }}
           >
-            Ahmed Al-Rashidi
+            {userData?.name || "-"}
+
           </Typography>
         </Box>
+
 
         <Link href="/dashboard/contracts/create" style={{ textDecoration: "none" }}>
           <Button

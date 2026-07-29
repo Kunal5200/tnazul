@@ -37,19 +37,50 @@ import {
 } from "@mui/icons-material";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
-import WhatsAppButton from "@/components/layout/dashboard/contracts/WhatsAppButton";
 import Link from "next/link";
+import WhatsAppButton from "@/components/layout/dashboard/contracts/WhatsAppButton";
+import { useUserDetail } from "@/hooks/user/useUserDetail";
+import { useUpdateProfile } from "@/hooks/user/useUpdateProfile";
+import { useUpdatePhoto } from "@/hooks/user/useUpdatePhoto";
+import { useChangePassword } from "@/hooks/authentication/changePassword";
+
 
 interface SettingsLayoutProps {
   activeTab: "edit-profile" | "verification" | "account-settings";
 }
 
 const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
-  const [fullName, setFullName] = useState("Ahmed Al-Rashidi");
-  const [email, setEmail] = useState("ahmed@example.com");
+  const { userData, refetch: refetchUser } = useUserDetail();
+  const { updateProfile, loading: updatingProfile } = useUpdateProfile();
+  const { updatePhoto, loading: uploadingPhoto } = useUpdatePhoto();
+  const { changePassword, loading: updatingPassword } = useChangePassword();
+
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
   const [cityRegion, setCityRegion] = useState("");
   const [language, setLanguage] = useState<"en" | "ar">("en");
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (userData) {
+      if (userData.name) setFullName(userData.name);
+      if (userData.email) setEmail(userData.email);
+      if (userData.avatar) setProfilePhoto(userData.avatar);
+      if (userData.cityOrRegion) setCityRegion(userData.cityOrRegion);
+      if (userData.languagePreference) {
+        setLanguage(userData.languagePreference === "Arabic" ? "ar" : "en");
+      }
+    }
+  }, [userData]);
+
+  const getInitials = (name?: string) => {
+    if (!name) return "-";
+    const parts = name.trim().split(" ");
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  };
 
   const [crFileName, setCrFileName] = useState<string | null>(null);
   const [crUploadStatus, setCrUploadStatus] = useState<
@@ -90,7 +121,9 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
@@ -103,12 +136,27 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
       reader.onload = (e) => {
         if (e.target?.result) {
           setProfilePhoto(e.target.result as string);
-          setToastMessage("Profile photo uploaded successfully!");
-          setToastSeverity("success");
-          setToastOpen(true);
         }
       };
       reader.readAsDataURL(file);
+
+      try {
+        const res = await updatePhoto(file);
+        console.log("Photo upload response:", res);
+        setToastMessage("Profile photo uploaded successfully!");
+        setToastSeverity("success");
+        setToastOpen(true);
+        refetchUser();
+      } catch (err: any) {
+        console.error("Error uploading photo:", err);
+        const msg =
+          err?.response?.data?.message ||
+          err?.message ||
+          "Failed to upload photo.";
+        setToastMessage(msg);
+        setToastSeverity("info");
+        setToastOpen(true);
+      }
     }
   };
 
@@ -129,23 +177,45 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
     }
   };
 
-  const handleSaveChanges = (e: React.FormEvent) => {
-    e.preventDefault();
-    setToastMessage("Changes saved successfully!");
-    setToastSeverity("success");
-    setToastOpen(true);
-  };
+  const handleSaveChanges = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    console.log("Submitting updateProfile payload:", {
+      name: fullName,
+      cityOrRegion: cityRegion,
+      languagePreference: language === "ar" ? "Arabic" : "English",
+    });
 
-  const handleUpdatePassword = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      setToastMessage("Please fill in all password fields.");
+    try {
+      const res = await updateProfile({
+        name: fullName,
+        cityOrRegion: cityRegion,
+        languagePreference: language === "ar" ? "Arabic" : "English",
+      });
+
+      console.log("updateProfile success:", res);
+      setToastMessage("Profile updated successfully!");
+      setToastSeverity("success");
+      setToastOpen(true);
+      refetchUser();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (err: any) {
+      console.error("updateProfile error:", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to update profile.";
+      setToastMessage(msg);
       setToastSeverity("info");
       setToastOpen(true);
-      return;
     }
-    if (newPassword.length < 8) {
-      setToastMessage("New password must be at least 8 characters.");
+  };
+
+  const handleUpdatePassword = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setToastMessage("Please fill in all password fields.");
       setToastSeverity("info");
       setToastOpen(true);
       return;
@@ -156,13 +226,30 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
       setToastOpen(true);
       return;
     }
-    setToastMessage("Password updated successfully!");
-    setToastSeverity("success");
-    setToastOpen(true);
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
+    try {
+      const res = await changePassword({
+        oldPassword: currentPassword,
+        newPassword: newPassword,
+      });
+      console.log("changePassword res:", res);
+      setToastMessage("Password updated successfully!");
+      setToastSeverity("success");
+      setToastOpen(true);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      console.error("Error changing password:", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to update password.";
+      setToastMessage(msg);
+      setToastSeverity("info");
+      setToastOpen(true);
+    }
   };
+
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -236,7 +323,8 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
                     boxShadow: "0px 8px 24px rgba(1, 53, 71, 0.08)",
                   }}
                 >
-                  {!profilePhoto && "AA"}
+                  {!profilePhoto && getInitials(fullName)}
+
                 </Avatar>
                 <Box
                   sx={{
@@ -270,7 +358,8 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
                   mb: 0.75,
                 }}
               >
-                {fullName}
+                {fullName || "-"}
+
               </Typography>
 
               {/* Verified Member Status */}
@@ -649,7 +738,8 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
                     fontFamily: poppins700.style.fontFamily,
                   }}
                 >
-                  {!profilePhoto && "AA"}
+                  {!profilePhoto && getInitials(fullName)}
+
                 </Avatar>
                 <Stack spacing={1} sx={{ alignItems: "flex-start" }}>
                   <Button
@@ -960,7 +1050,10 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
                 type="submit"
                 variant="contained"
                 disableElevation
+                onClick={handleSaveChanges}
+                disabled={updatingProfile}
                 startIcon={<SaveOutlined sx={{ fontSize: 18 }} />}
+
                 sx={{
                   backgroundColor: COLORS.SECONDARY,
                   color: COLORS.WHITE,
@@ -972,13 +1065,18 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
                   fontFamily: poppins700.style.fontFamily,
                   fontWeight: 700,
                   fontSize: "14px",
+                  "&.Mui-disabled": {
+                    backgroundColor: "#B0C3CC",
+                    color: "#FFFFFF99",
+                  },
                   "&:hover": {
                     backgroundColor: "#002432",
                   },
                 }}
               >
-                Save Changes
+                {updatingProfile ? "Saving..." : "Save Changes"}
               </Button>
+
             </Box>
           )}
 
@@ -1652,11 +1750,13 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
                   </Box>
                 </Stack>
 
-                {/* Save Changes Button */}
+                {/* Update Password Button */}
                 <Button
                   type="submit"
                   variant="contained"
                   disableElevation
+                  onClick={handleUpdatePassword}
+                  disabled={updatingPassword}
                   startIcon={<LockOutlined sx={{ fontSize: 18 }} />}
                   sx={{
                     backgroundColor: COLORS.SECONDARY,
@@ -1669,13 +1769,18 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
                     fontFamily: poppins700.style.fontFamily,
                     fontWeight: 700,
                     fontSize: "14px",
+                    "&.Mui-disabled": {
+                      backgroundColor: "#B0C3CC",
+                      color: "#FFFFFF99",
+                    },
                     "&:hover": {
                       backgroundColor: "#002432",
                     },
                   }}
                 >
-                  Update Password
+                  {updatingPassword ? "Updating..." : "Update Password"}
                 </Button>
+
               </Box>
 
               {/* Card 2: Notification Preferences */}

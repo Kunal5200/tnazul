@@ -11,9 +11,12 @@ import { poppins, poppins700 } from "@/utils/fonts";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { useUserDetail } from "@/hooks/user/useUserDetail";
+
 const Sidebar = () => {
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { userData } = useUserDetail();
 
   useEffect(() => {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -34,8 +37,21 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     window.location.href = "/login";
   };
+
+  const getInitials = (name?: string) => {
+    if (!name) return "-";
+    const parts = name.trim().split(" ");
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  };
+
+
 
   return (
     <Box>
@@ -202,7 +218,7 @@ const Sidebar = () => {
                     flexShrink: 0,
                   }}
                 >
-                  AM
+                  {getInitials(userData?.name)}
                 </Box>
 
                 {/* Details */}
@@ -216,7 +232,8 @@ const Sidebar = () => {
                       color: COLORS.SECONDARY,
                     }}
                   >
-                    Ahmed Mohamed
+                    {userData?.name || "-"}
+
                   </Typography>
                   <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
                     <Box
@@ -235,10 +252,11 @@ const Sidebar = () => {
                         color: "#10753E",
                       }}
                     >
-                      Premium
+                      {userData?.roleName || "Premium"}
                     </Typography>
                   </Stack>
                 </Box>
+
 
                 {/* Logout Button */}
                 <IconButton

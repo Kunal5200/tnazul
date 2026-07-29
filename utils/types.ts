@@ -32,6 +32,20 @@ export interface RenewTokenPayload {
   refreshToken: string;
 }
 
+export interface UpdateProfilePayload {
+  name?: string;
+  cityOrRegion?: string;
+  languagePreference?: string;
+}
+
+export interface ChangePasswordPayload {
+  oldPassword: string;
+  newPassword: string;
+}
+
+
+
+
 
 
 
