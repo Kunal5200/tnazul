@@ -27,3 +27,12 @@ export const registerValidationSchema = Yup.object().shape({
     .oneOf([true], "You must agree to the Terms & Conditions")
     .required("You must agree to the Terms & Conditions"),
 });
+
+export const loginValidationSchema = Yup.object().shape({
+  identity: Yup.string()
+    .trim()
+    .required("Mobile number or email is required"),
+  password: Yup.string()
+    .required("Password is required"),
+});
+

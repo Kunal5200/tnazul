@@ -1,27 +1,72 @@
 "use client";
 
-import { LockOutlined } from "@mui/icons-material";
+import { LockOutlined, Visibility, VisibilityOff } from "@mui/icons-material";
 import {
+  Alert,
   Box,
   Button,
   Divider,
+  IconButton,
   InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useFormik } from "formik";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
+import { useLogin } from "@/hooks/authentication/login";
+import { loginValidationSchema } from "@/utils/validationSchema";
 
 const LoginForm = () => {
-  const [identifier, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
+  const router = useRouter();
+  const { login, loading } = useLogin();
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Login execution logic goes here
-  };
+  const formik = useFormik({
+    initialValues: {
+      identity: "",
+      password: "",
+    },
+    validationSchema: loginValidationSchema,
+    onSubmit: async (values) => {
+      setErrorMessage(null);
+      try {
+        const response = await login({
+          identity: values.identity,
+          password: values.password,
+        });
+
+        const accessToken =
+          response?.data?.accessToken ||
+          response?.accessToken ||
+          response?.token;
+        const refreshToken =
+          response?.data?.refreshToken ||
+          response?.refreshToken;
+
+        if (accessToken) {
+          localStorage.setItem("token", accessToken);
+          localStorage.setItem("accessToken", accessToken);
+        }
+        if (refreshToken) {
+          localStorage.setItem("refreshToken", refreshToken);
+        }
+
+        router.push("/dashboard");
+
+      } catch (err: any) {
+        const msg =
+          err?.response?.data?.message ||
+          err?.message ||
+          "Failed to login. Please check your credentials.";
+        setErrorMessage(msg);
+      }
+    },
+  });
 
   const NafathIcon = () => (
     <Box
@@ -36,8 +81,17 @@ const LoginForm = () => {
         mr: 1,
       }}
     >
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 16.5L6 12.5L7.41 11.09L10 13.67L16.59 7.08L18 8.5L10 16.5Z" fill="white"/>
+      <svg
+        width="10"
+        height="10"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 16.5L6 12.5L7.41 11.09L10 13.67L16.59 7.08L18 8.5L10 16.5Z"
+          fill="white"
+        />
       </svg>
     </Box>
   );
@@ -45,7 +99,7 @@ const LoginForm = () => {
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit}
+      onSubmit={formik.handleSubmit}
       sx={{
         width: "100%",
         maxWidth: "460px",
@@ -77,18 +131,24 @@ const LoginForm = () => {
         >
           Welcome back
         </Typography>
-        
+
         <Typography
           sx={{
             fontFamily: poppins.style.fontFamily,
             fontWeight: 500,
             fontSize: "13px",
             color: "#7A9BAB",
-            mb: 4,
+            mb: 3,
           }}
         >
           Login securely to your Tnazul account.
         </Typography>
+
+        {errorMessage && (
+          <Alert severity="error" sx={{ mb: 3, borderRadius: "10px" }}>
+            {errorMessage}
+          </Alert>
+        )}
 
         {/* Identifier Field */}
         <Typography
@@ -105,14 +165,27 @@ const LoginForm = () => {
         </Typography>
         <TextField
           fullWidth
-          value={identifier}
-          onChange={(e) => setIdentifier(e.target.value)}
+          id="identity"
+          name="identity"
+          value={formik.values.identity}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={Boolean(formik.touched.identity && formik.errors.identity)}
+          helperText={formik.touched.identity && formik.errors.identity}
           placeholder="05X XXX XXXX or name@email.com"
           slotProps={{
             input: {
               startAdornment: (
                 <InputAdornment position="start" sx={{ mr: 0.5 }}>
-                  <span style={{ color: "#7A9BAB", fontSize: "15px", fontWeight: 600 }}>@</span>
+                  <span
+                    style={{
+                      color: "#7A9BAB",
+                      fontSize: "15px",
+                      fontWeight: 600,
+                    }}
+                  >
+                    @
+                  </span>
                 </InputAdornment>
               ),
             },
@@ -136,6 +209,10 @@ const LoginForm = () => {
                 borderWidth: "1.5px",
               },
             },
+            "& input:-webkit-autofill": {
+              WebkitBoxShadow: "0 0 0 100px #FFFFFF inset !important",
+              WebkitTextFillColor: `${COLORS.SECONDARY} !important`,
+            },
           }}
         />
 
@@ -154,15 +231,34 @@ const LoginForm = () => {
         </Typography>
         <TextField
           fullWidth
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          id="password"
+          name="password"
+          type={showPassword ? "text" : "password"}
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={Boolean(formik.touched.password && formik.errors.password)}
+          helperText={formik.touched.password && formik.errors.password}
           placeholder="Enter your password"
           slotProps={{
             input: {
               startAdornment: (
                 <InputAdornment position="start" sx={{ mr: 0.5 }}>
                   <LockOutlined sx={{ color: "#7A9BAB", fontSize: 18 }} />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
+                  >
+                    {showPassword ? (
+                      <VisibilityOff sx={{ fontSize: 18 }} />
+                    ) : (
+                      <Visibility sx={{ fontSize: 18 }} />
+                    )}
+                  </IconButton>
                 </InputAdornment>
               ),
             },
@@ -186,8 +282,13 @@ const LoginForm = () => {
                 borderWidth: "1.5px",
               },
             },
+            "& input:-webkit-autofill": {
+              WebkitBoxShadow: "0 0 0 100px #FFFFFF inset !important",
+              WebkitTextFillColor: `${COLORS.SECONDARY} !important`,
+            },
           }}
         />
+
 
         {/* Forgot Password Link */}
         <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
@@ -214,6 +315,7 @@ const LoginForm = () => {
           variant="contained"
           disableElevation
           fullWidth
+          disabled={loading}
           sx={{
             height: "48px",
             borderRadius: "10px",
@@ -224,12 +326,16 @@ const LoginForm = () => {
             fontWeight: 700,
             fontSize: "14px",
             mb: 3,
+            "&.Mui-disabled": {
+              backgroundColor: "#B0C3CC",
+              color: "#FFFFFF99",
+            },
             "&:hover": {
               backgroundColor: "#002432",
             },
           }}
         >
-          Secure Login
+          {loading ? "Logging in..." : "Secure Login"}
         </Button>
 
         {/* Divider */}

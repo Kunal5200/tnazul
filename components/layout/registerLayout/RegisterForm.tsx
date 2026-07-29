@@ -11,6 +11,7 @@ import {
   ArrowForward,
 } from "@mui/icons-material";
 import {
+  Alert,
   Box,
   Button,
   Checkbox,
@@ -25,16 +26,26 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ACCOUNT_TYPE, COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
-import { MuiTelInput } from "mui-tel-input";
+import { MuiTelInput, MuiTelInputInfo } from "mui-tel-input";
 import { useFormik } from "formik";
 import { registerValidationSchema } from "@/utils/validationSchema";
 import { useRegister } from "@/hooks/authentication/register";
 import { RegisterPayload } from "@/utils/types";
 
+import VerifyOtpForm from "./VerifyOtpForm";
+
 const RegisterForm = () => {
   const { register, loading } = useRegister();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [telInfo, setTelInfo] = useState<MuiTelInputInfo | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const [otpStep, setOtpStep] = useState<{
+    active: boolean;
+    referenceId: string;
+    mobileNumber: string;
+  }>({ active: false, referenceId: "", mobileNumber: "" });
 
   const formik = useFormik({
     initialValues: {
@@ -48,10 +59,42 @@ const RegisterForm = () => {
     },
     validationSchema: registerValidationSchema,
     onSubmit: async (values) => {
-      const cleanNumber = values.mobileNumber.replace(/\s+/g, "");
-      const countryCodeMatch = cleanNumber.match(/^(\+\d{1,4})/);
-      const countryCode = countryCodeMatch ? countryCodeMatch[1] : "+966";
-      const phoneNo = cleanNumber.replace(countryCode, "");
+      setErrorMessage(null);
+      let countryCode = "+966";
+      let phoneNo = "";
+
+      if (telInfo && telInfo.countryCallingCode) {
+        countryCode = "+" + telInfo.countryCallingCode;
+        if (telInfo.nationalNumber) {
+          phoneNo = telInfo.nationalNumber.replace(/\D/g, "");
+        } else {
+          const raw = telInfo.numberValue || values.mobileNumber;
+          phoneNo = raw.replace("+" + telInfo.countryCallingCode, "").replace(/\D/g, "");
+        }
+      } else {
+        const trimmed = values.mobileNumber.trim();
+        const parts = trimmed.split(/\s+/);
+        if (parts.length > 1 && parts[0].startsWith("+")) {
+          countryCode = parts[0];
+          phoneNo = parts.slice(1).join("").replace(/\D/g, "");
+        } else {
+          const digits = trimmed.replace(/\D/g, "");
+          if (trimmed.startsWith("+966")) {
+            countryCode = "+966";
+            phoneNo = digits.substring(3);
+          } else if (trimmed.startsWith("+91")) {
+            countryCode = "+91";
+            phoneNo = digits.substring(2);
+          } else {
+            countryCode = "+966";
+            phoneNo = digits;
+          }
+        }
+      }
+
+      if (countryCode.length > 4) {
+        countryCode = countryCode.substring(0, 4);
+      }
 
       const payload: RegisterPayload = {
         name: values.fullName,
@@ -62,9 +105,44 @@ const RegisterForm = () => {
         accountType: values.accountType,
       };
 
-      await register(payload);
+      console.log("Submitting Register Payload:", payload);
+
+      try {
+        const res = await register(payload);
+        const refId =
+          res?.data?.referenceId ||
+          res?.referenceId ||
+          res?.data?.id ||
+          res?.id ||
+          "";
+
+        setOtpStep({
+          active: true,
+          referenceId: refId,
+          mobileNumber: `${countryCode} ${phoneNo}`,
+        });
+      } catch (err: any) {
+        console.error("Register error response:", err?.response?.data || err);
+        const msg =
+          err?.response?.data?.message ||
+          err?.message ||
+          "Registration failed. Please try again.";
+        setErrorMessage(msg);
+      }
     },
   });
+
+  if (otpStep.active) {
+    return (
+      <VerifyOtpForm
+        referenceId={otpStep.referenceId}
+        mobileNumber={otpStep.mobileNumber}
+        onBack={() => setOtpStep({ active: false, referenceId: "", mobileNumber: "" })}
+      />
+    );
+  }
+
+
 
 
   return (
@@ -91,11 +169,18 @@ const RegisterForm = () => {
           fontWeight: 500,
           fontSize: "13px",
           color: "#7A9BAB",
-          mb: 4,
+          mb: 3,
         }}
       >
         Join the Kingdom's most trusted contract transfer platform.
       </Typography>
+
+      {errorMessage && (
+        <Alert severity="error" sx={{ mb: 3, borderRadius: "10px" }}>
+          {errorMessage}
+        </Alert>
+      )}
+
 
       {/* Account Type Selection */}
       <Typography
@@ -360,9 +445,11 @@ const RegisterForm = () => {
             defaultCountry="SA"
             preferredCountries={["SA", "AE", "KW", "QA", "BH", "OM"]}
             value={formik.values.mobileNumber}
-            onChange={(newValue) =>
-              formik.setFieldValue("mobileNumber", newValue)
-            }
+            onChange={(newValue, info) => {
+              formik.setFieldValue("mobileNumber", newValue);
+              setTelInfo(info);
+            }}
+
             onBlur={() => formik.setFieldTouched("mobileNumber", true)}
             error={Boolean(
               formik.touched.mobileNumber && formik.errors.mobileNumber

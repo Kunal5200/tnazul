@@ -17,3 +17,21 @@ export interface RegisterPayload {
   accountType: string;
 }
 
+export interface LoginPayload {
+  identity: string;
+  password: string;
+}
+
+export interface VerifyOtpPayload {
+  otp: string;
+  referenceId: string;
+}
+
+export interface RenewTokenPayload {
+  accessToken: string;
+  refreshToken: string;
+}
+
+
+
+
