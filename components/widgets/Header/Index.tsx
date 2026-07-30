@@ -1,3 +1,6 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { Add, NotificationsNoneOutlined, Login, PersonAddAlt1 } from "@mui/icons-material";
 import {
   Box,
@@ -5,13 +8,29 @@ import {
   Stack,
   Button,
 } from "@mui/material";
-import React from "react";
 import SearchBar from "./SearchBar";
 import { COLORS } from "@/utils/enum";
 import { poppins700 } from "@/utils/fonts";
 import Link from "next/link";
+import { useUserDetail } from "@/hooks/user/useUserDetail";
 
 const Header = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { userData } = useUserDetail();
+
+  useEffect(() => {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("token") || localStorage.getItem("accessToken")
+        : null;
+
+    if (token || userData) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, [userData]);
+
   return (
     <Box
       sx={{
@@ -82,56 +101,61 @@ const Header = () => {
             <NotificationsNoneOutlined sx={{ color: "#7A9BAB", fontSize: 22 }} />
           </IconButton>
 
-          {/* Login Button */}
-          <Link href={"/login"} style={{ textDecoration: "none" }}>
-            <Button
-              variant="outlined"
-              startIcon={<Login sx={{ color: COLORS.SECONDARY }} />}
-              sx={{
-                color: COLORS.SECONDARY,
-                borderColor: "#01354724",
-                borderRadius: "100px",
-                px: 2,
-                height: "46px",
-                textTransform: "none",
-                fontFamily: poppins700.style.fontFamily,
-                fontWeight: 700,
-                fontSize: "14px",
-                backgroundColor: "#FFFFFF",
-                "&:hover": {
-                  borderColor: "#0135473D",
-                  backgroundColor: "#EEF6FA",
-                },
-              }}
-            >
-              Login
-            </Button>
-          </Link>
+          {/* Render Login & Create Account buttons only if user is NOT logged in */}
+          {!isLoggedIn && (
+            <>
+              {/* Login Button */}
+              <Link href={"/login"} style={{ textDecoration: "none" }}>
+                <Button
+                  variant="outlined"
+                  startIcon={<Login sx={{ color: COLORS.SECONDARY }} />}
+                  sx={{
+                    color: COLORS.SECONDARY,
+                    borderColor: "#01354724",
+                    borderRadius: "100px",
+                    px: 2,
+                    height: "46px",
+                    textTransform: "none",
+                    fontFamily: poppins700.style.fontFamily,
+                    fontWeight: 700,
+                    fontSize: "14px",
+                    backgroundColor: "#FFFFFF",
+                    "&:hover": {
+                      borderColor: "#0135473D",
+                      backgroundColor: "#EEF6FA",
+                    },
+                  }}
+                >
+                  Login
+                </Button>
+              </Link>
 
-          {/* Create Account Button */}
-          <Link href={"/register"} style={{ textDecoration: "none" }}>
-            <Button
-              variant="contained"
-              disableElevation
-              startIcon={<PersonAddAlt1 sx={{ color: COLORS.WHITE }} />}
-              sx={{
-                backgroundColor: COLORS.SECONDARY,
-                color: COLORS.WHITE,
-                borderRadius: "100px",
-                px: 2,
-                height: "46px",
-                textTransform: "none",
-                fontFamily: poppins700.style.fontFamily,
-                fontWeight: 700,
-                fontSize: "14px",
-                "&:hover": {
-                  backgroundColor: "#002432",
-                },
-              }}
-            >
-              Create Account
-            </Button>
-          </Link>
+              {/* Create Account Button */}
+              <Link href={"/register"} style={{ textDecoration: "none" }}>
+                <Button
+                  variant="contained"
+                  disableElevation
+                  startIcon={<PersonAddAlt1 sx={{ color: COLORS.WHITE }} />}
+                  sx={{
+                    backgroundColor: COLORS.SECONDARY,
+                    color: COLORS.WHITE,
+                    borderRadius: "100px",
+                    px: 2,
+                    height: "46px",
+                    textTransform: "none",
+                    fontFamily: poppins700.style.fontFamily,
+                    fontWeight: 700,
+                    fontSize: "14px",
+                    "&:hover": {
+                      backgroundColor: "#002432",
+                    },
+                  }}
+                >
+                  Create Account
+                </Button>
+              </Link>
+            </>
+          )}
         </Stack>
       </Stack>
     </Box>
@@ -139,4 +163,3 @@ const Header = () => {
 };
 
 export default Header;
-

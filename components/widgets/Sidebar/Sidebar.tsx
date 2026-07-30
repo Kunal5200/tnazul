@@ -11,7 +11,7 @@ import { poppins, poppins700 } from "@/utils/fonts";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { useUserDetail } from "@/hooks/user/useUserDetail";
+import { useUserDetail, clearUserCache } from "@/hooks/user/useUserDetail";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -23,7 +23,6 @@ const Sidebar = () => {
     const isProfileRoute =
       pathname.startsWith("/dashboard/my-profile") ||
       pathname.startsWith("/dashboard/saved") ||
-      pathname.startsWith("/dashboard/my-contracts") ||
       pathname.startsWith("/dashboard/messages") ||
       pathname.startsWith("/dashboard/notifications") ||
       pathname.startsWith("/dashboard/settings");
@@ -36,6 +35,7 @@ const Sidebar = () => {
   }, [pathname]);
 
   const handleLogout = () => {
+    clearUserCache();
     localStorage.removeItem("token");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
