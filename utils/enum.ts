@@ -13,3 +13,8 @@ export enum ACCOUNT_TYPE {
   INDIVIDUAL = "Individual",
   BUSINESS = "Business",
 }
+
+export enum CONTRACT_STATUS {
+  PUBLISHED = "Published",
+  DRAFT = "Draft",
+}

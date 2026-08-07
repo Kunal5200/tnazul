@@ -5,11 +5,11 @@ export const registerValidationSchema = Yup.object().shape({
   accountType: Yup.mixed<ACCOUNT_TYPE>()
     .oneOf(Object.values(ACCOUNT_TYPE), "Invalid account type")
     .required("Account type is required"),
-  fullName: Yup.string()
+  name: Yup.string()
     .trim()
     .min(2, "Full name must be at least 2 characters")
     .required("Full name is required"),
-  mobileNumber: Yup.string()
+  phoneNo: Yup.string()
     .trim()
     .min(8, "Please enter a valid mobile number")
     .required("Mobile number is required"),
@@ -29,10 +29,6 @@ export const registerValidationSchema = Yup.object().shape({
 });
 
 export const loginValidationSchema = Yup.object().shape({
-  identity: Yup.string()
-    .trim()
-    .required("Mobile number or email is required"),
-  password: Yup.string()
-    .required("Password is required"),
+  identity: Yup.string().trim().required("Mobile number or email is required"),
+  password: Yup.string().required("Password is required"),
 });
-

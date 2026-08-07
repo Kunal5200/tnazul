@@ -13,10 +13,12 @@ import { COLORS } from "@/utils/enum";
 import { poppins700 } from "@/utils/fonts";
 import Link from "next/link";
 import { useUserDetail } from "@/hooks/user/useUserDetail";
+import { useSidebarStore } from "@/store/sidebarStore";
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { userData } = useUserDetail();
+  const { isCollapsed } = useSidebarStore();
 
   useEffect(() => {
     const token =
@@ -34,7 +36,7 @@ const Header = () => {
   return (
     <Box
       sx={{
-        left: "276px",
+        left: isCollapsed ? "80px" : "276px",
         right: 0,
         position: "fixed",
         top: 0,
@@ -45,6 +47,7 @@ const Header = () => {
         display: "flex",
         alignItems: "center",
         zIndex: 1100,
+        transition: "left 0.3s ease",
       }}
     >
       <Stack

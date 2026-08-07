@@ -74,14 +74,9 @@ const createSecuredApi = (baseURL: string) => {
   return instance;
 };
 
-const authPublicAPI = createPublicAPI(services.auth);
-const authSecuredAPI = createSecuredApi(services.auth);
-const userSecuredAPI = createSecuredApi(services.user);
+export const authPublicAPI = createPublicAPI(services.auth);
+export const authSecuredAPI = createSecuredApi(services.auth);
+export const userSecuredAPI = createSecuredApi(services.user);
+export const contractSecuredAPI = createSecuredApi(services.contract);
 
-export {
-  authPublicAPI,
-  authSecuredAPI,
-  createPublicAPI,
-  createSecuredApi,
-  userSecuredAPI,
-};
+// export { createPublicAPI, createSecuredApi };

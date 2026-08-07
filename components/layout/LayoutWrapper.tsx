@@ -6,8 +6,13 @@ import Sidebar from "../widgets/Sidebar/Sidebar";
 import Header from "../widgets/Header/Index";
 import { usePathname } from "next/navigation";
 
+import GlobalSnackbar from "../common/GlobalSnackbar";
+import { useSidebarStore } from "@/store/sidebarStore";
+import Modal from "../widgets/Modal";
+
 const LayoutWrapper = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
+  const { isCollapsed } = useSidebarStore();
 
   // Routes that should NOT render the default GuestSidebar and Header
   const excludeDefaultLayout =
@@ -36,25 +41,30 @@ const LayoutWrapper = ({ children }: { children: ReactNode }) => {
     pathname.startsWith("/dashboard/messages") ||
     pathname.startsWith("/dashboard/notifications");
 
+  const sidebarWidth = isCollapsed ? "80px" : "276px";
+
   return (
     <Box>
       {showSidebar && <Sidebar />}
       {showHeader && <Header />}
+      <Modal />
+
       <Box
         sx={{
-          marginLeft: showSidebar ? "276px" : 0,
+          marginLeft: showSidebar ? sidebarWidth : 0,
           marginTop: showHeader ? "70px" : 0,
           height: isFixedLayout ? "100vh" : "auto",
           minHeight: isFixedLayout ? "auto" : "100vh",
           overflow: isFixedLayout ? "hidden" : "visible",
           backgroundColor: "#F9F8F6EB",
-          transition: "margin 0.3s ease",
+          transition: "margin-left 0.3s ease, margin 0.3s ease",
           px: showSidebar ? 3 : 0,
           pt: showHeader ? 3 : excludeHeaderOnly ? (isFixedLayout ? 3 : 4) : 0,
         }}
       >
         {children}
       </Box>
+      <GlobalSnackbar />
     </Box>
   );
 };

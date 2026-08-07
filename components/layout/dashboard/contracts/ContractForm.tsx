@@ -23,7 +23,11 @@ interface ContractFormProps {
   onNext?: () => void;
 }
 
-const ContractForm = ({ formData, updateFormData, onNext }: ContractFormProps) => {
+const ContractForm = ({
+  formData,
+  updateFormData,
+  onNext,
+}: ContractFormProps) => {
   const {
     contractType,
     contractTitle,
@@ -34,9 +38,12 @@ const ContractForm = ({ formData, updateFormData, onNext }: ContractFormProps) =
     description,
   } = formData;
 
-  const setContractType = (val: string) => updateFormData({ contractType: val });
-  const setContractTitle = (val: string) => updateFormData({ contractTitle: val });
-  const setContractNumber = (val: string) => updateFormData({ contractNumber: val });
+  const setContractType = (val: string) =>
+    updateFormData({ contractType: val });
+  const setContractTitle = (val: string) =>
+    updateFormData({ contractTitle: val });
+  const setContractNumber = (val: string) =>
+    updateFormData({ contractNumber: val });
   const setCategory = (val: string) => updateFormData({ category: val });
   const setCity = (val: string) => updateFormData({ city: val });
   const setDistrict = (val: string) => updateFormData({ district: val });
@@ -45,7 +52,13 @@ const ContractForm = ({ formData, updateFormData, onNext }: ContractFormProps) =
   const maxDescriptionLength = 1000;
 
   // Custom Input Label Component
-  const FormLabel = ({ label, required = false }: { label: string; required?: boolean }) => (
+  const FormLabel = ({
+    label,
+    required = false,
+  }: {
+    label: string;
+    required?: boolean;
+  }) => (
     <Typography
       sx={{
         fontFamily: poppins700.style.fontFamily,
@@ -60,7 +73,11 @@ const ContractForm = ({ formData, updateFormData, onNext }: ContractFormProps) =
     >
       {label}
       {required && (
-        <span style={{ color: COLORS.PRIMARY, marginLeft: "4px", fontSize: "14px" }}>*</span>
+        <span
+          style={{ color: COLORS.PRIMARY, marginLeft: "4px", fontSize: "14px" }}
+        >
+          *
+        </span>
       )}
     </Typography>
   );
@@ -158,17 +175,25 @@ const ContractForm = ({ formData, updateFormData, onNext }: ContractFormProps) =
               onChange={(e) => setContractType(e.target.value)}
               renderValue={(selected) => {
                 if (!selected) {
-                  return <span style={{ color: "#98A2B3" }}>Select contract type</span>;
+                  return (
+                    <span style={{ color: "#98A2B3" }}>
+                      Select contract type
+                    </span>
+                  );
                 }
                 return selected;
               }}
               {...selectStyleProps}
             >
-              <MenuItem value="" disabled>Select contract type</MenuItem>
+              <MenuItem value="" disabled>
+                Select contract type
+              </MenuItem>
               <MenuItem value="Residential Rent">Residential Rent</MenuItem>
               <MenuItem value="Commercial Rent">Commercial Rent</MenuItem>
               <MenuItem value="Sale Contract">Sale Contract</MenuItem>
-              <MenuItem value="Investment Contract">Investment Contract</MenuItem>
+              <MenuItem value="Investment Contract">
+                Investment Contract
+              </MenuItem>
             </Select>
           </Grid>
 
@@ -200,13 +225,17 @@ const ContractForm = ({ formData, updateFormData, onNext }: ContractFormProps) =
               onChange={(e) => setCategory(e.target.value)}
               renderValue={(selected) => {
                 if (!selected) {
-                  return <span style={{ color: "#98A2B3" }}>Select category</span>;
+                  return (
+                    <span style={{ color: "#98A2B3" }}>Select category</span>
+                  );
                 }
                 return selected;
               }}
               {...selectStyleProps}
             >
-              <MenuItem value="" disabled>Select category</MenuItem>
+              <MenuItem value="" disabled>
+                Select category
+              </MenuItem>
               <MenuItem value="Apartment">Apartment</MenuItem>
               <MenuItem value="Villa">Villa</MenuItem>
               <MenuItem value="Land">Land</MenuItem>
@@ -229,7 +258,9 @@ const ContractForm = ({ formData, updateFormData, onNext }: ContractFormProps) =
               }}
               {...selectStyleProps}
             >
-              <MenuItem value="" disabled>Select city</MenuItem>
+              <MenuItem value="" disabled>
+                Select city
+              </MenuItem>
               <MenuItem value="Riyadh">Riyadh</MenuItem>
               <MenuItem value="Jeddah">Jeddah</MenuItem>
               <MenuItem value="Dammam">Dammam</MenuItem>
@@ -348,7 +379,9 @@ const ContractForm = ({ formData, updateFormData, onNext }: ContractFormProps) =
                 fontSize: "14px",
                 boxShadow: "none",
                 "&:hover": {
-                  backgroundColor: isFormValid ? "rgba(1, 53, 71, 0.9)" : "#E4E7EC",
+                  backgroundColor: isFormValid
+                    ? "rgba(1, 53, 71, 0.9)"
+                    : "#E4E7EC",
                   boxShadow: "none",
                 },
                 "&.Mui-disabled": {

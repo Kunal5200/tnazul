@@ -1,6 +1,7 @@
 import {
   BuildOutlined,
   BusinessCenterOutlined,
+  BusinessOutlined,
   ChatBubbleOutlineOutlined,
   CorporateFareOutlined,
   DirectionsCarFilledOutlined,
@@ -16,6 +17,7 @@ import {
   WorkspacePremiumOutlined,
 } from "@mui/icons-material";
 import { LINK_BOX } from "./types";
+import { ACCOUNT_TYPE } from "./enum";
 
 export const SIDEBAR_LINKS: LINK_BOX[] = [
   {
@@ -97,5 +99,20 @@ export const SIDEBAR_PROFILE_LINKS: LINK_BOX[] = [
     icon: SettingsOutlined,
     label: "Settings",
     url: "/dashboard/settings",
+  },
+];
+
+export const ACCOUNT_TYPE_OPTIONS = [
+  {
+    type: ACCOUNT_TYPE.INDIVIDUAL,
+    label: "Individual Account",
+    desc: "For personal contracts",
+    Icon: PersonOutlined,
+  },
+  {
+    type: ACCOUNT_TYPE.BUSINESS,
+    label: "Business Account",
+    desc: "For registered companies",
+    Icon: BusinessOutlined,
   },
 ];

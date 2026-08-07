@@ -12,7 +12,6 @@ import ReviewPublishForm from "@/components/layout/dashboard/contracts/ReviewPub
 import WhatsAppButton from "@/components/layout/dashboard/contracts/WhatsAppButton";
 
 export interface ContractFormData {
-  // Step 1: Basic Info
   contractType: string;
   contractTitle: string;
   contractNumber: string;
@@ -20,15 +19,13 @@ export interface ContractFormData {
   city: string;
   district: string;
   description: string;
-  
-  // Step 2: Financial Details
+
   totalValue: string;
   monthlyAmount: string;
   transferFee: string;
   securityDeposit: string;
   negotiable: boolean;
 
-  // Step 3: Conditions & Dates
   contractStartDate: string;
   contractEndDate: string;
   transferExpiryDate: string;
@@ -36,10 +33,14 @@ export interface ContractFormData {
   transferTerms: string;
 
   // Step 4: Attachments
-  contractDocuments: { name: string; size: number; type: string; content?: string }[];
+  contractDocuments: {
+    name: string;
+    size: number;
+    type: string;
+    content?: string;
+  }[];
   assetPhotos: { name: string; size: number; type: string; content?: string }[];
 
-  // Step 5: Review & Publish
   listingType: "Standard" | "Featured";
 }
 
@@ -53,10 +54,10 @@ const CreateContractPage = () => {
     city: "",
     district: "",
     description: "",
-    totalValue: "150000",
-    monthlyAmount: "8500",
-    transferFee: "5000",
-    securityDeposit: "10000",
+    totalValue: "",
+    monthlyAmount: "",
+    transferFee: "",
+    securityDeposit: "",
     negotiable: false,
     contractStartDate: "",
     contractEndDate: "",
@@ -158,9 +159,7 @@ const CreateContractPage = () => {
           </Grid>
 
           {/* Right Column: Dynamic Form depending on currentStep */}
-          <Grid size={{ xs: 12, md: 8, lg: 8.5 }}>
-            {renderFormStep()}
-          </Grid>
+          <Grid size={{ xs: 12, md: 8, lg: 8.5 }}>{renderFormStep()}</Grid>
         </Grid>
       </Container>
 

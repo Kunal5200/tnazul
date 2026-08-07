@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Box,
   Button,
@@ -19,6 +19,11 @@ import {
 } from "@mui/icons-material";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
+
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 interface ConditionsFormProps {
   formData: any;
@@ -68,7 +73,39 @@ const ConditionsForm = ({
     </Typography>
   );
 
-  // Common Input styling
+  // Styling for MuiDatePicker
+  const datePickerStyle = {
+    "& .MuiOutlinedInput-root": {
+      backgroundColor: "#F9FAFB",
+      borderRadius: "14px",
+      fontFamily: poppins.style.fontFamily,
+      fontSize: "14px",
+      "& fieldset": {
+        borderColor: "#E4E7EC",
+      },
+      "&:hover fieldset": {
+        borderColor: "#CBD5E1",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: COLORS.PRIMARY,
+        borderWidth: "1px",
+      },
+    },
+    "& .MuiInputBase-input": {
+      py: 1.8,
+      px: 2,
+      color: COLORS.SECONDARY,
+      "&::placeholder": {
+        color: "#98A2B3",
+        opacity: 1,
+      },
+    },
+    "& .MuiSvgIcon-root": {
+      color: COLORS.SECONDARY,
+    },
+  };
+
+  // Common Input styling for TextFields
   const inputStyleProps = {
     fullWidth: true,
     variant: "outlined" as const,
@@ -151,221 +188,259 @@ const ConditionsForm = ({
   const isFormValid = contractEndDate !== "" && reasonForTransfer !== "";
 
   return (
-    <Box
-      sx={{
-        backgroundColor: COLORS.WHITE,
-        borderRadius: "24px",
-        boxShadow: "0px 8px 30px rgba(1, 53, 71, 0.04)",
-        p: { xs: 3, md: 4 },
-        width: "100%",
-        border: "1px solid #01354705",
-      }}
-    >
-      <form onSubmit={(e) => e.preventDefault()}>
-        <Grid container spacing={3}>
-          {/* Row 1: Start Date, End Date, Expiry Date */}
-          <Grid size={{ xs: 12, md: 4 }}>
-            <FormLabel label="CONTRACT START DATE" />
-            <TextField
-              type="date"
-              value={contractStartDate}
-              onChange={(e) => setContractStartDate(e.target.value)}
-              {...inputStyleProps}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 4 }}>
-            <FormLabel label="CONTRACT END DATE" required />
-            <TextField
-              type="date"
-              value={contractEndDate}
-              onChange={(e) => setContractEndDate(e.target.value)}
-              {...inputStyleProps}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 4 }}>
-            <FormLabel label="TRANSFER EXPIRY DATE" />
-            <TextField
-              type="date"
-              value={transferExpiryDate}
-              onChange={(e) => setTransferExpiryDate(e.target.value)}
-              {...inputStyleProps}
-            />
-            <Typography
-              sx={{
-                fontFamily: poppins.style.fontFamily,
-                fontSize: "11px",
-                color: "#98A2B3",
-                mt: 0.8,
-              }}
-            >
-              Last date you accept transfer requests
-            </Typography>
-          </Grid>
-
-          {/* Row 2: Green duration box */}
-          <Grid size={{ xs: 12 }}>
-            <Box
-              sx={{
-                backgroundColor: "#EDF9F1",
-                border: "1px solid #D1F3DF",
-                borderRadius: "14px",
-                p: 2,
-                display: "flex",
-                alignItems: "center",
-                gap: 2,
-              }}
-            >
-              <AccessTime sx={{ color: "#10753E" }} />
-              <Box>
-                <Typography
-                  sx={{
-                    fontFamily: poppins700.style.fontFamily,
-                    fontSize: "14px",
-                    fontWeight: 700,
-                    color: "#10753E",
-                  }}
-                >
-                  Remaining Duration: {remainingDuration}
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: poppins.style.fontFamily,
-                    fontSize: "12px",
-                    color: "#475467",
-                    mt: 0.2,
-                  }}
-                >
-                  Auto-calculated from Contract End Date
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-
-          {/* Row 3: Reason for transfer */}
-          <Grid size={{ xs: 12 }}>
-            <FormLabel label="REASON FOR TRANSFER" required />
-            <Select
-              value={reasonForTransfer}
-              onChange={(e) => setReasonForTransfer(e.target.value)}
-              renderValue={(selected) => {
-                if (!selected) {
-                  return <span style={{ color: "#98A2B3" }}>Select reason</span>;
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box
+        sx={{
+          backgroundColor: COLORS.WHITE,
+          borderRadius: "24px",
+          boxShadow: "0px 8px 30px rgba(1, 53, 71, 0.04)",
+          p: { xs: 3, md: 4 },
+          width: "100%",
+          border: "1px solid #01354705",
+        }}
+      >
+        <form onSubmit={(e) => e.preventDefault()}>
+          <Grid container spacing={3}>
+            {/* Row 1: Start Date, End Date, Expiry Date with MuiDatePicker */}
+            <Grid size={{ xs: 12, md: 4 }}>
+              <FormLabel label="CONTRACT START DATE" />
+              <DatePicker
+                format="DD/MM/YYYY"
+                value={contractStartDate ? dayjs(contractStartDate) : null}
+                onChange={(newValue) =>
+                  setContractStartDate(
+                    newValue && newValue.isValid()
+                      ? newValue.format("YYYY-MM-DD")
+                      : ""
+                  )
                 }
-                return selected;
-              }}
-              {...selectStyleProps}
-            >
-              <MenuItem value="" disabled>Select reason</MenuItem>
-              <MenuItem value="Financial Reasons">Financial Reasons</MenuItem>
-              <MenuItem value="Relocation">Relocation</MenuItem>
-              <MenuItem value="Upgrade">Upgrade</MenuItem>
-              <MenuItem value="Downsize">Downsize</MenuItem>
-              <MenuItem value="Other">Other</MenuItem>
-            </Select>
-          </Grid>
-
-          {/* Row 4: Transfer terms & conditions */}
-          <Grid size={{ xs: 12 }}>
-            <FormLabel label="TRANSFER TERMS & CONDITIONS" />
-            <TextField
-              multiline
-              rows={4}
-              placeholder="Describe any specific conditions for the transfer. E.g. Buyer must meet landlord approval, outstanding maintenance responsibilities, included items, etc."
-              value={transferTerms}
-              onChange={(e) => setTransferTerms(e.target.value)}
-              {...inputStyleProps}
-              sx={{
-                ...inputStyleProps.sx,
-                "& .MuiInputBase-input": {
-                  ...inputStyleProps.sx["& .MuiInputBase-input"],
-                  py: 1,
-                  px: 0.5,
-                },
-              }}
-            />
-          </Grid>
-        </Grid>
-
-        {/* Bottom Navigation */}
-        <Stack
-          direction="row"
-          sx={{
-            alignItems: "center",
-            justifyContent: "space-between",
-            mt: 5,
-            pt: 2,
-            borderTop: "1px solid #F2F4F7",
-          }}
-        >
-          {/* Back Button */}
-          <Button
-            variant="outlined"
-            onClick={onBack}
-            startIcon={<ArrowBack />}
-            sx={{
-              borderRadius: "14px",
-              border: "1px solid #E4E7EC",
-              color: COLORS.SECONDARY,
-              px: 3,
-              py: 1.5,
-              textTransform: "none",
-              fontFamily: poppins700.style.fontFamily,
-              fontWeight: 700,
-              fontSize: "14px",
-              "&:hover": {
-                backgroundColor: "#F9FAFB",
-                borderColor: "#D0D5DD",
-              },
-            }}
-          >
-            Back
-          </Button>
-
-          {/* Continue Button */}
-          <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-            {!isFormValid && (
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    variant: "outlined",
+                    sx: datePickerStyle,
+                  },
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <FormLabel label="CONTRACT END DATE" required />
+              <DatePicker
+                format="DD/MM/YYYY"
+                value={contractEndDate ? dayjs(contractEndDate) : null}
+                onChange={(newValue) =>
+                  setContractEndDate(
+                    newValue && newValue.isValid()
+                      ? newValue.format("YYYY-MM-DD")
+                      : ""
+                  )
+                }
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    variant: "outlined",
+                    sx: datePickerStyle,
+                  },
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <FormLabel label="TRANSFER EXPIRY DATE" />
+              <DatePicker
+                format="DD/MM/YYYY"
+                value={transferExpiryDate ? dayjs(transferExpiryDate) : null}
+                onChange={(newValue) =>
+                  setTransferExpiryDate(
+                    newValue && newValue.isValid()
+                      ? newValue.format("YYYY-MM-DD")
+                      : ""
+                  )
+                }
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    variant: "outlined",
+                    sx: datePickerStyle,
+                  },
+                }}
+              />
               <Typography
                 sx={{
                   fontFamily: poppins.style.fontFamily,
-                  fontSize: "12px",
+                  fontSize: "11px",
                   color: "#98A2B3",
+                  mt: 0.8,
                 }}
               >
-                Fill required fields to continue
+                Last date you accept transfer requests
               </Typography>
-            )}
+            </Grid>
+
+            {/* Row 2: Green duration box */}
+            <Grid size={{ xs: 12 }}>
+              <Box
+                sx={{
+                  backgroundColor: "#EDF9F1",
+                  border: "1px solid #D1F3DF",
+                  borderRadius: "14px",
+                  p: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
+                }}
+              >
+                <AccessTime sx={{ color: "#10753E" }} />
+                <Box>
+                  <Typography
+                    sx={{
+                      fontFamily: poppins700.style.fontFamily,
+                      fontSize: "14px",
+                      fontWeight: 700,
+                      color: "#10753E",
+                    }}
+                  >
+                    Remaining Duration: {remainingDuration}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontFamily: poppins.style.fontFamily,
+                      fontSize: "12px",
+                      color: "#475467",
+                      mt: 0.2,
+                    }}
+                  >
+                    Auto-calculated from Contract End Date
+                  </Typography>
+                </Box>
+              </Box>
+            </Grid>
+
+            {/* Row 3: Reason for transfer */}
+            <Grid size={{ xs: 12 }}>
+              <FormLabel label="REASON FOR TRANSFER" required />
+              <Select
+                value={reasonForTransfer}
+                onChange={(e) => setReasonForTransfer(e.target.value)}
+                renderValue={(selected) => {
+                  if (!selected) {
+                    return <span style={{ color: "#98A2B3" }}>Select reason</span>;
+                  }
+                  return selected;
+                }}
+                {...selectStyleProps}
+              >
+                <MenuItem value="" disabled>Select reason</MenuItem>
+                <MenuItem value="Financial Reasons">Financial Reasons</MenuItem>
+                <MenuItem value="Relocation">Relocation</MenuItem>
+                <MenuItem value="Upgrade">Upgrade</MenuItem>
+                <MenuItem value="Downsize">Downsize</MenuItem>
+                <MenuItem value="Other">Other</MenuItem>
+              </Select>
+            </Grid>
+
+            {/* Row 4: Transfer terms & conditions */}
+            <Grid size={{ xs: 12 }}>
+              <FormLabel label="TRANSFER TERMS & CONDITIONS" />
+              <TextField
+                multiline
+                rows={4}
+                placeholder="Describe any specific conditions for the transfer. E.g. Buyer must meet landlord approval, outstanding maintenance responsibilities, included items, etc."
+                value={transferTerms}
+                onChange={(e) => setTransferTerms(e.target.value)}
+                {...inputStyleProps}
+                sx={{
+                  ...inputStyleProps.sx,
+                  "& .MuiInputBase-input": {
+                    ...inputStyleProps.sx["& .MuiInputBase-input"],
+                    py: 1,
+                    px: 0.5,
+                  },
+                }}
+              />
+            </Grid>
+          </Grid>
+
+          {/* Bottom Navigation */}
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: "center",
+              justifyContent: "space-between",
+              mt: 5,
+              pt: 2,
+              borderTop: "1px solid #F2F4F7",
+            }}
+          >
+            {/* Back Button */}
             <Button
-              variant="contained"
-              onClick={onNext}
-              endIcon={<ArrowForward />}
-              disabled={!isFormValid}
+              variant="outlined"
+              onClick={onBack}
+              startIcon={<ArrowBack />}
               sx={{
                 borderRadius: "14px",
-                backgroundColor: isFormValid ? COLORS.SECONDARY : "#E4E7EC",
-                color: isFormValid ? COLORS.WHITE : "#98A2B3",
-                px: 4,
+                border: "1px solid #E4E7EC",
+                color: COLORS.SECONDARY,
+                px: 3,
                 py: 1.5,
                 textTransform: "none",
                 fontFamily: poppins700.style.fontFamily,
                 fontWeight: 700,
                 fontSize: "14px",
-                boxShadow: "none",
                 "&:hover": {
-                  backgroundColor: isFormValid ? "rgba(1, 53, 71, 0.9)" : "#E4E7EC",
-                  boxShadow: "none",
-                },
-                "&.Mui-disabled": {
-                  backgroundColor: "#E4E7EC",
-                  color: "#98A2B3",
+                  backgroundColor: "#F9FAFB",
+                  borderColor: "#D0D5DD",
                 },
               }}
             >
-              Continue
+              Back
             </Button>
+
+            {/* Continue Button */}
+            <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+              {!isFormValid && (
+                <Typography
+                  sx={{
+                    fontFamily: poppins.style.fontFamily,
+                    fontSize: "12px",
+                    color: "#98A2B3",
+                  }}
+                >
+                  Fill required fields to continue
+                </Typography>
+              )}
+              <Button
+                variant="contained"
+                onClick={onNext}
+                endIcon={<ArrowForward />}
+                disabled={!isFormValid}
+                sx={{
+                  borderRadius: "14px",
+                  backgroundColor: isFormValid ? COLORS.SECONDARY : "#E4E7EC",
+                  color: isFormValid ? COLORS.WHITE : "#98A2B3",
+                  px: 4,
+                  py: 1.5,
+                  textTransform: "none",
+                  fontFamily: poppins700.style.fontFamily,
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  boxShadow: "none",
+                  "&:hover": {
+                    backgroundColor: isFormValid ? "rgba(1, 53, 71, 0.9)" : "#E4E7EC",
+                    boxShadow: "none",
+                  },
+                  "&.Mui-disabled": {
+                    backgroundColor: "#E4E7EC",
+                    color: "#98A2B3",
+                  },
+                }}
+              >
+                Continue
+              </Button>
+            </Stack>
           </Stack>
-        </Stack>
-      </form>
-    </Box>
+        </form>
+      </Box>
+    </LocalizationProvider>
   );
 };
 

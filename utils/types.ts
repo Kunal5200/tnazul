@@ -43,9 +43,39 @@ export interface ChangePasswordPayload {
   newPassword: string;
 }
 
+export interface ContractPayload {
+  _id?: string;
+  contractNumber?: string;
+  contractType?: string;
+  contractTitle?: string;
+  contractDescription?: string;
+  city?: string;
+  districtOrNeighborhood?: string;
+  category?: string;
 
+  // Financial and others
+  totalContractValue?: number;
+  monthlyAmount?: number;
+  transferFee?: number;
+  securityDeposit?: number;
+  priceNegotiable?: boolean;
+  startDate?: string;
+  endDate?: string;
+  transferExpiryDate?: string;
+  remainingDuration?: string;
+  transferReason?: string;
+  TransferTermsConditions?: string;
+  contractStatus?: "Draft" | "Published" | string;
+  assetPhotos?: any[];
+}
 
+export interface GET_API_REQUEST_RESPONSE {
+  page: string | number;
+  limit: string | number;
+  status?: string;
+}
 
-
-
-
+export interface ASSEST_INFO {
+  contractNumber: string;
+  asset: File[];
+}

@@ -69,7 +69,9 @@ const AttachmentsForm = ({
   };
 
   const removeDoc = (index: number) => {
-    const newDocs = contractDocuments.filter((_: any, i: number) => i !== index);
+    const newDocs = contractDocuments.filter(
+      (_: any, i: number) => i !== index,
+    );
     updateFormData({ contractDocuments: newDocs });
   };
 
@@ -93,6 +95,7 @@ const AttachmentsForm = ({
         size: file.size,
         type: file.type,
         content: URL.createObjectURL(file),
+        file: file,
       });
     }
     updateFormData({ assetPhotos: newPhotos });
@@ -145,7 +148,8 @@ const AttachmentsForm = ({
                 mb: 0.5,
               }}
             >
-              CONTRACT DOCUMENTS <span style={{ color: COLORS.PRIMARY }}>*</span>
+              CONTRACT DOCUMENTS{" "}
+              <span style={{ color: COLORS.PRIMARY }}>*</span>
             </Typography>
             <Typography
               sx={{
@@ -155,7 +159,8 @@ const AttachmentsForm = ({
                 mb: 2,
               }}
             >
-              Upload the official contract, any amendments, or supporting legal documents.
+              Upload the official contract, any amendments, or supporting legal
+              documents.
             </Typography>
 
             {/* Hidden Input */}
@@ -240,8 +245,19 @@ const AttachmentsForm = ({
                       border: "1px solid #EAECF0",
                     }}
                   >
-                    <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
-                      <Box sx={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: COLORS.PRIMARY }} />
+                    <Stack
+                      direction="row"
+                      spacing={1.5}
+                      sx={{ alignItems: "center" }}
+                    >
+                      <Box
+                        sx={{
+                          width: 6,
+                          height: 6,
+                          borderRadius: "50%",
+                          backgroundColor: COLORS.PRIMARY,
+                        }}
+                      />
                       <Box>
                         <Typography
                           sx={{
@@ -264,7 +280,11 @@ const AttachmentsForm = ({
                         </Typography>
                       </Box>
                     </Stack>
-                    <IconButton size="small" onClick={() => removeDoc(index)} sx={{ color: "#F04438" }}>
+                    <IconButton
+                      size="small"
+                      onClick={() => removeDoc(index)}
+                      sx={{ color: "#F04438" }}
+                    >
                       <DeleteOutlined fontSize="small" />
                     </IconButton>
                   </Stack>
@@ -295,7 +315,8 @@ const AttachmentsForm = ({
                 mb: 2,
               }}
             >
-              Photos of the property, vehicle, or business space. High-quality photos attract 3x more inquiries.
+              Photos of the property, vehicle, or business space. High-quality
+              photos attract 3x more inquiries.
             </Typography>
 
             {/* Hidden Input */}
@@ -461,7 +482,12 @@ const AttachmentsForm = ({
                   lineHeight: 1.5,
                 }}
               >
-                Uploaded contract files are <strong>only visible to registered, identity-verified users</strong> who express interest in your listing. Asset photos are publicly visible to attract buyers.
+                Uploaded contract files are{" "}
+                <strong>
+                  only visible to registered, identity-verified users
+                </strong>{" "}
+                who express interest in your listing. Asset photos are publicly
+                visible to attract buyers.
               </Typography>
             </Box>
           </Box>
@@ -532,7 +558,9 @@ const AttachmentsForm = ({
                 fontSize: "14px",
                 boxShadow: "none",
                 "&:hover": {
-                  backgroundColor: isFormValid ? "rgba(1, 53, 71, 0.9)" : "#E4E7EC",
+                  backgroundColor: isFormValid
+                    ? "rgba(1, 53, 71, 0.9)"
+                    : "#E4E7EC",
                   boxShadow: "none",
                 },
                 "&.Mui-disabled": {

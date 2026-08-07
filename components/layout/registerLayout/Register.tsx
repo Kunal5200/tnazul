@@ -88,12 +88,19 @@ const RegisterLayout = () => {
   );
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", flexDirection: { xs: "column", md: "row" } }}>
+    <Box
+      sx={{
+        display: "flex",
+        minHeight: "100vh",
+        flexDirection: { xs: "column", md: "row" },
+      }}
+    >
       {/* Left Column: Hero Sidebar */}
       <Box
         sx={{
           width: { xs: "100%", md: "38%" },
-          background: "linear-gradient(135deg, #013547 0%, #01273A 50%, #010F18 100%)",
+          background:
+            "linear-gradient(135deg, #013547 0%, #01273A 50%, #010F18 100%)",
           color: COLORS.WHITE,
           p: { xs: 4, sm: 6 },
           display: "flex",
@@ -146,13 +153,19 @@ const RegisterLayout = () => {
               maxWidth: "380px",
             }}
           >
-            Join thousands of Saudis who safely transfer their contracts — from real estate and vehicles to subscriptions and commercial leases.
+            Join thousands of Saudis who safely transfer their contracts — from
+            real estate and vehicles to subscriptions and commercial leases.
           </Typography>
 
           {/* Benefits List */}
           <Stack spacing={4}>
             {benefits.map((b, i) => (
-              <Stack key={i} direction="row" spacing={2} sx={{ alignItems: "center" }}>
+              <Stack
+                key={i}
+                direction="row"
+                spacing={2}
+                sx={{ alignItems: "center" }}
+              >
                 <Box
                   sx={{
                     width: 40,
@@ -222,7 +235,12 @@ const RegisterLayout = () => {
 
           <Stack spacing={1.8}>
             {activities.map((act, idx) => (
-              <Stack key={idx} direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+              <Stack
+                key={idx}
+                direction="row"
+                spacing={1.5}
+                sx={{ alignItems: "center" }}
+              >
                 <Box
                   sx={{
                     width: 24,
@@ -245,8 +263,10 @@ const RegisterLayout = () => {
                     lineHeight: "16px",
                   }}
                 >
-                  <strong style={{ color: COLORS.WHITE }}>{act.name}</strong> {act.action}{" "}
-                  <span style={{ color: COLORS.WHITE }}>{act.item}</span> {act.time}
+                  <strong style={{ color: COLORS.WHITE }}>{act.name}</strong>{" "}
+                  {act.action}{" "}
+                  <span style={{ color: COLORS.WHITE }}>{act.item}</span>{" "}
+                  {act.time}
                 </Typography>
               </Stack>
             ))}

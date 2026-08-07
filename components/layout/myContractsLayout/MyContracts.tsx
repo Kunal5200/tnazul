@@ -1,12 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import {
   DescriptionOutlined,
   ChatBubbleOutlineOutlined,
@@ -21,7 +16,9 @@ import { ContractCard } from "./components/ContractCard";
 import { ContractItem } from "./types";
 
 const MyContractsLayout = () => {
-  const [activeTab, setActiveTab] = useState<"active" | "draft" | "expired">("active");
+  const [activeTab, setActiveTab] = useState<"active" | "draft" | "expired">(
+    "active",
+  );
 
   // Mock contracts data using only local images
   const mockContracts: ContractItem[] = [
@@ -39,31 +36,51 @@ const MyContractsLayout = () => {
       steps: [
         {
           label: "Listed",
-          icon: (isActive) => <DescriptionOutlined sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }} />,
+          icon: (isActive) => (
+            <DescriptionOutlined
+              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
+            />
+          ),
           isActive: true,
           color: "#166CA9", // Blue
         },
         {
           label: "Interested",
-          icon: (isActive) => <ChatBubbleOutlineOutlined sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }} />,
+          icon: (isActive) => (
+            <ChatBubbleOutlineOutlined
+              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
+            />
+          ),
           isActive: true,
           color: "#8A3FFC", // Purple
         },
         {
           label: "Docs Sent",
-          icon: (isActive) => <ShareOutlined sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }} />,
+          icon: (isActive) => (
+            <ShareOutlined
+              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
+            />
+          ),
           isActive: false,
           color: "#ED6C02",
         },
         {
           label: "Approval",
-          icon: (isActive) => <AccessTimeOutlined sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }} />,
+          icon: (isActive) => (
+            <AccessTimeOutlined
+              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
+            />
+          ),
           isActive: false,
           color: COLORS.SECONDARY,
         },
         {
           label: "Done",
-          icon: (isActive) => <CheckCircleOutlined sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }} />,
+          icon: (isActive) => (
+            <CheckCircleOutlined
+              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
+            />
+          ),
           isActive: false,
           color: "#10753E",
         },
@@ -83,31 +100,51 @@ const MyContractsLayout = () => {
       steps: [
         {
           label: "Listed",
-          icon: (isActive) => <DescriptionOutlined sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }} />,
+          icon: (isActive) => (
+            <DescriptionOutlined
+              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
+            />
+          ),
           isActive: true,
           color: "#166CA9", // Blue
         },
         {
           label: "Interested",
-          icon: (isActive) => <ChatBubbleOutlineOutlined sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }} />,
+          icon: (isActive) => (
+            <ChatBubbleOutlineOutlined
+              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
+            />
+          ),
           isActive: false,
           color: "#8A3FFC",
         },
         {
           label: "Docs Sent",
-          icon: (isActive) => <ShareOutlined sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }} />,
+          icon: (isActive) => (
+            <ShareOutlined
+              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
+            />
+          ),
           isActive: true,
           color: "#ED6C02", // Orange
         },
         {
           label: "Approval",
-          icon: (isActive) => <AccessTimeOutlined sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }} />,
+          icon: (isActive) => (
+            <AccessTimeOutlined
+              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
+            />
+          ),
           isActive: false,
           color: COLORS.SECONDARY,
         },
         {
           label: "Done",
-          icon: (isActive) => <CheckCircleOutlined sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }} />,
+          icon: (isActive) => (
+            <CheckCircleOutlined
+              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
+            />
+          ),
           isActive: false,
           color: "#10753E",
         },
@@ -136,7 +173,9 @@ const MyContractsLayout = () => {
   // Filtering counts
   const activeCount = mockContracts.filter((c) => c.status === "active").length;
   const draftCount = mockContracts.filter((c) => c.status === "draft").length;
-  const expiredCount = mockContracts.filter((c) => c.status === "expired").length;
+  const expiredCount = mockContracts.filter(
+    (c) => c.status === "expired",
+  ).length;
 
   // Filter list
   const filteredContracts = mockContracts.filter((c) => c.status === activeTab);
@@ -179,10 +218,12 @@ const MyContractsLayout = () => {
             fontWeight: 700,
             fontSize: "14px",
             textTransform: "none",
-            backgroundColor: activeTab === "active" ? COLORS.SECONDARY : "transparent",
+            backgroundColor:
+              activeTab === "active" ? COLORS.SECONDARY : "transparent",
             color: activeTab === "active" ? COLORS.WHITE : "#5A7A8A",
             "&:hover": {
-              backgroundColor: activeTab === "active" ? "#002432" : "rgba(1, 53, 71, 0.04)",
+              backgroundColor:
+                activeTab === "active" ? "#002432" : "rgba(1, 53, 71, 0.04)",
             },
           }}
         >
@@ -201,10 +242,12 @@ const MyContractsLayout = () => {
             fontWeight: 700,
             fontSize: "14px",
             textTransform: "none",
-            backgroundColor: activeTab === "draft" ? COLORS.SECONDARY : "transparent",
+            backgroundColor:
+              activeTab === "draft" ? COLORS.SECONDARY : "transparent",
             color: activeTab === "draft" ? COLORS.WHITE : "#5A7A8A",
             "&:hover": {
-              backgroundColor: activeTab === "draft" ? "#002432" : "rgba(1, 53, 71, 0.04)",
+              backgroundColor:
+                activeTab === "draft" ? "#002432" : "rgba(1, 53, 71, 0.04)",
             },
           }}
         >
@@ -223,10 +266,12 @@ const MyContractsLayout = () => {
             fontWeight: 700,
             fontSize: "14px",
             textTransform: "none",
-            backgroundColor: activeTab === "expired" ? COLORS.SECONDARY : "transparent",
+            backgroundColor:
+              activeTab === "expired" ? COLORS.SECONDARY : "transparent",
             color: activeTab === "expired" ? COLORS.WHITE : "#5A7A8A",
             "&:hover": {
-              backgroundColor: activeTab === "expired" ? "#002432" : "rgba(1, 53, 71, 0.04)",
+              backgroundColor:
+                activeTab === "expired" ? "#002432" : "rgba(1, 53, 71, 0.04)",
             },
           }}
         >

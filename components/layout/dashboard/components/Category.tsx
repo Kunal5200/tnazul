@@ -59,9 +59,10 @@ const categoriesData = [
 export interface CategoryProps {
   activeCategory: string;
   onSelectCategory: (id: string) => void;
+  categoryCounts?: Record<string, number>;
 }
 
-const Category: React.FC<CategoryProps> = ({ activeCategory, onSelectCategory }) => {
+const Category: React.FC<CategoryProps> = ({ activeCategory, onSelectCategory, categoryCounts }) => {
   return (
     <Box sx={{ width: "100%", mt: 3 }}>
       <Swiper
@@ -79,7 +80,7 @@ const Category: React.FC<CategoryProps> = ({ activeCategory, onSelectCategory })
             <Box sx={{ width: { xs: "240px", sm: "280px" } }}>
               <CategoryCard
                 title={category.title}
-                count={category.count}
+                count={categoryCounts ? `${categoryCounts[category.id] || 0} listings` : category.count}
                 icon={category.icon}
                 isActive={activeCategory === category.id}
                 onClick={() => onSelectCategory(category.id)}

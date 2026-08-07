@@ -1,14 +1,9 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import {
-  Alert,
-  Box,
-  Button,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, Button, Stack, Typography } from "@mui/material";
 import { ArrowForward, MarkEmailReadOutlined } from "@mui/icons-material";
+import { MuiOtpInput } from "mui-one-time-password-input";
 import { useRouter } from "next/navigation";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
@@ -27,16 +22,9 @@ const VerifyOtpForm: React.FC<VerifyOtpFormProps> = ({
 }) => {
   const router = useRouter();
   const { verifyOtp, loading } = useVerifyOtp();
-  const [otp, setOtp] = useState<string[]>(["", "", "", ""]);
+  const [otp, setOtp] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [timer, setTimer] = useState<number>(30);
-
-  const inputRefs = [
-    useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(null),
-    useRef<HTMLInputElement>(null),
-  ];
 
   useEffect(() => {
     let interval: any;
@@ -48,57 +36,25 @@ const VerifyOtpForm: React.FC<VerifyOtpFormProps> = ({
     return () => clearInterval(interval);
   }, [timer]);
 
-  const handleChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return;
-
-    const newOtp = [...otp];
-    newOtp[index] = value.slice(-1);
-    setOtp(newOtp);
-
-    if (value && index < 3) {
-      inputRefs[index + 1].current?.focus();
-    }
-  };
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
-      inputRefs[index - 1].current?.focus();
-    }
-  };
-
-  const handlePaste = (e: React.ClipboardEvent) => {
-    e.preventDefault();
-    const pastedData = e.clipboardData.getData("text").trim();
-    if (/^\d{4}$/.test(pastedData)) {
-      const digits = pastedData.split("");
-      setOtp(digits);
-      inputRefs[3].current?.focus();
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
 
-    const fullOtp = otp.join("");
-    if (fullOtp.length < 4) {
+    if (otp.length < 4) {
       setErrorMessage("Please enter the complete 4-digit OTP.");
       return;
     }
 
     try {
       const response = await verifyOtp({
-        otp: fullOtp,
+        otp,
         referenceId,
       });
 
       const accessToken =
-        response?.data?.accessToken ||
-        response?.accessToken ||
-        response?.token;
+        response?.data?.accessToken || response?.accessToken || response?.token;
       const refreshToken =
-        response?.data?.refreshToken ||
-        response?.refreshToken;
+        response?.data?.refreshToken || response?.refreshToken;
 
       if (accessToken) {
         localStorage.setItem("token", accessToken);
@@ -109,7 +65,6 @@ const VerifyOtpForm: React.FC<VerifyOtpFormProps> = ({
       }
 
       router.push("/dashboard");
-
     } catch (err: any) {
       const msg =
         err?.response?.data?.message ||
@@ -123,7 +78,15 @@ const VerifyOtpForm: React.FC<VerifyOtpFormProps> = ({
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={{ width: "100%", maxWidth: "500px" }}
+      sx={{
+        width: "100%",
+        maxWidth: "500px",
+        mx: "auto",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
+      }}
     >
       {/* Icon Badge */}
       <Box
@@ -177,47 +140,42 @@ const VerifyOtpForm: React.FC<VerifyOtpFormProps> = ({
       )}
 
       {/* OTP 4-Digit Inputs */}
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{ mb: 4, justifyContent: "center" }}
-        onPaste={handlePaste}
-      >
-
-        {otp.map((digit, idx) => (
-          <Box
-            key={idx}
-            component="input"
-            ref={inputRefs[idx]}
-            type="text"
-            inputMode="numeric"
-            maxLength={1}
-            value={digit}
-            onChange={(e: any) => handleChange(idx, e.target.value)}
-            onKeyDown={(e: any) => handleKeyDown(idx, e)}
-            sx={{
+      <Box sx={{ mb: 4, display: "flex", justifyContent: "center" }}>
+        <MuiOtpInput
+          value={otp}
+          onChange={(newValue) => setOtp(newValue)}
+          length={4}
+          sx={{
+            gap: 2,
+            "& .MuiOutlinedInput-root": {
               width: "64px",
               height: "64px",
-              textAlign: "center",
               fontSize: "24px",
               fontWeight: 700,
               fontFamily: poppins700.style.fontFamily,
               color: COLORS.SECONDARY,
               backgroundColor: "#FFFFFF",
-              border: digit
-                ? `2px solid ${COLORS.SECONDARY}`
-                : "1.5px solid #0135471F",
               borderRadius: "14px",
-              outline: "none",
-              transition: "all 0.2s ease",
-              "&:focus": {
+              "& fieldset": {
+                border: "1.5px solid #0135471F",
+                transition: "all 0.2s ease",
+              },
+              "&:hover fieldset": {
                 borderColor: COLORS.SECONDARY,
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: COLORS.SECONDARY,
+                borderWidth: "2px",
                 boxShadow: "0 0 0 3px rgba(1, 53, 71, 0.08)",
               },
-            }}
-          />
-        ))}
-      </Stack>
+            },
+            "& input": {
+              textAlign: "center",
+              padding: 0,
+            },
+          }}
+        />
+      </Box>
 
       {/* Submit Button */}
       <Button
@@ -225,7 +183,7 @@ const VerifyOtpForm: React.FC<VerifyOtpFormProps> = ({
         variant="contained"
         disableElevation
         fullWidth
-        disabled={loading || otp.join("").length < 4}
+        disabled={loading || otp.length < 4}
         sx={{
           height: "50px",
           borderRadius: "10px",
@@ -254,7 +212,9 @@ const VerifyOtpForm: React.FC<VerifyOtpFormProps> = ({
       </Button>
 
       {/* Resend Code Section */}
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <Box
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+      >
         {timer > 0 ? (
           <Typography
             sx={{
