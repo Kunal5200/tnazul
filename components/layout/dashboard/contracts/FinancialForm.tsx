@@ -13,31 +13,24 @@ import {
 import { ArrowBack, ArrowForward, InfoOutlined } from "@mui/icons-material";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
+import { FormikProps } from "formik";
+import { ContractFormData } from "@/app/dashboard/contracts/create/page";
 
 interface FinancialFormProps {
-  formData: any;
-  updateFormData: (fields: any) => void;
   onBack: () => void;
   onNext: () => void;
+  formik: FormikProps<ContractFormData>;
 }
 
-const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFormProps) => {
-  const {
-    totalValue,
-    monthlyAmount,
-    transferFee,
-    securityDeposit,
-    negotiable,
-  } = formData;
-
-  const setTotalValue = (val: string) => updateFormData({ totalValue: val });
-  const setMonthlyAmount = (val: string) => updateFormData({ monthlyAmount: val });
-  const setTransferFee = (val: string) => updateFormData({ transferFee: val });
-  const setSecurityDeposit = (val: string) => updateFormData({ securityDeposit: val });
-  const setNegotiable = (val: boolean) => updateFormData({ negotiable: val });
-
+const FinancialForm = ({ onBack, onNext, formik }: FinancialFormProps) => {
   // Custom Input Label Component
-  const FormLabel = ({ label, required = false }: { label: string; required?: boolean }) => (
+  const FormLabel = ({
+    label,
+    required = false,
+  }: {
+    label: string;
+    required?: boolean;
+  }) => (
     <Typography
       sx={{
         fontFamily: poppins700.style.fontFamily,
@@ -52,7 +45,11 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
     >
       {label}
       {required && (
-        <span style={{ color: COLORS.PRIMARY, marginLeft: "4px", fontSize: "14px" }}>*</span>
+        <span
+          style={{ color: COLORS.PRIMARY, marginLeft: "4px", fontSize: "14px" }}
+        >
+          *
+        </span>
       )}
     </Typography>
   );
@@ -104,7 +101,9 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
           >
             SAR
           </Typography>
-          <Box sx={{ width: "1px", height: "22px", backgroundColor: "#E4E7EC" }} />
+          <Box
+            sx={{ width: "1px", height: "22px", backgroundColor: "#E4E7EC" }}
+          />
         </InputAdornment>
       ),
     },
@@ -117,7 +116,8 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
     return num.toLocaleString();
   };
 
-  const isFormValid = totalValue.trim() !== "" && monthlyAmount.trim() !== "";
+  const isFormValid =
+    formik.values.totalValue !== "" && formik.values.monthlyAmount !== "";
 
   return (
     <Box
@@ -130,7 +130,6 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
         border: "1px solid #01354705",
       }}
     >
-      {/* Info Alert Banner */}
       <Box
         sx={{
           display: "flex",
@@ -142,7 +141,9 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
           mb: 4,
         }}
       >
-        <InfoOutlined sx={{ color: "#5A7A8A", mr: 1.5, fontSize: 20, mt: 0.2 }} />
+        <InfoOutlined
+          sx={{ color: "#5A7A8A", mr: 1.5, fontSize: 20, mt: 0.2 }}
+        />
         <Typography
           sx={{
             fontFamily: poppins.style.fontFamily,
@@ -151,19 +152,20 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
             lineHeight: 1.5,
           }}
         >
-          All amounts are in Saudi Riyals (SAR). Accurate financial details build buyer trust and speed up transfers.
+          All amounts are in Saudi Riyals (SAR). Accurate financial details
+          build buyer trust and speed up transfers.
         </Typography>
       </Box>
 
       <form onSubmit={(e) => e.preventDefault()}>
         <Grid container spacing={3}>
-          {/* Total Contract Value */}
           <Grid size={{ xs: 12, md: 6 }}>
             <FormLabel label="TOTAL CONTRACT VALUE" required />
             <TextField
               placeholder="e.g. 150000"
-              value={totalValue}
-              onChange={(e) => setTotalValue(e.target.value)}
+              value={formik.values.totalValue}
+              onChange={formik.handleChange}
+              id="totalValue"
               {...inputStyleProps}
             />
           </Grid>
@@ -173,8 +175,9 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
             <FormLabel label="MONTHLY AMOUNT" required />
             <TextField
               placeholder="e.g. 85000"
-              value={monthlyAmount}
-              onChange={(e) => setMonthlyAmount(e.target.value)}
+              value={formik.values.monthlyAmount}
+              onChange={formik.handleChange}
+              id="monthlyAmount"
               {...inputStyleProps}
             />
           </Grid>
@@ -184,9 +187,10 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
             <FormLabel label="TRANSFER FEE" />
             <TextField
               placeholder="e.g. 5000"
-              value={transferFee}
-              onChange={(e) => setTransferFee(e.target.value)}
+              value={formik.values.transferFee}
+              onChange={formik.handleChange}
               {...inputStyleProps}
+              id="transferFee"
             />
           </Grid>
 
@@ -195,9 +199,10 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
             <FormLabel label="SECURITY DEPOSIT" />
             <TextField
               placeholder="e.g. 10000"
-              value={securityDeposit}
-              onChange={(e) => setSecurityDeposit(e.target.value)}
+              value={formik.values.securityDeposit}
+              onChange={formik.handleChange}
               {...inputStyleProps}
+              id="securityDeposit"
             />
           </Grid>
 
@@ -214,11 +219,13 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
               }}
             >
               <Button
-                onClick={() => setNegotiable(false)}
+                onClick={() => formik.setFieldValue("negotiable", false)}
                 sx={{
                   borderRadius: "10px",
-                  backgroundColor: !negotiable ? COLORS.SECONDARY : "transparent",
-                  color: !negotiable ? COLORS.WHITE : "#475467",
+                  backgroundColor: !formik.values.negotiable
+                    ? COLORS.SECONDARY
+                    : "transparent",
+                  color: !formik.values.negotiable ? COLORS.WHITE : "#475467",
                   px: 3,
                   py: 1,
                   textTransform: "none",
@@ -227,7 +234,9 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
                   fontSize: "13px",
                   boxShadow: "none",
                   "&:hover": {
-                    backgroundColor: !negotiable ? COLORS.SECONDARY : "rgba(0, 0, 0, 0.03)",
+                    backgroundColor: !formik.values.negotiable
+                      ? COLORS.SECONDARY
+                      : "rgba(0, 0, 0, 0.03)",
                     boxShadow: "none",
                   },
                 }}
@@ -235,11 +244,13 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
                 Fixed Price
               </Button>
               <Button
-                onClick={() => setNegotiable(true)}
+                onClick={() => formik.setFieldValue("negotiable", true)}
                 sx={{
                   borderRadius: "10px",
-                  backgroundColor: negotiable ? COLORS.SECONDARY : "transparent",
-                  color: negotiable ? COLORS.WHITE : "#475467",
+                  backgroundColor: formik.values.negotiable
+                    ? COLORS.SECONDARY
+                    : "transparent",
+                  color: formik.values.negotiable ? COLORS.WHITE : "#475467",
                   px: 3,
                   py: 1,
                   textTransform: "none",
@@ -248,7 +259,9 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
                   fontSize: "13px",
                   boxShadow: "none",
                   "&:hover": {
-                    backgroundColor: negotiable ? COLORS.SECONDARY : "rgba(0, 0, 0, 0.03)",
+                    backgroundColor: formik.values.negotiable
+                      ? COLORS.SECONDARY
+                      : "rgba(0, 0, 0, 0.03)",
                     boxShadow: "none",
                   },
                 }}
@@ -263,11 +276,11 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
                 color: "#98A2B3",
               }}
             >
-              Negotiable listings receive more inquiries. You remain in full control of the final price.
+              Negotiable listings receive more inquiries. You remain in full
+              control of the final price.
             </Typography>
           </Grid>
 
-          {/* Financial Preview Box */}
           <Grid size={{ xs: 12 }}>
             <Box
               sx={{
@@ -302,7 +315,7 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
                       mb: 0.5,
                     }}
                   >
-                    {formatAmount(totalValue)}
+                    {formatAmount(formik.values.totalValue)}
                   </Typography>
                   <Typography
                     sx={{
@@ -314,7 +327,13 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
                     Total Value (SAR)
                   </Typography>
                 </Box>
-                <Box sx={{ width: "1px", height: "40px", backgroundColor: "#E4E7EC" }} />
+                <Box
+                  sx={{
+                    width: "1px",
+                    height: "40px",
+                    backgroundColor: "#E4E7EC",
+                  }}
+                />
                 <Box>
                   <Typography
                     sx={{
@@ -325,7 +344,7 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
                       mb: 0.5,
                     }}
                   >
-                    {formatAmount(monthlyAmount)}
+                    {formatAmount(formik.values.monthlyAmount)}
                   </Typography>
                   <Typography
                     sx={{
@@ -407,7 +426,9 @@ const FinancialForm = ({ formData, updateFormData, onBack, onNext }: FinancialFo
                 fontSize: "14px",
                 boxShadow: "none",
                 "&:hover": {
-                  backgroundColor: isFormValid ? "rgba(1, 53, 71, 0.9)" : "#E4E7EC",
+                  backgroundColor: isFormValid
+                    ? "rgba(1, 53, 71, 0.9)"
+                    : "#E4E7EC",
                   boxShadow: "none",
                 },
                 "&.Mui-disabled": {

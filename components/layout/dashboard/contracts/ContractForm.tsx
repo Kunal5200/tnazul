@@ -4,6 +4,7 @@ import {
   KeyboardArrowDown,
 } from "@mui/icons-material";
 import {
+  Autocomplete,
   Box,
   Button,
   Grid,
@@ -13,45 +14,21 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
+import { CONTRACT_CATEGORY, CONTRACT_TYPE } from "@/utils/constant";
+import { FormikProps, FormikState } from "formik";
+import { ContractFormData } from "@/app/dashboard/contracts/create/page";
 
 interface ContractFormProps {
   formData: any;
   updateFormData: (fields: any) => void;
   onNext?: () => void;
+  formik: FormikProps<ContractFormData>;
 }
 
-const ContractForm = ({
-  formData,
-  updateFormData,
-  onNext,
-}: ContractFormProps) => {
-  const {
-    contractType,
-    contractTitle,
-    contractNumber,
-    category,
-    city,
-    district,
-    description,
-  } = formData;
-
-  const setContractType = (val: string) =>
-    updateFormData({ contractType: val });
-  const setContractTitle = (val: string) =>
-    updateFormData({ contractTitle: val });
-  const setContractNumber = (val: string) =>
-    updateFormData({ contractNumber: val });
-  const setCategory = (val: string) => updateFormData({ category: val });
-  const setCity = (val: string) => updateFormData({ city: val });
-  const setDistrict = (val: string) => updateFormData({ district: val });
-  const setDescription = (val: string) => updateFormData({ description: val });
-
-  const maxDescriptionLength = 1000;
-
-  // Custom Input Label Component
+const ContractForm = ({ onNext, formik }: ContractFormProps) => {
   const FormLabel = ({
     label,
     required = false,
@@ -82,7 +59,6 @@ const ContractForm = ({
     </Typography>
   );
 
-  // Common Input styling
   const inputStyleProps = {
     fullWidth: true,
     variant: "outlined" as const,
@@ -115,44 +91,15 @@ const ContractForm = ({
     },
   };
 
-  const selectStyleProps = {
-    fullWidth: true,
-    IconComponent: KeyboardArrowDown,
-    displayEmpty: true,
-    sx: {
-      backgroundColor: "#F9FAFB",
-      borderRadius: "14px",
-      fontFamily: poppins.style.fontFamily,
-      fontSize: "14px",
-      color: COLORS.SECONDARY,
-      "& .MuiSelect-select": {
-        py: 1.8,
-        px: 2,
-      },
-      "& fieldset": {
-        borderColor: "#E4E7EC",
-      },
-      "&:hover fieldset": {
-        borderColor: "#CBD5E1",
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: COLORS.PRIMARY,
-        borderWidth: "1px",
-      },
-      "& .MuiSvgIcon-root": {
-        color: COLORS.SECONDARY,
-        right: 12,
-      },
-    },
-  };
-
-  // Check if form is valid (required fields filled)
   const isFormValid =
-    contractType !== "" &&
-    contractTitle.trim() !== "" &&
-    category !== "" &&
-    city !== "" &&
-    description.trim() !== "";
+    formik.values.contractType !== "" &&
+    formik.values.contractTitle.trim() !== "" &&
+    formik.values.contractNumber.trim() !== "" &&
+    formik.values.category !== "" &&
+    formik.values.city.trim() !== "" &&
+    formik.values.district.trim() !== "" &&
+    formik.values.description.trim() !== "" &&
+    formik.values.description.length >= 10;
 
   return (
     <Box
@@ -160,158 +107,98 @@ const ContractForm = ({
         backgroundColor: COLORS.WHITE,
         borderRadius: "24px",
         boxShadow: "0px 8px 30px rgba(1, 53, 71, 0.04)",
-        p: { xs: 3, md: 4 },
-        width: "100%",
         border: "1px solid #01354705",
+        p: 4,
       }}
     >
       <form onSubmit={(e) => e.preventDefault()}>
         <Grid container spacing={3}>
-          {/* Contract Type */}
-          <Grid size={{ xs: 12 }}>
-            <FormLabel label="CONTRACT TYPE" required />
-            <Select
-              value={contractType}
-              onChange={(e) => setContractType(e.target.value)}
-              renderValue={(selected) => {
-                if (!selected) {
-                  return (
-                    <span style={{ color: "#98A2B3" }}>
-                      Select contract type
-                    </span>
-                  );
-                }
-                return selected;
-              }}
-              {...selectStyleProps}
-            >
-              <MenuItem value="" disabled>
-                Select contract type
-              </MenuItem>
-              <MenuItem value="Residential Rent">Residential Rent</MenuItem>
-              <MenuItem value="Commercial Rent">Commercial Rent</MenuItem>
-              <MenuItem value="Sale Contract">Sale Contract</MenuItem>
-              <MenuItem value="Investment Contract">
-                Investment Contract
-              </MenuItem>
-            </Select>
+          <Grid size={12}>
+            <FormLabel label="Contract Type" required />
+            <Autocomplete
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder="Select contract type"
+                  {...inputStyleProps}
+                />
+              )}
+              options={CONTRACT_TYPE}
+              value={formik.values.contractType}
+              onChange={(_, value) =>
+                formik.setFieldValue("contractType", value)
+              }
+            />
           </Grid>
-
-          {/* Contract Title */}
-          <Grid size={{ xs: 12 }}>
-            <FormLabel label="CONTRACT TITLE" required />
+          <Grid size={12}>
+            <FormLabel label="Contract Title" required />
             <TextField
               placeholder="e.g. 3BR Villa - Al Nakheel District, Riyadh"
-              value={contractTitle}
-              onChange={(e) => setContractTitle(e.target.value)}
+              value={formik.values.contractTitle}
+              onChange={formik.handleChange}
               {...inputStyleProps}
+              id="contractTitle"
             />
           </Grid>
-
-          {/* Contract Number and Category */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FormLabel label="CONTRACT NUMBER" />
+          <Grid size={6}>
+            <FormLabel label="Contract Number" required />
             <TextField
-              placeholder="e.g. CTR-2024-00123"
-              value={contractNumber}
-              onChange={(e) => setContractNumber(e.target.value)}
+              placeholder="e.g. CTR-2024-25"
+              value={formik.values.contractNumber}
+              onChange={formik.handleChange}
               {...inputStyleProps}
+              id="contractNumber"
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FormLabel label="CATEGORY" required />
-            <Select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              renderValue={(selected) => {
-                if (!selected) {
-                  return (
-                    <span style={{ color: "#98A2B3" }}>Select category</span>
-                  );
-                }
-                return selected;
-              }}
-              {...selectStyleProps}
-            >
-              <MenuItem value="" disabled>
-                Select category
-              </MenuItem>
-              <MenuItem value="Apartment">Apartment</MenuItem>
-              <MenuItem value="Villa">Villa</MenuItem>
-              <MenuItem value="Land">Land</MenuItem>
-              <MenuItem value="Building">Building</MenuItem>
-              <MenuItem value="Office">Office</MenuItem>
-            </Select>
+          <Grid size={6}>
+            <FormLabel label="Category" required />
+            <Autocomplete
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  {...inputStyleProps}
+                  placeholder="Select category"
+                />
+              )}
+              options={CONTRACT_CATEGORY}
+              value={formik.values.category}
+              onChange={(_, value) => formik.setFieldValue("category", value)}
+            />
           </Grid>
-
-          {/* City and District/Neighbourhood */}
           <Grid size={{ xs: 12, md: 6 }}>
             <FormLabel label="CITY" required />
-            <Select
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              renderValue={(selected) => {
-                if (!selected) {
-                  return <span style={{ color: "#98A2B3" }}>Select city</span>;
-                }
-                return selected;
-              }}
-              {...selectStyleProps}
-            >
-              <MenuItem value="" disabled>
-                Select city
-              </MenuItem>
-              <MenuItem value="Riyadh">Riyadh</MenuItem>
-              <MenuItem value="Jeddah">Jeddah</MenuItem>
-              <MenuItem value="Dammam">Dammam</MenuItem>
-              <MenuItem value="Mecca">Mecca</MenuItem>
-              <MenuItem value="Medina">Medina</MenuItem>
-            </Select>
+
+            <TextField
+              placeholder="e.g. Riyadh, Jeddah, Dammam, Mecca, Medina"
+              value={formik.values.city}
+              onChange={formik.handleChange}
+              {...inputStyleProps}
+              id="city"
+            />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
-            <FormLabel label="DISTRICT / NEIGHBOURHOOD" />
+            <FormLabel label="DISTRICT / NEIGHBOURHOOD" required />
             <TextField
               placeholder="e.g. Al-Olaya, Al-Nakheel"
-              value={district}
-              onChange={(e) => setDistrict(e.target.value)}
+              value={formik.values.district}
+              onChange={formik.handleChange}
               {...inputStyleProps}
+              id="district"
             />
           </Grid>
-
-          {/* Contract Description */}
-          <Grid size={{ xs: 12 }}>
-            <FormLabel label="CONTRACT DESCRIPTION" required />
+          <Grid size={12}>
+            <FormLabel label="Description" required />
             <TextField
-              multiline
-              rows={4}
-              placeholder="Describe the contract, property details, key terms, and any important information for potential buyers..."
-              value={description}
-              onChange={(e) => {
-                if (e.target.value.length <= maxDescriptionLength) {
-                  setDescription(e.target.value);
-                }
-              }}
+              placeholder="Description"
               {...inputStyleProps}
-              sx={{
-                ...inputStyleProps.sx,
-                "& .MuiInputBase-input": {
-                  ...inputStyleProps.sx["& .MuiInputBase-input"],
-                  py: 1,
-                  px: 0.5,
-                },
-              }}
+              value={formik.values.description}
+              onChange={formik.handleChange}
+              {...inputStyleProps}
+              id="description"
+              multiline
+              rows={5}
+              fullWidth
             />
-            {/* Character Count */}
-            <Typography
-              sx={{
-                fontFamily: poppins.style.fontFamily,
-                fontSize: "11px",
-                color: "#98A2B3",
-                mt: 1,
-              }}
-            >
-              {description.length}/{maxDescriptionLength} characters
-            </Typography>
           </Grid>
         </Grid>
 
@@ -365,8 +252,8 @@ const ContractForm = ({
             <Button
               variant="contained"
               onClick={onNext}
-              endIcon={<ArrowForward />}
               disabled={!isFormValid}
+              endIcon={<ArrowForward />}
               sx={{
                 borderRadius: "14px",
                 backgroundColor: isFormValid ? COLORS.SECONDARY : "#E4E7EC",

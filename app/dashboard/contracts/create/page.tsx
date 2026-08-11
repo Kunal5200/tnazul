@@ -10,6 +10,7 @@ import ConditionsForm from "@/components/layout/dashboard/contracts/ConditionsFo
 import AttachmentsForm from "@/components/layout/dashboard/contracts/AttachmentsForm";
 import ReviewPublishForm from "@/components/layout/dashboard/contracts/ReviewPublishForm";
 import WhatsAppButton from "@/components/layout/dashboard/contracts/WhatsAppButton";
+import { useFormik } from "formik";
 
 export interface ContractFormData {
   contractType: string;
@@ -32,20 +33,50 @@ export interface ContractFormData {
   reasonForTransfer: string;
   transferTerms: string;
 
-  // Step 4: Attachments
-  contractDocuments: {
+  contract: {
     name: string;
     size: number;
     type: string;
     content?: string;
-  }[];
-  assetPhotos: { name: string; size: number; type: string; content?: string }[];
+    file?: File;
+  } | null;
+  asset: { name: string; size: number; type: string; content?: string; file?: File }[];
 
   listingType: "Standard" | "Featured";
 }
 
 const CreateContractPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
+
+  const formik = useFormik<ContractFormData>({
+    initialValues: {
+      contractType: "",
+      contractTitle: "",
+      contractNumber: "",
+      category: "",
+      city: "",
+      district: "",
+      description: "",
+      totalValue: "",
+      monthlyAmount: "",
+      transferFee: "",
+      securityDeposit: "",
+      negotiable: false,
+      contractStartDate: "",
+      contractEndDate: "",
+      transferExpiryDate: "",
+      reasonForTransfer: "",
+      transferTerms: "",
+      contract: null,
+      asset: [],
+      listingType: "Standard",
+    },
+    validationSchema: "",
+
+    onSubmit: (values) => {
+      console.log("values", values);
+    },
+  });
   const [formData, setFormData] = useState<ContractFormData>({
     contractType: "",
     contractTitle: "",
@@ -64,8 +95,8 @@ const CreateContractPage = () => {
     transferExpiryDate: "",
     reasonForTransfer: "",
     transferTerms: "",
-    contractDocuments: [],
-    assetPhotos: [],
+    contract: null,
+    asset: [],
     listingType: "Standard",
   });
 
@@ -81,15 +112,15 @@ const CreateContractPage = () => {
             formData={formData}
             updateFormData={updateFormData}
             onNext={() => setCurrentStep(2)}
+            formik={formik}
           />
         );
       case 2:
         return (
           <FinancialForm
-            formData={formData}
-            updateFormData={updateFormData}
             onBack={() => setCurrentStep(1)}
             onNext={() => setCurrentStep(3)}
+            formik={formik}
           />
         );
       case 3:
@@ -99,22 +130,21 @@ const CreateContractPage = () => {
             updateFormData={updateFormData}
             onBack={() => setCurrentStep(2)}
             onNext={() => setCurrentStep(4)}
+            formik={formik}
           />
         );
       case 4:
         return (
           <AttachmentsForm
-            formData={formData}
-            updateFormData={updateFormData}
             onBack={() => setCurrentStep(3)}
             onNext={() => setCurrentStep(5)}
+            formik={formik}
           />
         );
       case 5:
         return (
           <ReviewPublishForm
-            formData={formData}
-            updateFormData={updateFormData}
+            formik={formik}
             onBack={() => setCurrentStep(4)}
           />
         );
@@ -124,6 +154,7 @@ const CreateContractPage = () => {
             formData={formData}
             updateFormData={updateFormData}
             onNext={() => setCurrentStep(2)}
+            formik={formik}
           />
         );
     }
@@ -139,31 +170,18 @@ const CreateContractPage = () => {
         position: "relative",
       }}
     >
-      {/* Top Header */}
       <ContractHeader currentStep={currentStep} />
 
-      {/* Main Content Area */}
-      <Container
-        maxWidth="lg"
-        sx={{
-          flex: 1,
-          display: "flex",
-          py: { xs: 4, md: 6 },
-          px: { xs: 2, md: 4 },
-        }}
-      >
+      <Container maxWidth="lg" sx={{ mt: 5 }}>
         <Grid container spacing={4} sx={{ alignItems: "flex-start" }}>
-          {/* Left Column: Form Progress Stepper */}
           <Grid size={{ xs: 12, md: 4, lg: 3.5 }}>
             <StepperSidebar currentStep={currentStep} />
           </Grid>
 
-          {/* Right Column: Dynamic Form depending on currentStep */}
           <Grid size={{ xs: 12, md: 8, lg: 8.5 }}>{renderFormStep()}</Grid>
         </Grid>
       </Container>
 
-      {/* Floating WhatsApp Action Button */}
       <WhatsAppButton />
     </Box>
   );

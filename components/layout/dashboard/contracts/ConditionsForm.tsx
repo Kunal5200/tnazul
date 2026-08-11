@@ -24,12 +24,16 @@ import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { FormikProps } from "formik";
+import { ContractFormData } from "@/app/dashboard/contracts/create/page";
+import { TRANSER_REASON } from "@/utils/constant";
 
 interface ConditionsFormProps {
   formData: any;
   updateFormData: (fields: any) => void;
   onBack: () => void;
   onNext: () => void;
+  formik: FormikProps<ContractFormData>;
 }
 
 const ConditionsForm = ({
@@ -37,6 +41,7 @@ const ConditionsForm = ({
   updateFormData,
   onBack,
   onNext,
+  formik,
 }: ConditionsFormProps) => {
   const {
     contractStartDate,
@@ -46,14 +51,25 @@ const ConditionsForm = ({
     transferTerms,
   } = formData;
 
-  const setContractStartDate = (val: string) => updateFormData({ contractStartDate: val });
-  const setContractEndDate = (val: string) => updateFormData({ contractEndDate: val });
-  const setTransferExpiryDate = (val: string) => updateFormData({ transferExpiryDate: val });
-  const setReasonForTransfer = (val: string) => updateFormData({ reasonForTransfer: val });
-  const setTransferTerms = (val: string) => updateFormData({ transferTerms: val });
+  const setContractStartDate = (val: string) =>
+    updateFormData({ contractStartDate: val });
+  const setContractEndDate = (val: string) =>
+    updateFormData({ contractEndDate: val });
+  const setTransferExpiryDate = (val: string) =>
+    updateFormData({ transferExpiryDate: val });
+  const setReasonForTransfer = (val: string) =>
+    updateFormData({ reasonForTransfer: val });
+  const setTransferTerms = (val: string) =>
+    updateFormData({ transferTerms: val });
 
   // Custom Input Label Component
-  const FormLabel = ({ label, required = false }: { label: string; required?: boolean }) => (
+  const FormLabel = ({
+    label,
+    required = false,
+  }: {
+    label: string;
+    required?: boolean;
+  }) => (
     <Typography
       sx={{
         fontFamily: poppins700.style.fontFamily,
@@ -68,7 +84,11 @@ const ConditionsForm = ({
     >
       {label}
       {required && (
-        <span style={{ color: COLORS.PRIMARY, marginLeft: "4px", fontSize: "14px" }}>*</span>
+        <span
+          style={{ color: COLORS.PRIMARY, marginLeft: "4px", fontSize: "14px" }}
+        >
+          *
+        </span>
       )}
     </Typography>
   );
@@ -171,21 +191,27 @@ const ConditionsForm = ({
 
   // Auto calculate remaining duration in months based on dates
   const calculateRemainingDuration = () => {
-    if (!contractStartDate || !contractEndDate) return "0 Months";
-    const start = new Date(contractStartDate);
-    const end = new Date(contractEndDate);
+    if (!formik.values.contractStartDate || !formik.values.contractEndDate)
+      return "0 Months";
+    const start = new Date(formik.values.contractStartDate);
+    const end = new Date(formik.values.contractEndDate);
     if (isNaN(start.getTime()) || isNaN(end.getTime())) return "0 Months";
-    
+
     // Difference in months
-    const diffMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
-    
+    const diffMonths =
+      (end.getFullYear() - start.getFullYear()) * 12 +
+      (end.getMonth() - start.getMonth());
+
     if (diffMonths <= 0) return "0 Months";
     return `${diffMonths} Month${diffMonths !== 1 ? "s" : ""}`;
   };
 
   const remainingDuration = calculateRemainingDuration();
 
-  const isFormValid = contractEndDate !== "" && reasonForTransfer !== "";
+  const isFormValid =
+    formik.values.contractStartDate !== "" &&
+    formik.values.contractEndDate !== "" &&
+    formik.values.reasonForTransfer !== "";
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -206,12 +232,17 @@ const ConditionsForm = ({
               <FormLabel label="CONTRACT START DATE" />
               <DatePicker
                 format="DD/MM/YYYY"
-                value={contractStartDate ? dayjs(contractStartDate) : null}
+                value={
+                  formik.values.contractStartDate
+                    ? dayjs(formik.values.contractStartDate)
+                    : null
+                }
                 onChange={(newValue) =>
-                  setContractStartDate(
+                  formik.setFieldValue(
+                    "contractStartDate",
                     newValue && newValue.isValid()
                       ? newValue.format("YYYY-MM-DD")
-                      : ""
+                      : "",
                   )
                 }
                 slotProps={{
@@ -221,18 +252,24 @@ const ConditionsForm = ({
                     sx: datePickerStyle,
                   },
                 }}
+                disablePast
               />
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
               <FormLabel label="CONTRACT END DATE" required />
               <DatePicker
                 format="DD/MM/YYYY"
-                value={contractEndDate ? dayjs(contractEndDate) : null}
+                value={
+                  formik.values.contractEndDate
+                    ? dayjs(formik.values.contractEndDate)
+                    : null
+                }
                 onChange={(newValue) =>
-                  setContractEndDate(
+                  formik.setFieldValue(
+                    "contractEndDate",
                     newValue && newValue.isValid()
                       ? newValue.format("YYYY-MM-DD")
-                      : ""
+                      : "",
                   )
                 }
                 slotProps={{
@@ -242,18 +279,34 @@ const ConditionsForm = ({
                     sx: datePickerStyle,
                   },
                 }}
+                disablePast
+                minDate={
+                  formik.values.contractStartDate
+                    ? dayjs(formik.values.contractStartDate)
+                    : undefined
+                }
               />
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
               <FormLabel label="TRANSFER EXPIRY DATE" />
               <DatePicker
                 format="DD/MM/YYYY"
-                value={transferExpiryDate ? dayjs(transferExpiryDate) : null}
+                value={
+                  formik.values.transferExpiryDate
+                    ? dayjs(formik.values.transferExpiryDate)
+                    : null
+                }
                 onChange={(newValue) =>
-                  setTransferExpiryDate(
+                  // setTransferExpiryDate(
+                  //   newValue && newValue.isValid()
+                  //     ? newValue.format("YYYY-MM-DD")
+                  //     : "",
+                  // )
+                  formik.setFieldValue(
+                    "transferExpiryDate",
                     newValue && newValue.isValid()
                       ? newValue.format("YYYY-MM-DD")
-                      : ""
+                      : "",
                   )
                 }
                 slotProps={{
@@ -263,6 +316,12 @@ const ConditionsForm = ({
                     sx: datePickerStyle,
                   },
                 }}
+                disablePast
+                minDate={
+                  formik.values.contractEndDate
+                    ? dayjs(formik.values.contractEndDate)
+                    : undefined
+                }
               />
               <Typography
                 sx={{
@@ -319,22 +378,28 @@ const ConditionsForm = ({
             <Grid size={{ xs: 12 }}>
               <FormLabel label="REASON FOR TRANSFER" required />
               <Select
-                value={reasonForTransfer}
-                onChange={(e) => setReasonForTransfer(e.target.value)}
+                value={formik.values.reasonForTransfer}
+                onChange={(e) =>
+                  formik.setFieldValue("reasonForTransfer", e.target.value)
+                }
                 renderValue={(selected) => {
                   if (!selected) {
-                    return <span style={{ color: "#98A2B3" }}>Select reason</span>;
+                    return (
+                      <span style={{ color: "#98A2B3" }}>Select reason</span>
+                    );
                   }
                   return selected;
                 }}
                 {...selectStyleProps}
               >
-                <MenuItem value="" disabled>Select reason</MenuItem>
-                <MenuItem value="Financial Reasons">Financial Reasons</MenuItem>
-                <MenuItem value="Relocation">Relocation</MenuItem>
-                <MenuItem value="Upgrade">Upgrade</MenuItem>
-                <MenuItem value="Downsize">Downsize</MenuItem>
-                <MenuItem value="Other">Other</MenuItem>
+                <MenuItem value="" disabled>
+                  Select reason
+                </MenuItem>
+                {TRANSER_REASON.map((val, i) => (
+                  <MenuItem key={i} value={val}>
+                    {val}
+                  </MenuItem>
+                ))}
               </Select>
             </Grid>
 
@@ -345,8 +410,10 @@ const ConditionsForm = ({
                 multiline
                 rows={4}
                 placeholder="Describe any specific conditions for the transfer. E.g. Buyer must meet landlord approval, outstanding maintenance responsibilities, included items, etc."
-                value={transferTerms}
-                onChange={(e) => setTransferTerms(e.target.value)}
+                value={formik.values.transferTerms}
+                onChange={(e) =>
+                  formik.setFieldValue("transferTerms", e.target.value)
+                }
                 {...inputStyleProps}
                 sx={{
                   ...inputStyleProps.sx,
@@ -425,7 +492,9 @@ const ConditionsForm = ({
                   fontSize: "14px",
                   boxShadow: "none",
                   "&:hover": {
-                    backgroundColor: isFormValid ? "rgba(1, 53, 71, 0.9)" : "#E4E7EC",
+                    backgroundColor: isFormValid
+                      ? "rgba(1, 53, 71, 0.9)"
+                      : "#E4E7EC",
                     boxShadow: "none",
                   },
                   "&.Mui-disabled": {

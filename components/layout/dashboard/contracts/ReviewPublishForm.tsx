@@ -8,6 +8,8 @@ import { poppins700 } from "@/utils/fonts";
 import { useRouter } from "next/navigation";
 import { useCreateContract } from "@/hooks/contract/useCreateContract";
 import { ContractPayload } from "@/utils/types";
+import { FormikProps } from "formik";
+import { ContractFormData } from "@/app/dashboard/contracts/create/page";
 
 import CardPreview from "./reviewComponents/CardPreview";
 import DetailsSummary from "./reviewComponents/DetailsSummary";
@@ -15,16 +17,12 @@ import ListingTypeSelector from "./reviewComponents/ListingTypeSelector";
 import ReviewFormActions from "./reviewComponents/ReviewFormActions";
 
 interface ReviewPublishFormProps {
-  formData: any;
-  updateFormData: (fields: any) => void;
+  formik: FormikProps<ContractFormData>;
   onBack: () => void;
 }
 
-const ReviewPublishForm = ({
-  formData,
-  updateFormData,
-  onBack,
-}: ReviewPublishFormProps) => {
+const ReviewPublishForm = ({ formik, onBack }: ReviewPublishFormProps) => {
+  const formData = formik.values;
   const router = useRouter();
   const { createContract, loading } = useCreateContract();
 
@@ -35,7 +33,7 @@ const ReviewPublishForm = ({
 
   const handlePlanChange = (plan: "Standard" | "Featured") => {
     setSelectedPlan(plan);
-    updateFormData({ listingType: plan });
+    formik.setFieldValue("listingType", plan);
   };
 
   // Helper to format currency values
@@ -91,10 +89,9 @@ const ReviewPublishForm = ({
       transferReason: formData.reasonForTransfer,
       TransferTermsConditions: formData.transferTerms,
       contractStatus: status,
-      // assetPhotos: formData.assetPhotos,
+      asset: formData.asset,
+      contract: formData.contract,
     };
-
-    console.log("werty", payload);
 
     try {
       await createContract(payload);

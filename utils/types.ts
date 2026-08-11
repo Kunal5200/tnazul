@@ -66,7 +66,8 @@ export interface ContractPayload {
   transferReason?: string;
   TransferTermsConditions?: string;
   contractStatus?: "Draft" | "Published" | string;
-  assetPhotos?: any[];
+  asset?: any[];
+  contract?: any;
 }
 
 export interface GET_API_REQUEST_RESPONSE {
@@ -77,5 +78,6 @@ export interface GET_API_REQUEST_RESPONSE {
 
 export interface ASSEST_INFO {
   contractNumber: string;
-  asset: File[];
+  asset?: File[];
+  contract?: File[];
 }

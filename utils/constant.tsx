@@ -71,34 +71,34 @@ export const SIDEBAR_PROFILE_LINKS: LINK_BOX[] = [
   {
     icon: PersonOutlined,
     label: "My Profile",
-    url: "/dashboard/my-profile",
+    url: "/dashboard/profile/my-profile",
   },
   {
     icon: FavoriteBorderOutlined,
     label: "Saved",
-    url: "/dashboard/saved",
+    url: "/dashboard/profile/saved",
   },
   {
     icon: FeedOutlined,
     label: "My Contracts",
-    url: "/dashboard/my-contracts",
+    url: "/dashboard/profile/my-contracts",
   },
   {
     icon: ChatBubbleOutlineOutlined,
     label: "Messages",
-    url: "/dashboard/messages",
+    url: "/dashboard/profile/messages",
     badge: 5,
   },
   {
     icon: NotificationsNoneOutlined,
     label: "Notifications",
-    url: "/dashboard/notifications",
+    url: "/dashboard/profile/notifications",
     badge: 5,
   },
   {
     icon: SettingsOutlined,
     label: "Settings",
-    url: "/dashboard/settings",
+    url: "/dashboard/profile/settings",
   },
 ];
 
@@ -115,4 +115,27 @@ export const ACCOUNT_TYPE_OPTIONS = [
     desc: "For registered companies",
     Icon: BusinessOutlined,
   },
+];
+
+export const CONTRACT_TYPE = [
+  "Residential Rent",
+  "Commercial Rent",
+  "Sale contract",
+  "Investment contract",
+];
+
+export const CONTRACT_CATEGORY = [
+  "Apartment",
+  "Villa",
+  "Land",
+  "Building",
+  "Office",
+];
+
+export const TRANSER_REASON = [
+  "Financial Reasons",
+  "Relocation",
+  "Upgrade",
+  "Downsize",
+  "Other",
 ];

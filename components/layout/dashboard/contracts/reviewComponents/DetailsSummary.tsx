@@ -106,11 +106,11 @@ export const DetailsSummary: React.FC<DetailsSummaryProps> = ({
         />
         <DetailRow
           label="Documents"
-          value={`${formData.contractDocuments?.length || 0} file(s)`}
+          value={`${formData.contract ? 1 : 0} file(s)`}
         />
         <DetailRow
           label="Asset Photos"
-          value={`${formData.assetPhotos?.length || 0} photo(s)`}
+          value={`${formData.asset?.length || 0} photo(s)`}
         />
       </Stack>
     </Box>

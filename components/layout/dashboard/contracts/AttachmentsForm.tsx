@@ -18,21 +18,21 @@ import {
 } from "@mui/icons-material";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
+import { FormikProps } from "formik";
+import { ContractFormData } from "@/app/dashboard/contracts/create/page";
 
 interface AttachmentsFormProps {
-  formData: any;
-  updateFormData: (fields: any) => void;
   onBack: () => void;
   onNext: () => void;
+  formik: FormikProps<ContractFormData>;
 }
 
 const AttachmentsForm = ({
-  formData,
-  updateFormData,
   onBack,
   onNext,
+  formik,
 }: AttachmentsFormProps) => {
-  const { contractDocuments, assetPhotos } = formData;
+  const { contract, asset } = formik.values;
 
   const docInputRef = useRef<HTMLInputElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -48,37 +48,35 @@ const AttachmentsForm = ({
 
   // Document upload handers
   const handleDocUpload = (files: FileList | null) => {
-    if (!files) return;
-    const newDocs = [...contractDocuments];
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      // Max 5MB
-      if (file.size > 5 * 1024 * 1024) {
-        alert(`File ${file.name} exceeds the 5MB size limit.`);
-        continue;
-      }
-      newDocs.push({
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        // Mock preview string or standard file handling
-        content: URL.createObjectURL(file),
-      });
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    
+    // Max 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      alert(`File ${file.name} exceeds the 5MB size limit.`);
+      return;
     }
-    updateFormData({ contractDocuments: newDocs });
+    
+    const newDoc = {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      // Mock preview string or standard file handling
+      content: URL.createObjectURL(file),
+      file: file,
+    };
+    
+    formik.setFieldValue("contract", newDoc);
   };
 
-  const removeDoc = (index: number) => {
-    const newDocs = contractDocuments.filter(
-      (_: any, i: number) => i !== index,
-    );
-    updateFormData({ contractDocuments: newDocs });
+  const removeDoc = () => {
+    formik.setFieldValue("contract", null);
   };
 
   // Asset photo upload handlers
   const handlePhotoUpload = (files: FileList | null) => {
     if (!files) return;
-    const newPhotos = [...assetPhotos];
+    const newPhotos = [...asset];
     if (newPhotos.length + files.length > 10) {
       alert("You can upload a maximum of 10 photos.");
       return;
@@ -98,12 +96,12 @@ const AttachmentsForm = ({
         file: file,
       });
     }
-    updateFormData({ assetPhotos: newPhotos });
+    formik.setFieldValue("asset", newPhotos);
   };
 
   const removePhoto = (index: number) => {
-    const newPhotos = assetPhotos.filter((_: any, i: number) => i !== index);
-    updateFormData({ assetPhotos: newPhotos });
+    const newPhotos = asset.filter((_: any, i: number) => i !== index);
+    formik.setFieldValue("asset", newPhotos);
   };
 
   // Drag and drop handlers
@@ -121,7 +119,7 @@ const AttachmentsForm = ({
     handlePhotoUpload(e.dataTransfer.files);
   };
 
-  const isFormValid = contractDocuments.length > 0;
+  const isFormValid = !!contract;
 
   return (
     <Box
@@ -230,65 +228,62 @@ const AttachmentsForm = ({
             </Box>
 
             {/* List of uploaded docs */}
-            {contractDocuments.length > 0 && (
+            {contract && (
               <Stack spacing={1} sx={{ mt: 2 }}>
-                {contractDocuments.map((doc: any, index: number) => (
+                <Stack
+                  direction="row"
+                  sx={{
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    p: 1.5,
+                    borderRadius: "10px",
+                    backgroundColor: "#F8F9FA",
+                    border: "1px solid #EAECF0",
+                  }}
+                >
                   <Stack
-                    key={index}
                     direction="row"
-                    sx={{
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      p: 1.5,
-                      borderRadius: "10px",
-                      backgroundColor: "#F8F9FA",
-                      border: "1px solid #EAECF0",
-                    }}
+                    spacing={1.5}
+                    sx={{ alignItems: "center" }}
                   >
-                    <Stack
-                      direction="row"
-                      spacing={1.5}
-                      sx={{ alignItems: "center" }}
-                    >
-                      <Box
+                    <Box
+                      sx={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: "50%",
+                        backgroundColor: COLORS.PRIMARY,
+                      }}
+                    />
+                    <Box>
+                      <Typography
                         sx={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: "50%",
-                          backgroundColor: COLORS.PRIMARY,
+                          fontFamily: poppins700.style.fontFamily,
+                          fontSize: "13px",
+                          fontWeight: 700,
+                          color: COLORS.SECONDARY,
                         }}
-                      />
-                      <Box>
-                        <Typography
-                          sx={{
-                            fontFamily: poppins700.style.fontFamily,
-                            fontSize: "13px",
-                            fontWeight: 700,
-                            color: COLORS.SECONDARY,
-                          }}
-                        >
-                          {doc.name}
-                        </Typography>
-                        <Typography
-                          sx={{
-                            fontFamily: poppins.style.fontFamily,
-                            fontSize: "11px",
-                            color: "#667085",
-                          }}
-                        >
-                          {formatFileSize(doc.size)}
-                        </Typography>
-                      </Box>
-                    </Stack>
-                    <IconButton
-                      size="small"
-                      onClick={() => removeDoc(index)}
-                      sx={{ color: "#F04438" }}
-                    >
-                      <DeleteOutlined fontSize="small" />
-                    </IconButton>
+                      >
+                        {contract.name}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontFamily: poppins.style.fontFamily,
+                          fontSize: "11px",
+                          color: "#667085",
+                        }}
+                      >
+                        {formatFileSize(contract.size)}
+                      </Typography>
+                    </Box>
                   </Stack>
-                ))}
+                  <IconButton
+                    size="small"
+                    onClick={() => removeDoc()}
+                    sx={{ color: "#F04438" }}
+                  >
+                    <DeleteOutlined fontSize="small" />
+                  </IconButton>
+                </Stack>
               </Stack>
             )}
           </Box>
@@ -386,9 +381,9 @@ const AttachmentsForm = ({
             </Box>
 
             {/* List of uploaded photos */}
-            {assetPhotos.length > 0 && (
+            {asset.length > 0 && (
               <Grid container spacing={2} sx={{ mt: 2 }}>
-                {assetPhotos.map((photo: any, index: number) => (
+                {asset.map((photo: any, index: number) => (
                   <Grid size={{ xs: 6, sm: 4, md: 3 }} key={index}>
                     <Box
                       sx={{

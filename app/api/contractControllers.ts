@@ -9,7 +9,30 @@ import {
 export const contractControllers = {
   addOrCreateControllers: async (body: ContractPayload) => {
     try {
-      let result = await contractSecuredAPI.post("/createOrUpdate", body);
+      const formData = new FormData();
+      Object.entries(body).forEach(([key, value]) => {
+        if (value === undefined || value === null || value === "") return;
+
+        if (key === "asset" && Array.isArray(value)) {
+          value.forEach((item) => {
+            if (item && item.file) {
+              formData.append("asset", item.file);
+            }
+          });
+        } else if (key === "contract") {
+          if (value && value.file) {
+            formData.append("contract", value.file);
+          }
+        } else {
+          formData.append(key, value.toString());
+        }
+      });
+
+      let result = await contractSecuredAPI.post("/createOrUpdate", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return result?.data || result;
     } catch (error) {
       throw error;
@@ -33,9 +56,16 @@ export const contractControllers = {
     try {
       const formData = new FormData();
       formData.append("contractNumber", data.contractNumber);
-      data.asset.forEach((file) => {
-        formData.append("asset", file);
-      });
+      if (data.asset) {
+        data.asset.forEach((file) => {
+          formData.append("asset", file);
+        });
+      }
+      if (data.contract) {
+        data.contract.forEach((file) => {
+          formData.append("contract", file);
+        });
+      }
 
       const result = await contractSecuredAPI.post("/uploadFiles", formData, {
         headers: {

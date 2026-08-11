@@ -35,7 +35,7 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
         <Box
           component="img"
           src={
-            formData.assetPhotos?.[0]?.content ||
+            formData.asset?.[0]?.content ||
             "/images/villa_preview.png"
           }
           alt="Property Preview"

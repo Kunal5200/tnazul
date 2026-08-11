@@ -12,6 +12,7 @@ export enum COLORS {
 export enum ACCOUNT_TYPE {
   INDIVIDUAL = "Individual",
   BUSINESS = "Business",
+  ADMINISTRATOR = "ADMINISTRATOR",
 }
 
 export enum CONTRACT_STATUS {
