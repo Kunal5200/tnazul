@@ -11,9 +11,11 @@ export const useContractList = () => {
       .then((res) => {
         // console.log("res", res);
         setContractData(res.data);
+        setLoading(false);
       })
       .catch((err) => {
         console.log("error in get contract", err);
+        setLoading(false);
       });
   };
   return {
@@ -22,5 +24,31 @@ export const useContractList = () => {
     loading,
     setLoading,
     setContractData,
+  };
+};
+
+export const useContractDetails = () => {
+  const [loading, setLoading] = useState(true);
+  const [contractDetails, setContractDetails] = useState<any>(null);
+  const fetchContractDetails = (id: string | string[] | undefined) => {
+    setLoading(true);
+    contractControllers
+      .getContractDetailsById(id)
+      .then((res) => {
+        // console.log("res", res);
+        setContractDetails(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("error in get contract details", err);
+        setLoading(false);
+      });
+  };
+  return {
+    fetchContractDetails,
+    contractDetails,
+    loading,
+    setLoading,
+    setContractDetails,
   };
 };

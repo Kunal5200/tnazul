@@ -7,62 +7,67 @@ import {
   Typography,
   Stack,
   Button,
-  Collapse,
-  Grid,
   TextField,
   Divider,
   Chip,
+  CircularProgress,
 } from "@mui/material";
 import {
   LocationOn,
   AttachFile,
-  KeyboardArrowDown,
-  KeyboardArrowUp,
   Check,
   Close,
-  Refresh,
-  CheckCircle,
-  Error,
 } from "@mui/icons-material";
 import { poppins, poppins700 } from "@/utils/fonts";
-import { COLORS } from "@/utils/enum";
-
-export interface QueueItemData {
-  id: string;
-  title: string;
-  category: string;
-  categoryLabel: string;
-  categoryColor: string;
-  categoryBg: string;
-  location: string;
-  totalValue: string;
-  monthlyValue: string;
-  docsCount: number;
-  timestamp: string;
-  imageUrl: string;
-  description: string;
-  sellerName: string;
-  sellerPhone: string;
-  sellerVerified: boolean;
-}
+import { COLORS, CONTRACT_STATUS } from "@/utils/enum";
+import { QueueItemData } from "@/utils/types";
+import ImageCarousel from "@/components/widgets/dashboard/ImageCarousel";
+import { useRouter } from "next/navigation";
+import { useApproveDisapproveContract } from "@/hooks/admin/useApprovedOrdisApproveContract";
 
 interface QueueItemProps {
   item: QueueItemData;
-  onApprove: (id: string) => void;
-  onReject: (id: string, reason: string) => void;
-  onRevision: (id: string, reason: string) => void;
+  onActionComplete?: () => void;
 }
 
 const QueueItem = ({
   item,
-  onApprove,
-  onReject,
-  onRevision,
+  onActionComplete,
 }: QueueItemProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [showRejectField, setShowRejectField] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
+  const router = useRouter();
 
-  const handleToggle = () => setIsExpanded(!isExpanded);
+  const { approveDisapproveContract, loading } = useApproveDisapproveContract();
+
+  const handleApprove = async () => {
+    try {
+      await approveDisapproveContract(item._id, CONTRACT_STATUS.APPROVED);
+      if (onActionComplete) onActionComplete();
+    } catch (e) {
+      // Error handled by hook toast
+    }
+  };
+
+  const handleRejectClick = () => {
+    if (!showRejectField) {
+      setShowRejectField(true);
+    } else {
+      setShowRejectField(false);
+      setRejectionReason("");
+    }
+  };
+
+  const handleSubmitReject = async () => {
+    if (!rejectionReason.trim()) return;
+    try {
+      await approveDisapproveContract(item._id, CONTRACT_STATUS.REJECTED, rejectionReason);
+      setShowRejectField(false);
+      if (onActionComplete) onActionComplete();
+    } catch (e) {
+      // Error handled by hook toast
+    }
+  };
 
   return (
     <Paper
@@ -91,21 +96,7 @@ const QueueItem = ({
             spacing={2.5}
             sx={{ alignItems: "flex-start", flexGrow: 1 }}
           >
-            {/* Preview Image */}
-            <Box
-              component="img"
-              src={item.imageUrl}
-              alt={item.title}
-              sx={{
-                width: 80,
-                height: 80,
-                borderRadius: "16px",
-                objectFit: "cover",
-                backgroundColor: "#F4F7F8",
-                flexShrink: 0,
-              }}
-            />
-
+            <ImageCarousel data={item?.assetImages} />
             {/* Core Info */}
             <Box>
               <Stack
@@ -121,16 +112,16 @@ const QueueItem = ({
                     color: COLORS.SECONDARY,
                   }}
                 >
-                  {item.title}
+                  {item.contractTitle}
                 </Typography>
 
                 {/* Category tag */}
                 <Chip
-                  label={item.categoryLabel}
+                  label={item.category || item.contractType}
                   size="small"
                   sx={{
-                    backgroundColor: item.categoryBg,
-                    color: item.categoryColor,
+                    backgroundColor: "rgba(35, 164, 85, 0.1)",
+                    color: "#23A455",
                     fontFamily: poppins700.style.fontFamily,
                     fontWeight: 700,
                     fontSize: "11px",
@@ -138,25 +129,6 @@ const QueueItem = ({
                     height: "22px",
                   }}
                 />
-
-                {/* Verification Status Tag (Item 3 in screenshot has ID Not Verified tag) */}
-                {!item.sellerVerified && (
-                  <Chip
-                    label="ID Not Verified"
-                    size="small"
-                    variant="outlined"
-                    sx={{
-                      backgroundColor: "rgba(211, 47, 47, 0.05)",
-                      color: "#D32F2F",
-                      borderColor: "rgba(211, 47, 47, 0.2)",
-                      fontFamily: poppins700.style.fontFamily,
-                      fontWeight: 700,
-                      fontSize: "11px",
-                      borderRadius: "6px",
-                      height: "22px",
-                    }}
-                  />
-                )}
               </Stack>
 
               {/* Sub-details (location, financials, documents, timestamp) */}
@@ -175,27 +147,29 @@ const QueueItem = ({
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                   <LocationOn sx={{ fontSize: 16 }} />
                   <Typography sx={{ fontSize: "13px" }}>
-                    {item.location}
+                    {`${item.city || ""}, ${item.districtOrNeighborhood || ""}`}
                   </Typography>
                 </Box>
                 <Typography>•</Typography>
                 <Typography sx={{ fontWeight: 600, color: COLORS.SECONDARY }}>
-                  SAR {item.totalValue} total
+                  {item.currency || "SAR"}{" "}
+                  {item.totalContractValue?.toLocaleString()} total
                 </Typography>
                 <Typography>•</Typography>
                 <Typography sx={{ color: "#7A9BAB" }}>
-                  SAR {item.monthlyValue}/mo
+                  {item.currency || "SAR"}{" "}
+                  {item.monthlyAmount?.toLocaleString()}/mo
                 </Typography>
                 <Typography>•</Typography>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                   <AttachFile sx={{ fontSize: 16 }} />
                   <Typography sx={{ fontSize: "13px" }}>
-                    {item.docsCount} documents
+                    {item.contractDocuments?.length || 0} documents
                   </Typography>
                 </Box>
                 <Typography>•</Typography>
                 <Typography sx={{ fontSize: "13px" }}>
-                  {item.timestamp}
+                  {new Date(item.createdAt).toLocaleDateString()}
                 </Typography>
               </Stack>
             </Box>
@@ -204,8 +178,7 @@ const QueueItem = ({
           {/* Expanded Toggle Button */}
           <Button
             variant="outlined"
-            onClick={handleToggle}
-            endIcon={isExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+            onClick={() => router.push(`/admin/approvals/${item._id}`)}
             sx={{
               borderRadius: "100px",
               borderColor: "#0135471A",
@@ -223,156 +196,13 @@ const QueueItem = ({
               },
             }}
           >
-            {isExpanded ? "Hide" : "View Full"}
+            View Details
           </Button>
         </Stack>
       </Box>
 
-      {/* Expanded Block (Collapsible) */}
-      <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-        <Divider sx={{ borderColor: "#0135470F" }} />
-
-        {/* Expanded Description & Seller Info */}
-        <Box sx={{ p: 4, backgroundColor: "#FAFAFA" }}>
-          <Grid container spacing={4} sx={{ mb: 4 }}>
-            {/* Description */}
-            <Grid size={{ xs: 12, md: 7 }}>
-              <Typography
-                sx={{
-                  fontFamily: poppins700.style.fontFamily,
-                  fontWeight: 800,
-                  fontSize: "11px",
-                  color: "#7A9BAB",
-                  letterSpacing: "1px",
-                  mb: 1.5,
-                }}
-              >
-                LISTING DESCRIPTION
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: poppins.style.fontFamily,
-                  fontWeight: 500,
-                  fontSize: "14px",
-                  color: COLORS.SECONDARY,
-                  lineHeight: "22px",
-                }}
-              >
-                {item.description}
-              </Typography>
-            </Grid>
-
-            {/* Seller Info */}
-            <Grid size={{ xs: 12, md: 5 }}>
-              <Typography
-                sx={{
-                  fontFamily: poppins700.style.fontFamily,
-                  fontWeight: 800,
-                  fontSize: "11px",
-                  color: "#7A9BAB",
-                  letterSpacing: "1px",
-                  mb: 1.5,
-                }}
-              >
-                SELLER INFO
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: poppins700.style.fontFamily,
-                  fontWeight: 700,
-                  fontSize: "16px",
-                  color: COLORS.SECONDARY,
-                  mb: 0.5,
-                }}
-              >
-                {item.sellerName}
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: poppins.style.fontFamily,
-                  fontWeight: 500,
-                  fontSize: "14px",
-                  color: "#7A9BAB",
-                  mb: 1.5,
-                }}
-              >
-                {item.sellerPhone}
-              </Typography>
-
-              {/* Verification Status */}
-              <Stack
-                direction="row"
-                spacing={0.5}
-                sx={{ alignItems: "center" }}
-              >
-                {item.sellerVerified ? (
-                  <>
-                    <CheckCircle sx={{ color: "#2E7D32", fontSize: 16 }} />
-                    <Typography
-                      sx={{
-                        fontFamily: poppins700.style.fontFamily,
-                        fontWeight: 700,
-                        fontSize: "12px",
-                        color: "#2E7D32",
-                      }}
-                    >
-                      ID Verified
-                    </Typography>
-                  </>
-                ) : (
-                  <>
-                    <Error sx={{ color: "#D32F2F", fontSize: 16 }} />
-                    <Typography
-                      sx={{
-                        fontFamily: poppins700.style.fontFamily,
-                        fontWeight: 700,
-                        fontSize: "12px",
-                        color: "#D32F2F",
-                      }}
-                    >
-                      ID Not Verified
-                    </Typography>
-                  </>
-                )}
-              </Stack>
-            </Grid>
-          </Grid>
-
-          {/* Rejection input field */}
-          <Box sx={{ mb: 2 }}>
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Rejection reason (required if rejecting)..."
-              value={rejectionReason}
-              onChange={(e) => setRejectionReason(e.target.value)}
-              slotProps={{
-                input: {
-                  sx: {
-                    borderRadius: "12px",
-                    fontFamily: poppins.style.fontFamily,
-                    fontSize: "14px",
-                    backgroundColor: COLORS.WHITE,
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#0135471A",
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "#0135473D",
-                    },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: COLORS.SECONDARY,
-                    },
-                  },
-                },
-              }}
-            />
-          </Box>
-        </Box>
-      </Collapse>
-
       <Divider sx={{ borderColor: "#0135470F" }} />
 
-      {/* Footer / Action Row (Always visible) */}
       <Box sx={{ p: 2.5, px: 3 }}>
         <Stack
           direction={{ xs: "column", sm: "row" }}
@@ -380,82 +210,82 @@ const QueueItem = ({
           sx={{ alignItems: "center", justifyContent: "space-between" }}
         >
           {/* Action Buttons */}
-          <Stack
-            direction="row"
-            spacing={1.5}
-            sx={{ width: { xs: "100%", sm: "auto" } }}
-          >
-            <Button
-              variant="contained"
-              disableElevation
-              startIcon={<Check />}
-              onClick={() => onApprove(item.id)}
-              sx={{
-                backgroundColor: "#23A455",
-                color: COLORS.WHITE,
-                borderRadius: "100px",
-                textTransform: "none",
-                fontFamily: poppins700.style.fontFamily,
-                fontWeight: 700,
-                fontSize: "14px",
-                px: 3.5,
-                py: 1.2,
-                "&:hover": {
-                  backgroundColor: "#1E8E49",
-                },
-              }}
+          {item.contractStatus === CONTRACT_STATUS.PUBLISHED ? (
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={1.5}
+              sx={{ width: { xs: "100%", sm: "auto" } }}
             >
-              Approve
-            </Button>
+              <Button
+                variant="contained"
+                disableElevation
+                startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <Check />}
+                onClick={handleApprove}
+                disabled={loading}
+                sx={{
+                  backgroundColor: "#23A455",
+                  color: COLORS.WHITE,
+                  borderRadius: "100px",
+                  textTransform: "none",
+                  fontFamily: poppins700.style.fontFamily,
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  px: 3.5,
+                  py: 1.2,
+                  "&:hover": {
+                    backgroundColor: "#1E8E49",
+                  },
+                }}
+              >
+                Approve
+              </Button>
 
-            <Button
-              variant="outlined"
-              startIcon={<Close />}
-              onClick={() => onReject(item.id, rejectionReason)}
-              sx={{
-                color: "#FF4D4D",
-                borderColor: "rgba(255, 77, 77, 0.4)",
-                borderRadius: "100px",
-                textTransform: "none",
-                fontFamily: poppins700.style.fontFamily,
-                fontWeight: 700,
-                fontSize: "14px",
-                px: 3.5,
-                py: 1.2,
-                backgroundColor: COLORS.WHITE,
-                "&:hover": {
-                  borderColor: "#FF4D4D",
-                  backgroundColor: "rgba(255, 77, 77, 0.05)",
-                },
-              }}
-            >
-              Reject
-            </Button>
-
-            <Button
-              variant="outlined"
-              startIcon={<Refresh />}
-              onClick={() => onRevision(item.id, rejectionReason)}
-              sx={{
-                color: "#E78B49",
-                borderColor: "rgba(231, 139, 73, 0.4)",
-                borderRadius: "100px",
-                textTransform: "none",
-                fontFamily: poppins700.style.fontFamily,
-                fontWeight: 700,
-                fontSize: "14px",
-                px: 3.5,
-                py: 1.2,
-                backgroundColor: COLORS.WHITE,
-                "&:hover": {
-                  borderColor: "#E78B49",
-                  backgroundColor: "rgba(231, 139, 73, 0.05)",
-                },
-              }}
-            >
-              Request Revision
-            </Button>
-          </Stack>
+              <Button
+                variant={showRejectField ? "contained" : "outlined"}
+                startIcon={<Close />}
+                onClick={handleRejectClick}
+                disabled={loading}
+                sx={{
+                  color: showRejectField ? COLORS.WHITE : "#FF4D4D",
+                  borderColor: showRejectField ? "transparent" : "rgba(255, 77, 77, 0.4)",
+                  borderRadius: "100px",
+                  textTransform: "none",
+                  fontFamily: poppins700.style.fontFamily,
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  px: 3.5,
+                  py: 1.2,
+                  backgroundColor: showRejectField ? "#FF4D4D" : COLORS.WHITE,
+                  "&:hover": {
+                    borderColor: showRejectField ? "transparent" : "#FF4D4D",
+                    backgroundColor: showRejectField ? "#E64545" : "rgba(255, 77, 77, 0.05)",
+                  },
+                }}
+              >
+                {showRejectField ? "Cancel Reject" : "Reject"}
+              </Button>
+            </Stack>
+          ) : (
+            <Box sx={{ width: { xs: "100%", sm: "auto" }, display: "flex", alignItems: "center" }}>
+              <Chip
+                icon={item.contractStatus === CONTRACT_STATUS.APPROVED ? <Check fontSize="small" /> : <Close fontSize="small" />}
+                label={item.contractStatus === CONTRACT_STATUS.APPROVED ? "Approved" : "Rejected"}
+                sx={{
+                  backgroundColor: item.contractStatus === CONTRACT_STATUS.APPROVED ? "rgba(35, 164, 85, 0.1)" : "rgba(255, 77, 77, 0.1)",
+                  color: item.contractStatus === CONTRACT_STATUS.APPROVED ? "#23A455" : "#FF4D4D",
+                  fontFamily: poppins700.style.fontFamily,
+                  fontWeight: 700,
+                  fontSize: "13px",
+                  borderRadius: "100px",
+                  px: 1,
+                  py: 2,
+                  "& .MuiChip-icon": {
+                    color: "inherit",
+                  },
+                }}
+              />
+            </Box>
+          )}
 
           {/* Submission Info */}
           <Typography
@@ -466,9 +296,59 @@ const QueueItem = ({
               color: "#7A9BAB",
             }}
           >
-            Submitted by {item.sellerName}
+            Submitted by {item.createdBy?.name || "Unknown"}
           </Typography>
         </Stack>
+
+        {/* Rejection Field */}
+        {showRejectField && (
+          <Box sx={{ mt: 3, p: 3, backgroundColor: "#F9FAFB", borderRadius: "16px", border: "1px solid #E5E7EB" }}>
+            <Typography sx={{ fontFamily: poppins700.style.fontFamily, fontSize: "14px", color: COLORS.SECONDARY, mb: 1 }}>
+              Provide a reason for rejection
+            </Typography>
+            <TextField
+              fullWidth
+              multiline
+              rows={3}
+              variant="outlined"
+              placeholder="Explain why this listing is being rejected..."
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              disabled={loading}
+              sx={{
+                mb: 2,
+                backgroundColor: COLORS.WHITE,
+                "& .MuiOutlinedInput-root": {
+                  fontFamily: poppins.style.fontFamily,
+                  fontSize: "14px",
+                  borderRadius: "12px",
+                }
+              }}
+            />
+            <Stack direction="row" sx={{ justifyContent: "flex-end" }}>
+              <Button
+                variant="contained"
+                onClick={handleSubmitReject}
+                disabled={!rejectionReason.trim() || loading}
+                sx={{
+                  backgroundColor: "#FF4D4D",
+                  color: COLORS.WHITE,
+                  borderRadius: "100px",
+                  textTransform: "none",
+                  fontFamily: poppins700.style.fontFamily,
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  px: 3,
+                  "&:hover": {
+                    backgroundColor: "#E64545",
+                  },
+                }}
+              >
+                {loading ? <CircularProgress size={20} color="inherit" /> : "Confirm Reject"}
+              </Button>
+            </Stack>
+          </Box>
+        )}
       </Box>
     </Paper>
   );

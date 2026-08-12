@@ -77,4 +77,12 @@ export const contractControllers = {
       throw error;
     }
   },
+  getContractDetailsById: async (id: string | string[] | undefined) => {
+    try {
+      let result = await contractSecuredAPI.get(`/details/${id}`);
+      return result?.data || result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

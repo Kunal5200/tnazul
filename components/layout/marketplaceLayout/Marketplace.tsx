@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Box,
   Button,
@@ -27,11 +27,12 @@ import {
   Tune,
 } from "@mui/icons-material";
 import Link from "next/link";
-import { COLORS } from "@/utils/enum";
+import { COLORS, CONTRACT_STATUS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
 import ProductCard, { ProductCardProps } from "@/components/layout/dashboard/components/Product-Card";
 import WhatsAppButton from "@/components/layout/dashboard/contracts/WhatsAppButton";
 import LogoBox from "@/components/widgets/Sidebar/components/LogoBox";
+import { useContractList } from "@/hooks/contract/useContractList";
 
 // Custom type representing the contract item
 type ContractType = Omit<ProductCardProps, "viewMode">;
@@ -50,117 +51,60 @@ const MarketplaceLayout = () => {
   const [sortBy, setSortBy] = useState<"newest" | "price-asc" | "price-desc" | "views">("newest");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  // Mock contracts matching the marketplace mockup details
-  const allContracts: ContractType[] = [
-    {
-      id: "m1",
-      category: "real-estate",
-      categoryLabel: "Real Estate",
-      categoryIcon: <Apartment />,
-      title: "3BR Villa - Al Nakheel District",
-      location: "Al Nakheel, Riyadh",
-      totalValue: "1,53,000",
-      monthlyValue: "8,500",
-      imageUrl: "/images/villa_preview.png",
-      timeLeft: "18 month left",
-      views: 342,
-      isStarred: true,
-      tags: [
-        { label: "Verified", type: "verified" },
-        { label: "Docs Ready", type: "docs-ready" },
-      ],
-    },
-    {
-      id: "m2",
-      category: "vehicles",
-      categoryLabel: "Vehicles",
-      categoryIcon: <DirectionsCar />,
-      title: "Toyota Camry - 2022 Lease Transfer",
-      location: "Al Rawdah, Jeddah",
-      totalValue: "52,800",
-      monthlyValue: "2,200",
-      imageUrl: "/images/shop_preview.png",
-      timeLeft: "24 month left",
-      views: 189,
-      isStarred: false,
-      tags: [
-        { label: "Verified", type: "verified" },
-      ],
-    },
-    {
-      id: "m3",
-      category: "commercial",
-      categoryLabel: "Commercial",
-      categoryIcon: <BusinessCenter />,
-      title: "Commercial Shop - Al Olaya Tower",
-      location: "Al Olaya, Riyadh",
-      totalValue: "90,000",
-      monthlyValue: "15,000",
-      imageUrl: "/images/shop_preview.png",
-      timeLeft: "6 month left",
-      views: 521,
-      isStarred: true,
-      tags: [
-        { label: "URGENT TRANSFER", type: "urgent" },
-        { label: "Docs Ready", type: "docs-ready" },
-      ],
-    },
-    {
-      id: "m4",
-      category: "real-estate",
-      categoryLabel: "Real Estate",
-      categoryIcon: <Apartment />,
-      title: "Furnished Office - King Fahd Road",
-      location: "Al Hamra, Riyadh",
-      totalValue: "1,72,800",
-      monthlyValue: "7,200",
-      imageUrl: "/images/shop_preview.png",
-      timeLeft: "4 month left",
-      views: 276,
-      isStarred: false,
-      tags: [
-        { label: "Verified", type: "verified" },
-      ],
-    },
-    {
-      id: "m5",
-      category: "real-estate",
-      categoryLabel: "Real Estate",
-      categoryIcon: <Apartment />,
-      title: "2BR Apartment - Corniche Sea View",
-      location: "Al Corniche, Dammam",
-      totalValue: "33,000",
-      monthlyValue: "5,500",
-      imageUrl: "/images/villa_preview.png",
-      timeLeft: "6 month left",
-      views: 189,
-      isStarred: false,
-      tags: [
-        { label: "URGENT TRANSFER", type: "urgent" },
-      ],
-    },
-    {
-      id: "m6",
-      category: "commercial",
-      categoryLabel: "Subscriptions",
-      categoryIcon: <FitnessCenter />,
-      title: "Gym Platinum Membership - 2 Years Left",
-      location: "Al Malqa, Riyadh",
-      totalValue: "10,800",
-      monthlyValue: "450",
-      imageUrl: "/images/villa_preview.png",
-      timeLeft: "12 month left",
-      views: 189,
-      isStarred: true,
-      tags: [
-        { label: "Verified", type: "verified" },
-      ],
-    },
-  ];
+  // API Integration
+  const [apiRequestData, setApiRequstData] = useState({
+    page: 1,
+    limit: 100,
+    status: CONTRACT_STATUS.APPROVED,
+  });
+
+  const { loading, fetchContractDetails, contractData } = useContractList();
+
+  useEffect(() => {
+    fetchContractDetails(apiRequestData);
+  }, [apiRequestData]);
+
+  // Map API data to ContractType
+  const apiContracts: ContractType[] = useMemo(() => {
+    if (!contractData?.docs) return [];
+    
+    return contractData.docs.map((item: any) => {
+      let catIcon = <Apartment />;
+      const catLower = (item.category || item.contractType || "").toLowerCase();
+      let categoryId = "real-estate";
+      
+      if (catLower.includes("vehicle") || catLower.includes("car")) {
+        catIcon = <DirectionsCar />;
+        categoryId = "vehicles";
+      } else if (catLower.includes("commercial")) {
+        catIcon = <BusinessCenter />;
+        categoryId = "commercial";
+      } else if (catLower.includes("subscription")) {
+        catIcon = <FitnessCenter />;
+        categoryId = "commercial";
+      }
+
+      return {
+        id: item._id,
+        category: categoryId,
+        categoryLabel: item.category || item.contractType || "Real Estate",
+        categoryIcon: catIcon,
+        title: item.contractTitle,
+        location: `${item.city || ""}, ${item.districtOrNeighborhood || ""}`.replace(/^, | , $/g, ''),
+        totalValue: item.totalContractValue?.toString() || "0",
+        monthlyValue: item.monthlyAmount?.toString() || "0",
+        imageUrl: item.assetImages?.[0] || "/images/villa_preview.png",
+        timeLeft: item.remainingDuration || "N/A",
+        views: 0,
+        isStarred: false,
+        tags: item.contractStatus === CONTRACT_STATUS.APPROVED ? [{ label: "Verified", type: "verified" }] : [],
+      };
+    });
+  }, [contractData]);
 
   // Filtering Logic
   const filteredContracts = useMemo(() => {
-    return allContracts.filter((contract) => {
+    return apiContracts.filter((contract) => {
       // 1. Contract Type
       if (contractType !== "all" && contract.category !== contractType) {
         return false;
@@ -222,9 +166,9 @@ const MarketplaceLayout = () => {
       if (sortBy === "price-asc") return valA - valB;
       if (sortBy === "price-desc") return valB - valA;
       if (sortBy === "views") return b.views - a.views;
-      return parseInt(b.id) - parseInt(a.id); // Newest / Default
+      return parseInt(b.id || "0") - parseInt(a.id || "0"); // Newest / Default
     });
-  }, [contractType, priceRange, searchTerm, duration, verificationStatus, selectedCity, sortBy]);
+  }, [apiContracts, contractType, priceRange, searchTerm, duration, verificationStatus, selectedCity, sortBy]);
 
   // Reset Filters
   const handleResetFilters = () => {

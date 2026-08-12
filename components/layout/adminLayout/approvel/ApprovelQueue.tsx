@@ -1,86 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  Stack,
-  Snackbar,
-  Alert,
-  Paper,
-} from "@mui/material";
-import { AccessTime } from "@mui/icons-material";
+import React, { useEffect, useState } from "react";
+import { Box, Container, Snackbar, Alert, Tabs, Tab } from "@mui/material";
 import AdminSidebar from "@/components/widgets/Sidebar/AdminSidebar";
-import QueueItem, { QueueItemData } from "./QueueItem";
+import ApprovalsTopBar from "./ApprovalsTopBar";
+import ApprovalQueueHeader from "./ApprovalQueueHeader";
+import ApprovalQueueList from "./ApprovalQueueList";
 import { poppins, poppins700 } from "@/utils/fonts";
-import { COLORS } from "@/utils/enum";
-
-const initialQueueData: QueueItemData[] = [
-  {
-    id: "1",
-    title: "5BR Villa - Diplomatic Quarter",
-    category: "real-estate",
-    categoryLabel: "Real Estate",
-    categoryColor: "#2E7D32",
-    categoryBg: "rgba(46, 125, 50, 0.1)",
-    location: "Diplomatic Quarter, Riyadh",
-    totalValue: "2,80,000",
-    monthlyValue: "11,000",
-    docsCount: 3,
-    timestamp: "Submitted 2 hours ago",
-    imageUrl:
-      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=300&auto=format&fit=crop",
-    description:
-      "Fully furnished 5-bedroom villa in a gated compound with a garden, pool access, and 2 covered parking spots.",
-    sellerName: "Ahmad Al-Khalid",
-    sellerPhone: "+966 5X XXX 1234",
-    sellerVerified: true,
-  },
-  {
-    id: "2",
-    title: "BMW 530i 2023 - Full Lease Transfer",
-    category: "vehicles",
-    categoryLabel: "Vehicles",
-    categoryColor: "#166CA9",
-    categoryBg: "rgba(22, 108, 170, 0.1)",
-    location: "Al-Rawdah, Jeddah",
-    totalValue: "68,000",
-    monthlyValue: "2,800",
-    docsCount: 2,
-    timestamp: "Submitted 4 hours ago",
-    imageUrl:
-      "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=300&auto=format&fit=crop",
-    description:
-      "BMW 530i in pristine condition. Agency maintained, transfer of lease option ready. Fuel efficient and fully loaded model.",
-    sellerName: "Sara Al-Mutairi",
-    sellerPhone: "+966 5X XXX 5678",
-    sellerVerified: true,
-  },
-  {
-    id: "3",
-    title: "Restaurant Space - Tahlia Street",
-    category: "commercial",
-    categoryLabel: "Commercial",
-    categoryColor: "#E78B49",
-    categoryBg: "rgba(231, 186, 73, 0.1)",
-    location: "Al-Tahlia, Jeddah",
-    totalValue: "1,20,000",
-    monthlyValue: "6,000",
-    docsCount: 4,
-    timestamp: "Submitted 6 hours ago",
-    imageUrl:
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=300&auto=format&fit=crop",
-    description:
-      "Restaurant space on Tahlia Street, high foot traffic, fully equipped kitchen.",
-    sellerName: "Mohammed Al-Hassan",
-    sellerPhone: "+966 5X XXX 9012",
-    sellerVerified: false,
-  },
-];
+import { COLORS, CONTRACT_STATUS } from "@/utils/enum";
+import { useContractList } from "@/hooks/contract/useContractList";
 
 const ApprovelQueue = () => {
-  const [queueList, setQueueList] = useState<QueueItemData[]>(initialQueueData);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -95,50 +25,20 @@ const ApprovelQueue = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
-  const handleApprove = (id: string) => {
-    const item = queueList.find((q) => q.id === id);
-    setQueueList((prev) => prev.filter((q) => q.id !== id));
-    setSnackbar({
-      open: true,
-      message: `Listing "${item?.title}" approved successfully.`,
-      severity: "success",
-    });
-  };
+  const [apiRequestData, setApiRequstData] = useState({
+    page: 1,
+    limit: 10,
+    status: CONTRACT_STATUS.PUBLISHED,
+  });
 
-  const handleReject = (id: string, reason: string) => {
-    if (!reason.trim()) {
-      setSnackbar({
-        open: true,
-        message: "Rejection reason is required.",
-        severity: "error",
-      });
-      return;
-    }
-    const item = queueList.find((q) => q.id === id);
-    setQueueList((prev) => prev.filter((q) => q.id !== id));
-    setSnackbar({
-      open: true,
-      message: `Listing "${item?.title}" rejected. Reason: "${reason}"`,
-      severity: "info",
-    });
-  };
+  const { loading, fetchContractDetails, contractData } = useContractList();
 
-  const handleRevision = (id: string, reason: string) => {
-    if (!reason.trim()) {
-      setSnackbar({
-        open: true,
-        message: "Revision details are required.",
-        severity: "warning",
-      });
-      return;
-    }
-    const item = queueList.find((q) => q.id === id);
-    setQueueList((prev) => prev.filter((q) => q.id !== id));
-    setSnackbar({
-      open: true,
-      message: `Revision requested for "${item?.title}". Details: "${reason}"`,
-      severity: "info",
-    });
+  useEffect(() => {
+    fetchContractDetails(apiRequestData);
+  }, [apiRequestData]);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    setApiRequstData((prev) => ({ ...prev, status: newValue as CONTRACT_STATUS }));
   };
 
   return (
@@ -146,7 +46,7 @@ const ApprovelQueue = () => {
       sx={{ display: "flex", minHeight: "100vh", backgroundColor: "#F4F7F8" }}
     >
       {/* Sidebar fixed to the left */}
-      <AdminSidebar />
+      <AdminSidebar approval_number={contractData?.docs?.length || 0} />
 
       {/* Main Content Area */}
       <Box
@@ -157,36 +57,7 @@ const ApprovelQueue = () => {
           flexDirection: "column",
         }}
       >
-        {/* Top Header Panel */}
-        <Box
-          sx={{
-            backgroundColor: COLORS.WHITE,
-            py: 2.5,
-            px: { xs: 3, md: 5 },
-            borderBottom: "1px solid #0135470F",
-          }}
-        >
-          <Typography
-            sx={{
-              fontFamily: poppins700.style.fontFamily,
-              fontWeight: 800,
-              fontSize: "24px",
-              color: COLORS.SECONDARY,
-            }}
-          >
-            Approvals
-          </Typography>
-          <Typography
-            sx={{
-              fontFamily: poppins.style.fontFamily,
-              fontWeight: 500,
-              fontSize: "13px",
-              color: "#7A9BAB",
-            }}
-          >
-            Tnazul Administration
-          </Typography>
-        </Box>
+        <ApprovalsTopBar />
 
         {/* Queue Content Panel */}
         <Container
@@ -197,114 +68,39 @@ const ApprovelQueue = () => {
             flexGrow: 1,
           }}
         >
-          {/* Header Row */}
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={2}
-            sx={{
-              alignItems: { xs: "flex-start", sm: "center" },
-              justifyContent: "space-between",
-              mb: 4,
-            }}
-          >
-            <Box>
-              <Typography
-                sx={{
-                  fontFamily: poppins700.style.fontFamily,
-                  fontWeight: 800,
-                  fontSize: "22px",
-                  color: COLORS.SECONDARY,
-                  mb: 0.5,
-                }}
-              >
-                Listing Approval Queue
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: poppins.style.fontFamily,
-                  fontWeight: 500,
-                  fontSize: "14px",
-                  color: "#7A9BAB",
-                }}
-              >
-                {queueList.length} listings awaiting review
-              </Typography>
-            </Box>
+          <ApprovalQueueHeader count={contractData?.docs?.length} />
 
-            {/* Review target badge */}
-            <Stack
-              direction="row"
-              spacing={1}
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+            <Tabs 
+              value={apiRequestData.status} 
+              onChange={handleTabChange}
               sx={{
-                alignItems: "center",
-                backgroundColor: "rgba(231, 186, 73, 0.08)",
-                border: "1px solid rgba(231, 186, 73, 0.25)",
-                borderRadius: "100px",
-                py: 1,
-                px: 2.5,
-                color: "#E78B49",
+                '& .MuiTab-root': {
+                  fontFamily: poppins700.style.fontFamily,
+                  fontWeight: 600,
+                  textTransform: 'none',
+                  fontSize: '15px',
+                  color: '#7A9BAB',
+                  '&.Mui-selected': {
+                    color: COLORS.SECONDARY,
+                  },
+                },
+                '& .MuiTabs-indicator': {
+                  backgroundColor: COLORS.PRIMARY,
+                }
               }}
             >
-              <AccessTime sx={{ fontSize: 18 }} />
-              <Typography
-                sx={{
-                  fontFamily: poppins700.style.fontFamily,
-                  fontWeight: 700,
-                  fontSize: "13px",
-                }}
-              >
-                Review within 2 hours
-              </Typography>
-            </Stack>
-          </Stack>
+              <Tab label="Pending" value={CONTRACT_STATUS.PUBLISHED} />
+              <Tab label="Approved" value={CONTRACT_STATUS.APPROVED} />
+              <Tab label="Rejected" value={CONTRACT_STATUS.REJECTED} />
+            </Tabs>
+          </Box>
 
-          {/* Queue Items */}
-          {queueList.length > 0 ? (
-            <Box>
-              {queueList.map((item) => (
-                <QueueItem
-                  key={item.id}
-                  item={item}
-                  onApprove={handleApprove}
-                  onReject={handleReject}
-                  onRevision={handleRevision}
-                />
-              ))}
-            </Box>
-          ) : (
-            <Paper
-              elevation={0}
-              sx={{
-                p: 6,
-                borderRadius: "24px",
-                textAlign: "center",
-                border: "1px solid #0135470F",
-                backgroundColor: COLORS.WHITE,
-              }}
-            >
-              <Typography
-                sx={{
-                  fontFamily: poppins700.style.fontFamily,
-                  fontWeight: 700,
-                  fontSize: "18px",
-                  color: COLORS.SECONDARY,
-                  mb: 1,
-                }}
-              >
-                All Caught Up!
-              </Typography>
-              <Typography
-                sx={{
-                  fontFamily: poppins.style.fontFamily,
-                  fontWeight: 500,
-                  fontSize: "14px",
-                  color: "#7A9BAB",
-                }}
-              >
-                There are no listings awaiting approval in the queue.
-              </Typography>
-            </Paper>
-          )}
+          <ApprovalQueueList 
+            loading={loading} 
+            contractData={contractData} 
+            onRefresh={() => fetchContractDetails(apiRequestData)} 
+          />
         </Container>
       </Box>
 

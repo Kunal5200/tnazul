@@ -44,7 +44,6 @@ import { useUpdateProfile } from "@/hooks/user/useUpdateProfile";
 import { useUpdatePhoto } from "@/hooks/user/useUpdatePhoto";
 import { useChangePassword } from "@/hooks/authentication/changePassword";
 
-
 interface SettingsLayoutProps {
   activeTab: "edit-profile" | "verification" | "account-settings";
 }
@@ -250,7 +249,6 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
     }
   };
 
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     window.location.href = "/login";
@@ -324,7 +322,6 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
                   }}
                 >
                   {!profilePhoto && getInitials(fullName)}
-
                 </Avatar>
                 <Box
                   sx={{
@@ -359,7 +356,6 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
                 }}
               >
                 {fullName || "-"}
-
               </Typography>
 
               {/* Verified Member Status */}
@@ -407,7 +403,7 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
               <Stack spacing={1}>
                 {/* Edit Profile Tab Trigger */}
                 <Link
-                  href="/dashboard/settings/edit-profile"
+                  href="/dashboard/profile/settings/edit-profile"
                   passHref
                   style={{ textDecoration: "none", width: "100%" }}
                 >
@@ -477,7 +473,7 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
 
                 {/* Verification Tab Trigger */}
                 <Link
-                  href="/dashboard/settings/verification"
+                  href="/dashboard/profile/settings/verification"
                   passHref
                   style={{ textDecoration: "none", width: "100%" }}
                 >
@@ -547,7 +543,7 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
 
                 {/* Account Settings Tab Trigger */}
                 <Link
-                  href="/dashboard/settings/account-settings"
+                  href="/dashboard/profile/settings/account-settings"
                   passHref
                   style={{ textDecoration: "none", width: "100%" }}
                 >
@@ -739,7 +735,6 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
                   }}
                 >
                   {!profilePhoto && getInitials(fullName)}
-
                 </Avatar>
                 <Stack spacing={1} sx={{ alignItems: "flex-start" }}>
                   <Button
@@ -1053,7 +1048,6 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
                 onClick={handleSaveChanges}
                 disabled={updatingProfile}
                 startIcon={<SaveOutlined sx={{ fontSize: 18 }} />}
-
                 sx={{
                   backgroundColor: COLORS.SECONDARY,
                   color: COLORS.WHITE,
@@ -1076,7 +1070,6 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
               >
                 {updatingProfile ? "Saving..." : "Save Changes"}
               </Button>
-
             </Box>
           )}
 
@@ -1780,7 +1773,6 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
                 >
                   {updatingPassword ? "Updating..." : "Update Password"}
                 </Button>
-
               </Box>
 
               {/* Card 2: Notification Preferences */}

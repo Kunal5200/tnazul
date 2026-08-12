@@ -18,4 +18,6 @@ export enum ACCOUNT_TYPE {
 export enum CONTRACT_STATUS {
   PUBLISHED = "Published",
   DRAFT = "Draft",
+  APPROVED = "Approved",
+  REJECTED = "Rejected",
 }

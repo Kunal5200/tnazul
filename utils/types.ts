@@ -81,3 +81,45 @@ export interface ASSEST_INFO {
   asset?: File[];
   contract?: File[];
 }
+
+export interface QueueItemData {
+  _id: string;
+  contractType: string;
+  contractTitle: string;
+  contractDescription: string;
+  contractNumber: string;
+  city: string;
+  districtOrNeighborhood: string;
+  category: string;
+  totalContractValue: number;
+  monthlyAmount: number;
+  transferFee: number;
+  securityDeposit: number;
+  priceNegotiable: boolean;
+  startDate: string;
+  endDate: string;
+  transferExpiryDate: string;
+  remainingDuration: string;
+  transferReason: string;
+  TransferTermsConditions: string;
+  contractDocuments: any[];
+  assetImages: string[];
+  contractStatus: string;
+  currency: string;
+  createdBy: {
+    _id: string;
+    phoneNo: string;
+    countryCode: string;
+    email: string;
+    name: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  isSaved: boolean;
+  sellerVerified?: boolean;
+}
+
+export interface IMAGE_CAROUSEL_DATA {
+  data: string[];
+}

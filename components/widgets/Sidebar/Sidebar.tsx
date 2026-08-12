@@ -1,7 +1,15 @@
 "use client";
 
 import { COLORS } from "@/utils/enum";
-import { Box, Divider, Stack, Typography, Button, IconButton, Tooltip } from "@mui/material";
+import {
+  Box,
+  Divider,
+  Stack,
+  Typography,
+  Button,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { Login, PersonAddAlt1, Logout } from "@mui/icons-material";
 import LogoBox from "./components/LogoBox";
@@ -22,13 +30,14 @@ const Sidebar = () => {
   const { isCollapsed } = useSidebarStore();
 
   useEffect(() => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
     const isProfileRoute =
-      pathname.startsWith("/dashboard/my-profile") ||
-      pathname.startsWith("/dashboard/saved") ||
-      pathname.startsWith("/dashboard/messages") ||
-      pathname.startsWith("/dashboard/notifications") ||
-      pathname.startsWith("/dashboard/settings");
+      pathname.startsWith("/dashboard/profile/my-profile") ||
+      pathname.startsWith("/dashboard/profile/saved-contracts") ||
+      pathname.startsWith("/dashboard/profile/messages") ||
+      pathname.startsWith("/dashboard/profile/notifications") ||
+      pathname.startsWith("/dashboard/profile/settings");
 
     if (token || isProfileRoute) {
       setIsLoggedIn(true);
@@ -90,7 +99,7 @@ const Sidebar = () => {
         >
           <LogoBox />
           <LinkBox data={SIDEBAR_LINKS} />
-          
+
           {isLoggedIn && (
             <>
               <Box sx={{ px: isCollapsed ? 1 : 2, my: 1.5 }}>
@@ -145,7 +154,10 @@ const Sidebar = () => {
 
               {/* Action Buttons */}
               <Stack spacing={1.5} sx={{ alignItems: "center" }}>
-                <Link href={"/register"} style={{ textDecoration: "none", width: "100%" }}>
+                <Link
+                  href={"/register"}
+                  style={{ textDecoration: "none", width: "100%" }}
+                >
                   {isCollapsed ? (
                     <Tooltip title="Create Account" placement="right" arrow>
                       <IconButton
@@ -170,7 +182,11 @@ const Sidebar = () => {
                       variant="contained"
                       disableElevation
                       fullWidth
-                      startIcon={<PersonAddAlt1 sx={{ color: COLORS.WHITE, fontSize: 18 }} />}
+                      startIcon={
+                        <PersonAddAlt1
+                          sx={{ color: COLORS.WHITE, fontSize: 18 }}
+                        />
+                      }
                       sx={{
                         backgroundColor: COLORS.SECONDARY,
                         color: COLORS.WHITE,
@@ -190,7 +206,10 @@ const Sidebar = () => {
                   )}
                 </Link>
 
-                <Link href={"/login"} style={{ textDecoration: "none", width: "100%" }}>
+                <Link
+                  href={"/login"}
+                  style={{ textDecoration: "none", width: "100%" }}
+                >
                   {isCollapsed ? (
                     <Tooltip title="Login" placement="right" arrow>
                       <IconButton
@@ -217,7 +236,9 @@ const Sidebar = () => {
                     <Button
                       variant="outlined"
                       fullWidth
-                      startIcon={<Login sx={{ color: COLORS.SECONDARY, fontSize: 18 }} />}
+                      startIcon={
+                        <Login sx={{ color: COLORS.SECONDARY, fontSize: 18 }} />
+                      }
                       sx={{
                         color: COLORS.SECONDARY,
                         borderColor: "#01354724",
@@ -245,7 +266,11 @@ const Sidebar = () => {
               {/* User Profile Section */}
               {isCollapsed ? (
                 <Stack spacing={1} sx={{ alignItems: "center" }}>
-                  <Tooltip title={userData?.name || "User Profile"} placement="right" arrow>
+                  <Tooltip
+                    title={userData?.name || "User Profile"}
+                    placement="right"
+                    arrow
+                  >
                     <Box
                       sx={{
                         width: 40,
@@ -324,7 +349,11 @@ const Sidebar = () => {
                     >
                       {userData?.name || "-"}
                     </Typography>
-                    <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
+                    <Stack
+                      direction="row"
+                      spacing={0.5}
+                      sx={{ alignItems: "center" }}
+                    >
                       <Box
                         sx={{
                           width: 6,

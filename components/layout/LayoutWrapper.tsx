@@ -26,12 +26,12 @@ const LayoutWrapper = ({ children }: { children: ReactNode }) => {
 
   // Routes that should NOT render the default Guest Header, but still render Sidebar
   const excludeHeaderOnly =
-    pathname.startsWith("/dashboard/my-profile") ||
-    pathname.startsWith("/dashboard/saved") ||
-    pathname.startsWith("/dashboard/my-contracts") ||
-    pathname.startsWith("/dashboard/messages") ||
-    pathname.startsWith("/dashboard/notifications") ||
-    pathname.startsWith("/dashboard/settings");
+    pathname.startsWith("/dashboard/profile/my-profile") ||
+    pathname.startsWith("/dashboard/profile/saved") ||
+    pathname.startsWith("/dashboard/profile/my-contracts") ||
+    pathname.startsWith("/dashboard/profile/messages") ||
+    pathname.startsWith("/dashboard/profile/notifications") ||
+    pathname.startsWith("/dashboard/profile/settings");
 
   const showSidebar = !excludeDefaultLayout;
   const showHeader = !excludeDefaultLayout && !excludeHeaderOnly;

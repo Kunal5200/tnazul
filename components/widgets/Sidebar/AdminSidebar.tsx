@@ -1,14 +1,22 @@
 "use client";
 
 import React from "react";
-import { Box, List, ListItemButton, ListItemIcon, ListItemText, Typography, Divider } from "@mui/material";
-import { 
-  GridView, 
-  FactCheck, 
-  People, 
-  Report, 
-  AttachMoney, 
-  ArrowBack 
+import {
+  Box,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+  Divider,
+} from "@mui/material";
+import {
+  GridView,
+  FactCheck,
+  People,
+  Report,
+  AttachMoney,
+  ArrowBack,
 } from "@mui/icons-material";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
@@ -24,7 +32,14 @@ interface SidebarItemProps {
   isActive?: boolean;
 }
 
-const SidebarItem = ({ label, icon, href, badge, badgeColor, isActive }: SidebarItemProps) => {
+const SidebarItem = ({
+  label,
+  icon,
+  href,
+  badge,
+  badgeColor,
+  isActive,
+}: SidebarItemProps) => {
   return (
     <Link href={href} style={{ textDecoration: "none" }}>
       <ListItemButton
@@ -33,7 +48,9 @@ const SidebarItem = ({ label, icon, href, badge, badgeColor, isActive }: Sidebar
           mb: 0.5,
           py: 1.5,
           px: 2.5,
-          backgroundColor: isActive ? "rgba(255, 255, 255, 0.08)" : "transparent",
+          backgroundColor: isActive
+            ? "rgba(255, 255, 255, 0.08)"
+            : "transparent",
           "&:hover": {
             backgroundColor: "rgba(255, 255, 255, 0.12)",
           },
@@ -43,7 +60,9 @@ const SidebarItem = ({ label, icon, href, badge, badgeColor, isActive }: Sidebar
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <ListItemIcon sx={{ minWidth: 36, color: isActive ? "#FFFFFF" : "#7A9BAB" }}>
+          <ListItemIcon
+            sx={{ minWidth: 36, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
+          >
             {icon}
           </ListItemIcon>
           <ListItemText
@@ -85,11 +104,18 @@ const SidebarItem = ({ label, icon, href, badge, badgeColor, isActive }: Sidebar
   );
 };
 
-const AdminSidebar = () => {
+const AdminSidebar = ({
+  approval_number,
+  report_number,
+}: {
+  approval_number: number;
+  report_number?: number;
+}) => {
   const pathname = usePathname();
 
   // Highlight Overview for /admin path
-  const isOverviewActive = pathname === "/admin" || pathname === "/admin/overview";
+  const isOverviewActive =
+    pathname === "/admin" || pathname === "/admin/overview";
 
   return (
     <Box
@@ -109,9 +135,7 @@ const AdminSidebar = () => {
         px: 2,
       }}
     >
-      {/* Upper Navigation section */}
       <Box sx={{ flexGrow: 1 }}>
-        {/* Admin Brand Header */}
         <Box sx={{ py: 2, px: 2, mb: 3 }}>
           <Typography
             sx={{
@@ -151,7 +175,7 @@ const AdminSidebar = () => {
             label="Approvals"
             icon={<FactCheck sx={{ fontSize: 22 }} />}
             href="/admin/approvals"
-            badge={3}
+            badge={approval_number}
             badgeColor="#E78B49" // Orange/amber badge
             isActive={pathname === "/admin/approvals"}
           />

@@ -167,7 +167,7 @@ const Dashboard = () => {
   const [apiRequestData, setApiRequstData] = useState({
     page: 1,
     limit: 10,
-    status: CONTRACT_STATUS.PUBLISHED,
+    status: CONTRACT_STATUS.APPROVED,
   });
 
   const {
@@ -229,15 +229,21 @@ const Dashboard = () => {
       let category = "real-estate";
       let categoryLabel = "Real Estate";
       let categoryIcon = <Apartment />;
-      
-      if (doc.contractType?.includes("Vehicle") || doc.category?.includes("Vehicle")) {
-          category = "vehicles";
-          categoryLabel = "Vehicles";
-          categoryIcon = <DirectionsCar />;
-      } else if (doc.contractType?.includes("Commercial") || doc.category?.includes("Commercial")) {
-          category = "commercial";
-          categoryLabel = "Commercial";
-          categoryIcon = <BusinessCenter />;
+
+      if (
+        doc.contractType?.includes("Vehicle") ||
+        doc.category?.includes("Vehicle")
+      ) {
+        category = "vehicles";
+        categoryLabel = "Vehicles";
+        categoryIcon = <DirectionsCar />;
+      } else if (
+        doc.contractType?.includes("Commercial") ||
+        doc.category?.includes("Commercial")
+      ) {
+        category = "commercial";
+        categoryLabel = "Commercial";
+        categoryIcon = <BusinessCenter />;
       }
 
       return {
@@ -246,16 +252,18 @@ const Dashboard = () => {
         categoryLabel: categoryLabel,
         categoryIcon: categoryIcon,
         title: doc.contractTitle || "Untitled Contract",
-        location: [doc.districtOrNeighborhood, doc.city].filter(Boolean).join(", "),
+        location: [doc.districtOrNeighborhood, doc.city]
+          .filter(Boolean)
+          .join(", "),
         totalValue: doc.totalContractValue?.toString() || "0",
         monthlyValue: doc.monthlyAmount?.toString() || "0",
-        imageUrl: doc.assetImages?.[0] || "https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=600&auto=format&fit=crop",
+        imageUrl:
+          doc.assetImages?.[0] ||
+          "https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=600&auto=format&fit=crop",
         timeLeft: doc.remainingDuration || "0 month",
         views: 0, // Placeholder
         isStarred: false, // Placeholder
-        tags: [
-          { label: "Verified", type: "verified" },
-        ],
+        tags: [{ label: "Verified", type: "verified" }],
       };
     });
   }, [contractData?.docs]);
@@ -270,7 +278,6 @@ const Dashboard = () => {
 
   // Handle Filtering and Sorting
   const filteredAndSortedContracts = useMemo(() => {
-
     // 1. Filter by category
     let list = apiList.filter((contract: any) => {
       if (activeCategory === "all") return true;
@@ -279,13 +286,19 @@ const Dashboard = () => {
 
     // 2. Filter by advanced filters
     if (filterVerified) {
-      list = list.filter((c: any) => c.tags?.some((t: any) => t.type === "verified"));
+      list = list.filter((c: any) =>
+        c.tags?.some((t: any) => t.type === "verified"),
+      );
     }
     if (filterUrgent) {
-      list = list.filter((c: any) => c.tags?.some((t: any) => t.type === "urgent"));
+      list = list.filter((c: any) =>
+        c.tags?.some((t: any) => t.type === "urgent"),
+      );
     }
     if (filterDocsReady) {
-      list = list.filter((c: any) => c.tags?.some((t: any) => t.type === "docs-ready"));
+      list = list.filter((c: any) =>
+        c.tags?.some((t: any) => t.type === "docs-ready"),
+      );
     }
 
     // 3. Sort
