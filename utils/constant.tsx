@@ -98,7 +98,7 @@ export const SIDEBAR_PROFILE_LINKS: LINK_BOX[] = [
   {
     icon: SettingsOutlined,
     label: "Settings",
-    url: "/dashboard/profile/settings",
+    url: "/dashboard/profile/settings/edit-profile",
   },
 ];
 
