@@ -15,6 +15,8 @@ import {
   InputAdornment,
   IconButton,
   Switch,
+  Dialog,
+  CircularProgress,
 } from "@mui/material";
 import {
   CameraAltOutlined,
@@ -43,6 +45,7 @@ import { useUserDetail } from "@/hooks/user/useUserDetail";
 import { useUpdateProfile } from "@/hooks/user/useUpdateProfile";
 import { useUpdatePhoto } from "@/hooks/user/useUpdatePhoto";
 import { useChangePassword } from "@/hooks/authentication/changePassword";
+import { useDeactivateAccount } from "@/hooks/user/useDeactivateAccount";
 
 interface SettingsLayoutProps {
   activeTab: "edit-profile" | "verification" | "account-settings";
@@ -53,6 +56,26 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
   const { updateProfile, loading: updatingProfile } = useUpdateProfile();
   const { updatePhoto, loading: uploadingPhoto } = useUpdatePhoto();
   const { changePassword, loading: updatingPassword } = useChangePassword();
+  const { deactivateAccount, loading: deactivatingAccount } = useDeactivateAccount();
+
+  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false);
+
+  const handleConfirmDeactivate = async () => {
+    try {
+      await deactivateAccount("INACTIVE");
+      setDeactivateModalOpen(false);
+      setToastMessage("Account deactivated successfully.");
+      setToastSeverity("success");
+      setToastOpen(true);
+      await refetchUser();
+    } catch (err: any) {
+      setToastMessage(
+        err?.response?.data?.message || "Failed to deactivate account."
+      );
+      setToastSeverity("error");
+      setToastOpen(true);
+    }
+  };
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -105,7 +128,7 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
   // --- STATUS & TOAST STATE ---
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [toastSeverity, setToastSeverity] = useState<"success" | "info">(
+  const [toastSeverity, setToastSeverity] = useState<"success" | "info" | "error">(
     "success",
   );
 
@@ -2207,13 +2230,7 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
                           backgroundColor: "#FF5C5C0A",
                         },
                       }}
-                      onClick={() => {
-                        setToastMessage(
-                          "Account deactivation is disabled in demo mode.",
-                        );
-                        setToastSeverity("info");
-                        setToastOpen(true);
-                      }}
+                      onClick={() => setDeactivateModalOpen(true)}
                     >
                       Deactivate
                     </Button>
@@ -2308,6 +2325,115 @@ const SettingsLayout = ({ activeTab }: SettingsLayoutProps) => {
           {toastMessage}
         </Alert>
       </Snackbar>
+
+      {/* Deactivate Account Confirmation Dialog */}
+      <Dialog
+        open={deactivateModalOpen}
+        onClose={() => !deactivatingAccount && setDeactivateModalOpen(false)}
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: "20px",
+              padding: 3,
+              maxWidth: "450px",
+              width: "100%",
+            },
+          },
+        }}
+      >
+        <Box sx={{ textAlign: "center" }}>
+          <Box
+            sx={{
+              width: 56,
+              height: 56,
+              borderRadius: "50%",
+              backgroundColor: "#FF5C5C1A",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 16px auto",
+            }}
+          >
+            <ErrorOutlined sx={{ color: "#FF5C5C", fontSize: 32 }} />
+          </Box>
+
+          <Typography
+            sx={{
+              fontFamily: poppins700.style.fontFamily,
+              fontWeight: 700,
+              fontSize: "18px",
+              color: COLORS.SECONDARY,
+              mb: 1,
+            }}
+          >
+            Deactivate Account?
+          </Typography>
+
+          <Typography
+            sx={{
+              fontFamily: poppins.style.fontFamily,
+              fontSize: "13.5px",
+              color: "#7A9BAB",
+              mb: 3,
+              lineHeight: 1.6,
+            }}
+          >
+            Are you sure you want to deactivate your account? Temporarily hide your profile and listings. You can reactivate anytime.
+          </Typography>
+
+          <Stack direction="row" spacing={2} sx={{ justifyContent: "center" }}>
+            <Button
+              variant="outlined"
+              disabled={deactivatingAccount}
+              onClick={() => setDeactivateModalOpen(false)}
+              sx={{
+                flex: 1,
+                borderRadius: "100px",
+                borderColor: "#E5E7EB",
+                color: COLORS.SECONDARY,
+                textTransform: "none",
+                fontFamily: poppins700.style.fontFamily,
+                fontWeight: 600,
+                fontSize: "13px",
+                py: 1.2,
+                "&:hover": {
+                  borderColor: COLORS.SECONDARY,
+                  backgroundColor: "transparent",
+                },
+              }}
+            >
+              No, Cancel
+            </Button>
+            <Button
+              variant="contained"
+              disabled={deactivatingAccount}
+              onClick={handleConfirmDeactivate}
+              sx={{
+                flex: 1,
+                borderRadius: "100px",
+                backgroundColor: "#FF5C5C",
+                color: "#FFFFFF",
+                textTransform: "none",
+                fontFamily: poppins700.style.fontFamily,
+                fontWeight: 600,
+                fontSize: "13px",
+                py: 1.2,
+                boxShadow: "none",
+                "&:hover": {
+                  backgroundColor: "#E04848",
+                  boxShadow: "none",
+                },
+              }}
+            >
+              {deactivatingAccount ? (
+                <CircularProgress size={20} sx={{ color: "#FFFFFF" }} />
+              ) : (
+                "Yes, Deactivate"
+              )}
+            </Button>
+          </Stack>
+        </Box>
+      </Dialog>
     </Box>
   );
 };

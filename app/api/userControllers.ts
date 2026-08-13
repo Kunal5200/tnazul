@@ -30,4 +30,12 @@ export const Usercontrollers = {
       throw error;
     }
   },
+  deactivateAccount: async (status: string = "INACTIVE") => {
+    try {
+      let result = await userSecuredAPI.put("/deactivate", { status });
+      return result.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

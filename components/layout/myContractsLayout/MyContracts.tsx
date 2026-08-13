@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Button, Stack, Typography, CircularProgress } from "@mui/material";
 import {
   DescriptionOutlined,
   ChatBubbleOutlineOutlined,
@@ -14,25 +14,101 @@ import { poppins, poppins700 } from "@/utils/fonts";
 import WhatsAppButton from "@/components/layout/dashboard/contracts/WhatsAppButton";
 import { ContractCard } from "./components/ContractCard";
 import { ContractItem } from "./types";
+import { useMyContracts } from "@/hooks/contract/useMyContracts";
 
 const MyContractsLayout = () => {
   const [activeTab, setActiveTab] = useState<"active" | "draft" | "expired">(
-    "active",
+    "active"
   );
 
-  // Mock contracts data using only local images
-  const mockContracts: ContractItem[] = [
-    {
-      id: "c1",
-      title: "3BR Villa - Al Nakheel District",
-      image: "/images/villa_preview.png",
-      status: "active",
-      location: "Riyadh",
-      price: "2,04,000 SAR",
-      views: 342,
-      timeLeft: "18 mo left",
-      subtext: "Reply to buyer share documents next.",
-      subtextColor: "#8A3FFC", // Purple
+  const { fetchMyContracts, myContractsList, loading } = useMyContracts();
+
+  const fetchedStatusRef = React.useRef<string | null>(null);
+
+  useEffect(() => {
+    const statusQuery =
+      activeTab === "active"
+        ? "Approved"
+        : activeTab === "draft"
+        ? "Draft"
+        : "Expired";
+
+    if (fetchedStatusRef.current === statusQuery) return;
+    fetchedStatusRef.current = statusQuery;
+
+    fetchMyContracts({ page: 1, limit: 10, status: statusQuery });
+  }, [activeTab, fetchMyContracts]);
+
+  // Helper to map API contract object to UI ContractItem using exact API schema keys
+  const mapApiContractToItem = (item: any): ContractItem => {
+    const rawStatus = (
+      item?.contractStatus ||
+      item?.status ||
+      "Approved"
+    ).toLowerCase();
+
+    const status: "active" | "draft" | "expired" =
+      rawStatus === "approved" || rawStatus === "active"
+        ? "active"
+        : rawStatus === "draft" || rawStatus === "pending"
+        ? "draft"
+        : "expired";
+
+    const title =
+      item?.contractTitle ||
+      item?.title ||
+      item?.contractName ||
+      item?.assetType ||
+      (item?.category ? `${item.category} Contract` : "Contract");
+
+    const locationParts = [item?.city, item?.districtOrNeighborhood].filter(
+      Boolean
+    );
+    const location =
+      locationParts.length > 0 ? locationParts.join(", ") : "Riyadh";
+
+    const val = item?.totalContractValue ?? item?.price;
+    const currency = item?.currency || "SAR";
+    const price =
+      val !== undefined && val !== null
+        ? `${Number(val).toLocaleString()} ${currency}`
+        : "0 SAR";
+
+    const monthlyAmount =
+      item?.monthlyAmount !== undefined && item?.monthlyAmount !== null
+        ? `${Number(item.monthlyAmount).toLocaleString()} ${currency}/mo`
+        : undefined;
+
+    const rawImg =
+      item?.assetImages?.[0] || item?.contractDocuments?.[0] || item?.image;
+
+    const image =
+      typeof rawImg === "string" && rawImg.trim() !== ""
+        ? rawImg
+        : item?.category === "Villa"
+        ? "/images/villa_preview.png"
+        : "/images/shop_preview.png";
+
+    const timeLeft = item?.remainingDuration
+      ? `${item.remainingDuration} left`
+      : item?.timeLeft || undefined;
+
+    return {
+      id: item?._id || item?.id || Math.random().toString(),
+      title,
+      image,
+      status,
+      contractStatus: item?.contractStatus || item?.status,
+      location,
+      price,
+      views: item?.views || item?.viewCount || 0,
+      timeLeft,
+      contractNumber: item?.contractNumber,
+      contractType: item?.contractType,
+      category: item?.category,
+      monthlyAmount,
+      currency,
+      subtext: item?.contractDescription || item?.subtext || undefined,
       steps: [
         {
           label: "Listed",
@@ -42,7 +118,7 @@ const MyContractsLayout = () => {
             />
           ),
           isActive: true,
-          color: "#166CA9", // Blue
+          color: "#166CA9",
         },
         {
           label: "Interested",
@@ -52,70 +128,6 @@ const MyContractsLayout = () => {
             />
           ),
           isActive: true,
-          color: "#8A3FFC", // Purple
-        },
-        {
-          label: "Docs Sent",
-          icon: (isActive) => (
-            <ShareOutlined
-              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
-            />
-          ),
-          isActive: false,
-          color: "#ED6C02",
-        },
-        {
-          label: "Approval",
-          icon: (isActive) => (
-            <AccessTimeOutlined
-              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
-            />
-          ),
-          isActive: false,
-          color: COLORS.SECONDARY,
-        },
-        {
-          label: "Done",
-          icon: (isActive) => (
-            <CheckCircleOutlined
-              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
-            />
-          ),
-          isActive: false,
-          color: "#10753E",
-        },
-      ],
-    },
-    {
-      id: "c2",
-      title: "Commercial Shop - Al Olaya Tower",
-      image: "/images/shop_preview.png",
-      status: "active",
-      location: "Riyadh",
-      price: "90,000 SAR",
-      views: 521,
-      timeLeft: "6 mo left",
-      subtext: "Buyer is reviewing the contract.",
-      subtextColor: "#ED6C02", // Orange
-      steps: [
-        {
-          label: "Listed",
-          icon: (isActive) => (
-            <DescriptionOutlined
-              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
-            />
-          ),
-          isActive: true,
-          color: "#166CA9", // Blue
-        },
-        {
-          label: "Interested",
-          icon: (isActive) => (
-            <ChatBubbleOutlineOutlined
-              sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
-            />
-          ),
-          isActive: false,
           color: "#8A3FFC",
         },
         {
@@ -125,8 +137,8 @@ const MyContractsLayout = () => {
               sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
             />
           ),
-          isActive: true,
-          color: "#ED6C02", // Orange
+          isActive: rawStatus === "approved" || rawStatus === "active",
+          color: "#ED6C02",
         },
         {
           label: "Approval",
@@ -135,7 +147,7 @@ const MyContractsLayout = () => {
               sx={{ fontSize: 15, color: isActive ? "#FFFFFF" : "#7A9BAB" }}
             />
           ),
-          isActive: false,
+          isActive: rawStatus === "approved",
           color: COLORS.SECONDARY,
         },
         {
@@ -149,36 +161,18 @@ const MyContractsLayout = () => {
           color: "#10753E",
         },
       ],
-    },
-    {
-      id: "c3",
-      title: "Toyota Camry 2022 - Full Lease",
-      image: "/images/shop_preview.png", // Local preview fallback instead of unsplash
-      status: "draft",
-      location: "Jeddah",
-      price: "48,000 SAR",
-      views: 94,
-    },
-    {
-      id: "c4",
-      title: "Office Suite - King Fahd Road",
-      image: "/images/villa_preview.png", // Local preview fallback instead of unsplash
-      status: "expired",
-      location: "Riyadh",
-      price: "72,000 SAR",
-      views: 189,
-    },
-  ];
+    };
+  };
 
-  // Filtering counts
-  const activeCount = mockContracts.filter((c) => c.status === "active").length;
-  const draftCount = mockContracts.filter((c) => c.status === "draft").length;
-  const expiredCount = mockContracts.filter(
-    (c) => c.status === "expired",
-  ).length;
+  // Map API list to UI items
+  const apiMappedContracts = myContractsList.map(mapApiContractToItem);
 
-  // Filter list
-  const filteredContracts = mockContracts.filter((c) => c.status === activeTab);
+  const activeCount =
+    activeTab === "active" ? apiMappedContracts.length : 0;
+  const draftCount =
+    activeTab === "draft" ? apiMappedContracts.length : 0;
+  const expiredCount =
+    activeTab === "expired" ? apiMappedContracts.length : 0;
 
   return (
     <Box sx={{ pb: 10, maxWidth: "1200px", margin: "0 auto" }}>
@@ -227,7 +221,7 @@ const MyContractsLayout = () => {
             },
           }}
         >
-          {`Active (${activeCount})`}
+          {`Active (${activeTab === "active" ? apiMappedContracts.length : 0})`}
         </Button>
 
         {/* Draft Tab Button */}
@@ -251,7 +245,7 @@ const MyContractsLayout = () => {
             },
           }}
         >
-          {`Draft (${draftCount})`}
+          {`Draft (${activeTab === "draft" ? apiMappedContracts.length : 0})`}
         </Button>
 
         {/* Expired Tab Button */}
@@ -275,16 +269,43 @@ const MyContractsLayout = () => {
             },
           }}
         >
-          {`Expired (${expiredCount})`}
+          {`Expired (${activeTab === "expired" ? apiMappedContracts.length : 0})`}
         </Button>
       </Box>
 
       {/* Contracts List container */}
-      <Stack spacing={4}>
-        {filteredContracts.map((contract) => (
-          <ContractCard key={contract.id} contract={contract} />
-        ))}
-      </Stack>
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+          <CircularProgress sx={{ color: COLORS.SECONDARY }} />
+        </Box>
+      ) : apiMappedContracts.length > 0 ? (
+        <Stack spacing={4}>
+          {apiMappedContracts.map((contract) => (
+            <ContractCard key={contract.id} contract={contract} />
+          ))}
+        </Stack>
+      ) : (
+        <Box
+          sx={{
+            textAlign: "center",
+            py: 8,
+            backgroundColor: "#FFFFFF",
+            borderRadius: "24px",
+            p: 5,
+            border: "1px solid #0135470D",
+          }}
+        >
+          <Typography
+            sx={{
+              fontFamily: poppins.style.fontFamily,
+              color: "#7A9BAB",
+              fontSize: "15px",
+            }}
+          >
+            No contracts found.
+          </Typography>
+        </Box>
+      )}
 
       {/* Floating Action WhatsApp trigger */}
       <WhatsAppButton />

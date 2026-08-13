@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { ProductCardImage } from "./ProductCardImage";
 import { ProductCardContent } from "./ProductCardContent";
+import { useSaveContract } from "@/hooks/contract/useSaveContract";
 
 export interface ProductCardProps {
   id: string;
@@ -20,6 +21,7 @@ export interface ProductCardProps {
   views: number;
   isStarred?: boolean;
   isFavoriteInitial?: boolean;
+  isSaved?: boolean;
   tags?: { label: string; type: "verified" | "docs-ready" | "urgent" }[];
   whatsappAvailable?: boolean;
   viewMode?: "grid" | "list";
@@ -39,11 +41,25 @@ const ProductCard: React.FC<ProductCardProps> = ({
   views,
   isStarred = false,
   isFavoriteInitial = false,
+  isSaved,
   tags = [],
   whatsappAvailable = false,
   viewMode = "grid",
 }) => {
-  const [isFavorite, setIsFavorite] = useState(isFavoriteInitial);
+  const initialFavorite = isSaved !== undefined ? isSaved : isFavoriteInitial;
+  const [isFavorite, setIsFavorite] = useState(initialFavorite);
+  const { saveContract } = useSaveContract();
+
+  const handleToggleFavorite = async (val?: boolean) => {
+    const nextSavedState = typeof val === "boolean" ? val : !isFavorite;
+    setIsFavorite(nextSavedState);
+    try {
+      await saveContract(id, nextSavedState);
+    } catch (error) {
+      console.error("Failed to save contract:", error);
+      setIsFavorite(!nextSavedState);
+    }
+  };
 
   if (viewMode === "list") {
     return (
@@ -71,7 +87,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           categoryIcon={categoryIcon}
           categoryLabel={categoryLabel}
           isFavorite={isFavorite}
-          setIsFavorite={setIsFavorite}
+          setIsFavorite={handleToggleFavorite}
           whatsappAvailable={whatsappAvailable}
           timeLeft={timeLeft}
           customWidth={{ xs: "100%", sm: "240px", md: "280px" }}
@@ -121,7 +137,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         categoryIcon={categoryIcon}
         categoryLabel={categoryLabel}
         isFavorite={isFavorite}
-        setIsFavorite={setIsFavorite}
+        setIsFavorite={handleToggleFavorite}
         whatsappAvailable={whatsappAvailable}
         timeLeft={timeLeft}
       />

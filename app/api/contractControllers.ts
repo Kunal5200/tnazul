@@ -85,4 +85,46 @@ export const contractControllers = {
       throw error;
     }
   },
+  getMyContracts: async (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+  }) => {
+    try {
+      const result = await contractSecuredAPI.get("/myContracts", {
+        params: {
+          page: params?.page || 1,
+          limit: params?.limit || 10,
+          ...(params?.status ? { status: params.status } : {}),
+        },
+      });
+      return result?.data || result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  saveContract: async (contractId: string, isSaved: boolean) => {
+    try {
+      const result = await contractSecuredAPI.post("/save", {
+        contractId,
+        isSaved,
+      });
+      return result?.data || result;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getMySavedContracts: async (params?: { page?: number; pageSize?: number }) => {
+    try {
+      const result = await contractSecuredAPI.get("/mySaved", {
+        params: {
+          page: params?.page || 1,
+          pageSize: params?.pageSize || 10,
+        },
+      });
+      return result?.data || result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

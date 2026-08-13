@@ -1,50 +1,97 @@
 "use client";
 
-import React, { useState } from "react";
-import { Box, Grid, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Grid, Typography, CircularProgress } from "@mui/material";
 import { COLORS } from "@/utils/enum";
-import { poppins700 } from "@/utils/fonts";
+import { poppins, poppins700 } from "@/utils/fonts";
 import WhatsAppButton from "@/components/layout/dashboard/contracts/WhatsAppButton";
 import { SavedCard } from "./components/SavedCard";
 import { SavedItem } from "./types";
+import { useMySavedContracts } from "@/hooks/contract/useMySavedContracts";
+import { useSaveContract } from "@/hooks/contract/useSaveContract";
 
 const SavedLayout = () => {
-  // Local state for interactive deletion
-  const [savedItems, setSavedItems] = useState<SavedItem[]>([
-    {
-      id: "s1",
-      title: "2BR Apartment - Corniche Sea View",
-      image: "/images/villa_preview.png",
-      location: "Dammam",
-      price: "33,000",
-      monthlyPrice: "5,500/mo",
-      duration: "6 mo",
-      isUrgent: true,
-    },
-    {
-      id: "s2",
-      title: "Hyundai Sonata 2022 - Low Mileage",
-      image: "/images/shop_preview.png",
-      location: "Riyadh",
-      price: "29,400",
-      monthlyPrice: "1,470/mo",
-      duration: "20 mo",
-      isUrgent: false,
-    },
-    {
-      id: "s3",
-      title: "Gym Membership - 2 Years Left",
-      image: "/images/villa_preview.png",
-      location: "Riyadh",
-      price: "10,800",
-      monthlyPrice: "450/mo",
-      duration: "24 mo",
-      isUrgent: false,
-    },
-  ]);
+  const { fetchMySavedContracts, savedList, loading } = useMySavedContracts();
+  const { saveContract } = useSaveContract();
 
-  const handleRemove = (id: string) => {
+  const [savedItems, setSavedItems] = useState<SavedItem[]>([]);
+
+  const isFetchedRef = React.useRef(false);
+
+  useEffect(() => {
+    if (isFetchedRef.current) return;
+    isFetchedRef.current = true;
+    fetchMySavedContracts({ page: 1, pageSize: 10 });
+  }, [fetchMySavedContracts]);
+
+  // Map API saved items to UI format
+  useEffect(() => {
+    if (savedList && savedList.length > 0) {
+      const mapped = savedList.map((item: any): SavedItem => {
+        const contractObj = item?.contractId || item;
+
+        const rawImg =
+          contractObj?.assetImages?.[0] ||
+          contractObj?.contractDocuments?.[0] ||
+          contractObj?.image ||
+          item?.image;
+
+        const image =
+          typeof rawImg === "string" && rawImg.trim() !== ""
+            ? rawImg
+            : "/images/villa_preview.png";
+
+        const totalVal =
+          contractObj?.totalContractValue ?? contractObj?.price ?? 0;
+        const monthlyVal =
+          contractObj?.monthlyAmount ?? contractObj?.monthlyPrice ?? 0;
+
+        const locationParts = [
+          contractObj?.city,
+          contractObj?.districtOrNeighborhood,
+        ].filter(Boolean);
+
+        return {
+          id:
+            contractObj?._id ||
+            contractObj?.id ||
+            item?._id ||
+            Math.random().toString(),
+          title:
+            contractObj?.contractTitle ||
+            contractObj?.title ||
+            contractObj?.contractName ||
+            "Saved Contract",
+          image,
+          location:
+            locationParts.length > 0 ? locationParts.join(", ") : "Riyadh",
+          price:
+            typeof totalVal === "number" ? totalVal.toLocaleString() : totalVal,
+          monthlyPrice:
+            typeof monthlyVal === "number"
+              ? `${monthlyVal.toLocaleString()}/mo`
+              : monthlyVal,
+          duration:
+            contractObj?.remainingDuration || contractObj?.duration || "0 mo",
+          isUrgent: Boolean(contractObj?.isUrgent),
+        };
+      });
+      setSavedItems(mapped);
+    } else {
+      setSavedItems([]);
+    }
+  }, [savedList]);
+
+  const handleRemove = async (id: string) => {
+    // Optimistic removal from UI list
     setSavedItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    try {
+      await saveContract(id, false);
+    } catch (err) {
+      console.error("Failed to unsave contract:", err);
+      // Refetch list if unsave API call failed
+      fetchMySavedContracts({ page: 1, pageSize: 10 });
+    }
   };
 
   return (
@@ -66,7 +113,11 @@ const SavedLayout = () => {
       </Typography>
 
       {/* Grid of Saved Cards */}
-      {savedItems.length > 0 ? (
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
+          <CircularProgress sx={{ color: COLORS.SECONDARY }} />
+        </Box>
+      ) : savedItems.length > 0 ? (
         <Grid container spacing={3.5}>
           {savedItems.map((item) => (
             <Grid key={item.id} size={{ xs: 12, sm: 6, md: 4 }}>
@@ -98,7 +149,7 @@ const SavedLayout = () => {
           </Typography>
           <Typography
             sx={{
-              fontFamily: poppins700.style.fontFamily,
+              fontFamily: poppins.style.fontFamily,
               fontWeight: 500,
               fontSize: "14px",
               color: "#7A9BAB",

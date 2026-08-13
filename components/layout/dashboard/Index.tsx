@@ -263,6 +263,8 @@ const Dashboard = () => {
         timeLeft: doc.remainingDuration || "0 month",
         views: 0, // Placeholder
         isStarred: false, // Placeholder
+        isSaved: doc.isSaved || false,
+        isFavoriteInitial: doc.isSaved || false,
         tags: [{ label: "Verified", type: "verified" }],
       };
     });

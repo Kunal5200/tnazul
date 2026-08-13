@@ -14,21 +14,34 @@ import { poppins, poppins700 } from "@/utils/fonts";
 import { ContractItem } from "../types";
 
 // Stepper item component
-const StepperPill = ({ label, icon, activeColor, isActive }: { label: string; icon: React.ReactNode; activeColor?: string; isActive: boolean }) => {
+const StepperPill = ({
+  label,
+  icon,
+  activeColor,
+  isActive,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  activeColor?: string;
+  isActive: boolean;
+}) => {
   return (
     <Box
       sx={{
         borderRadius: "100px",
-        py: 0.75,
-        px: 2,
+        py: 0.5,
+        px: 1.5,
         display: "inline-flex",
         alignItems: "center",
-        gap: 1,
+        gap: 0.75,
         backgroundColor: isActive ? activeColor || COLORS.SECONDARY : "#FFFFFF",
-        border: isActive ? `1.38px solid ${activeColor || COLORS.SECONDARY}` : "1.38px solid #01354717",
+        border: isActive
+          ? `1.38px solid ${activeColor || COLORS.SECONDARY}`
+          : "1.38px solid #01354717",
         color: isActive ? "#FFFFFF" : "#7A9BAB",
         boxSizing: "border-box",
-        minHeight: "32px",
+        minHeight: "28px",
+        flexShrink: 0,
       }}
     >
       {icon}
@@ -36,8 +49,9 @@ const StepperPill = ({ label, icon, activeColor, isActive }: { label: string; ic
         sx={{
           fontFamily: poppins700.style.fontFamily,
           fontWeight: 700,
-          fontSize: "12px",
+          fontSize: "11.5px",
           lineHeight: 1,
+          whiteSpace: "nowrap",
         }}
       >
         {label}
@@ -89,7 +103,7 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
       {/* Content Box */}
       <Box sx={{ flexGrow: 1, width: "100%" }}>
         {/* Title & Status Row */}
-        <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", mb: 1 }}>
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", mb: 0.75, flexWrap: "wrap" }}>
           <Typography
             sx={{
               fontFamily: poppins700.style.fontFamily,
@@ -100,7 +114,7 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
           >
             {contract.title}
           </Typography>
-          
+
           {/* Status Badging */}
           <Box
             sx={{
@@ -125,11 +139,11 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
                   : "#FF5C5C",
             }}
           >
-            {contract.status}
+            {contract.contractStatus || contract.status}
           </Box>
         </Stack>
 
-        {/* Specs Details Row */}
+        {/* Specs Details Row 1: Location & Financials */}
         <Stack
           direction="row"
           spacing={2.5}
@@ -141,16 +155,88 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
             fontFamily: poppins.style.fontFamily,
             fontWeight: 500,
             fontSize: "13px",
-            mb: contract.status === "active" ? 2.5 : 0,
+            mb: 1.25,
           }}
         >
           <Typography sx={{ color: "#7A9BAB", fontSize: "13px" }}>
             {contract.location}
           </Typography>
           <Typography sx={{ color: COLORS.SECONDARY, fontWeight: 700, fontSize: "13px" }}>
-            {contract.price}
+            Total: {contract.price}
           </Typography>
-          <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
+          {contract.monthlyAmount && (
+            <Typography sx={{ color: "#166CA9", fontWeight: 600, fontSize: "13px" }}>
+              Monthly: {contract.monthlyAmount}
+            </Typography>
+          )}
+        </Stack>
+
+        {/* Specs Details Row 2: Badges, Views & Remaining Duration (below address) */}
+        <Stack
+          direction="row"
+          spacing={1.5}
+          sx={{
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: 1,
+            color: "#7A9BAB",
+            fontFamily: poppins.style.fontFamily,
+            fontSize: "13px",
+            mb: contract.status === "active" ? 2 : 0,
+          }}
+        >
+          {contract.contractNumber && (
+            <Box
+              sx={{
+                borderRadius: "6px",
+                px: 1,
+                py: 0.3,
+                fontSize: "10.5px",
+                fontWeight: 600,
+                fontFamily: poppins.style.fontFamily,
+                backgroundColor: "#EDF1F2",
+                color: "#5A7A8A",
+              }}
+            >
+              #{contract.contractNumber}
+            </Box>
+          )}
+
+          {contract.category && (
+            <Box
+              sx={{
+                borderRadius: "6px",
+                px: 1,
+                py: 0.3,
+                fontSize: "10.5px",
+                fontWeight: 600,
+                fontFamily: poppins.style.fontFamily,
+                backgroundColor: "#E3F2FD",
+                color: "#1976D2",
+              }}
+            >
+              {contract.category}
+            </Box>
+          )}
+
+          {contract.contractType && (
+            <Box
+              sx={{
+                borderRadius: "6px",
+                px: 1,
+                py: 0.3,
+                fontSize: "10.5px",
+                fontWeight: 600,
+                fontFamily: poppins.style.fontFamily,
+                backgroundColor: "#F3E5F5",
+                color: "#7B1FA2",
+              }}
+            >
+              {contract.contractType}
+            </Box>
+          )}
+
+          <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", ml: 0.5 }}>
             <VisibilityOutlined sx={{ fontSize: 15 }} />
             <Typography sx={{ fontSize: "13px" }}>{contract.views}</Typography>
           </Stack>
@@ -168,10 +254,14 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
             {/* Stepper Steps Flexbox list */}
             <Stack
               direction="row"
-              useFlexGap
               sx={{
                 alignItems: "center",
-                flexWrap: "wrap",
+                flexWrap: "nowrap",
+                overflowX: "auto",
+                py: 0.5,
+                "&::-webkit-scrollbar": { display: "none" },
+                msOverflowStyle: "none",
+                scrollbarWidth: "none",
               }}
             >
               {contract.steps.map((step, idx) => (
@@ -186,7 +276,8 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
                     <Box
                       sx={{
                         height: "1.5px",
-                        width: { xs: "12px", sm: "30px" },
+                        width: { xs: "8px", sm: "16px", md: "20px" },
+                        flexShrink: 0,
                         backgroundColor: "#01354717",
                       }}
                     />

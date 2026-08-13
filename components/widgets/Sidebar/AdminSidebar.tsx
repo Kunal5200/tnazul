@@ -105,10 +105,10 @@ const SidebarItem = ({
 };
 
 const AdminSidebar = ({
-  approval_number,
+  approval_number = 0,
   report_number,
 }: {
-  approval_number: number;
+  approval_number?: number;
   report_number?: number;
 }) => {
   const pathname = usePathname();
