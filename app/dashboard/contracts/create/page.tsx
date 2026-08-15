@@ -11,7 +11,7 @@ import AttachmentsForm from "@/components/layout/dashboard/contracts/Attachments
 import ReviewPublishForm from "@/components/layout/dashboard/contracts/ReviewPublishForm";
 import WhatsAppButton from "@/components/layout/dashboard/contracts/WhatsAppButton";
 import { useFormik } from "formik";
-
+// best
 export interface ContractFormData {
   contractType: string;
   contractTitle: string;
@@ -40,7 +40,13 @@ export interface ContractFormData {
     content?: string;
     file?: File;
   } | null;
-  asset: { name: string; size: number; type: string; content?: string; file?: File }[];
+  asset: {
+    name: string;
+    size: number;
+    type: string;
+    content?: string;
+    file?: File;
+  }[];
 
   listingType: "Standard" | "Featured";
 }
@@ -143,10 +149,7 @@ const CreateContractPage = () => {
         );
       case 5:
         return (
-          <ReviewPublishForm
-            formik={formik}
-            onBack={() => setCurrentStep(4)}
-          />
+          <ReviewPublishForm formik={formik} onBack={() => setCurrentStep(4)} />
         );
       default:
         return (
