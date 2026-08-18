@@ -123,3 +123,11 @@ export interface QueueItemData {
 export interface IMAGE_CAROUSEL_DATA {
   data: string[];
 }
+
+export interface APPLY_TRANSFER {
+  contractId: string;
+  transferId?: string;
+  status: string;
+  documents: File[];
+  signtaure: File;
+}

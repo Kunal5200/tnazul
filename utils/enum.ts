@@ -20,4 +20,5 @@ export enum CONTRACT_STATUS {
   DRAFT = "Draft",
   APPROVED = "Approved",
   REJECTED = "Rejected",
+  SUBMITTED = "Submitted",
 }

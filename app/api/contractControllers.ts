@@ -1,6 +1,8 @@
+import { TrySharp } from "@mui/icons-material";
 import { contractSecuredAPI } from "./config";
 import { services } from "./serverconstant";
 import {
+  APPLY_TRANSFER,
   ASSEST_INFO,
   ContractPayload,
   GET_API_REQUEST_RESPONSE,
@@ -114,7 +116,10 @@ export const contractControllers = {
       throw error;
     }
   },
-  getMySavedContracts: async (params?: { page?: number; pageSize?: number }) => {
+  getMySavedContracts: async (params?: {
+    page?: number;
+    pageSize?: number;
+  }) => {
     try {
       const result = await contractSecuredAPI.get("/mySaved", {
         params: {
@@ -123,6 +128,34 @@ export const contractControllers = {
         },
       });
       return result?.data || result;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  applyTransfer: async (data: APPLY_TRANSFER) => {
+    try {
+      const formData = new FormData();
+      formData.append("contractId", data.contractId);
+      if (data.transferId) {
+        formData.append("transferId", data.transferId);
+      }
+      formData.append("status", data.status);
+      if (data.signtaure) {
+        formData.append("signature", data.signtaure);
+      }
+      if (data.documents && data.documents.length > 0) {
+        data.documents.forEach((doc) => {
+          formData.append("documents", doc);
+        });
+      }
+
+      let result = await contractSecuredAPI.post("/transfer/apply", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return result?.data;
     } catch (error) {
       throw error;
     }
