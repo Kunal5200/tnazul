@@ -71,9 +71,19 @@ export interface ContractPayload {
 }
 
 export interface GET_API_REQUEST_RESPONSE {
-  page: string | number;
-  limit: string | number;
+  page?: string | number;
+  limit?: string | number;
   status?: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minDuration?: number;
+  maxDuration?: number;
+  contractType?: string;
+  city?: string;
+  categories?: string[];
+  search?: string;
+  [key: string]: any;
 }
 
 export interface ASSEST_INFO {

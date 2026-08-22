@@ -6,6 +6,7 @@ export const useContractList = () => {
   const [loading, setLoading] = useState(true);
   const [contractData, setContractData] = useState<any>(null);
   const fetchContractDetails = (data: GET_API_REQUEST_RESPONSE) => {
+    setLoading(true);
     contractControllers
       .getContractList(data)
       .then((res) => {

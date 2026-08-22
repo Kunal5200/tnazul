@@ -40,15 +40,23 @@ export const contractControllers = {
       throw error;
     }
   },
+  // getContractList: async (data: GET_API_REQUEST_RESPONSE) => {
+  //   try {
+  //     const result = await contractSecuredAPI.get("/getContractList", {
+  //       params: {
+  //         page: data.page,
+  //         limit: data.limit,
+  //         status: data.status,
+  //       },
+  //     });
+  //     return result?.data || result;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // },
   getContractList: async (data: GET_API_REQUEST_RESPONSE) => {
     try {
-      const result = await contractSecuredAPI.get("/getList", {
-        params: {
-          page: data.page,
-          limit: data.limit,
-          status: data.status,
-        },
-      });
+      const result = await contractSecuredAPI.post("/getContractList", data);
       return result?.data || result;
     } catch (error) {
       throw error;

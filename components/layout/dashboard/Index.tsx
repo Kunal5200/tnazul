@@ -167,7 +167,7 @@ const Dashboard = () => {
   const [apiRequestData, setApiRequstData] = useState({
     page: 1,
     limit: 10,
-    status: CONTRACT_STATUS.APPROVED,
+    // status: CONTRACT_STATUS.APPROVED,
   });
 
   const {
