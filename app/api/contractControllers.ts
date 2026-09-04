@@ -1,5 +1,5 @@
 import { TrySharp } from "@mui/icons-material";
-import { contractSecuredAPI } from "./config";
+import { contractPublicAPI, contractSecuredAPI } from "./config";
 import { services } from "./serverconstant";
 import {
   APPLY_TRANSFER,
@@ -156,6 +156,17 @@ export const contractControllers = {
         },
       });
       return result?.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getPublicContractList: async (data: GET_API_REQUEST_RESPONSE) => {
+    try {
+      const result = await contractPublicAPI.post(
+        "/public/getContractList",
+        data,
+      );
+      return result?.data || result;
     } catch (error) {
       throw error;
     }

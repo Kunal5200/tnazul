@@ -52,3 +52,28 @@ export const useContractDetails = () => {
     setContractDetails,
   };
 };
+
+export const useContractPublicList = () => {
+  const [loading, setLoading] = useState(false);
+  const [contractPublicData, setContractPublicData] = useState<any>(null);
+  const fetchContractPublicList = (data: GET_API_REQUEST_RESPONSE) => {
+    setLoading(true);
+    contractControllers
+      .getPublicContractList(data)
+      .then((res) => {
+        setContractPublicData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("error in get contract details", err);
+        setLoading(false);
+      });
+  };
+  return {
+    fetchContractPublicList,
+    contractPublicData,
+    loading,
+    setLoading,
+    setContractPublicData,
+  };
+};
