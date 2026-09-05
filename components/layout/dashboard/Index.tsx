@@ -101,7 +101,8 @@ const Dashboard = () => {
 
   // Pre-calculate apiList so we can compute categoryCounts independently of filtering
   const apiList = useMemo(() => {
-    return (contractData?.docs || []).map((doc: any) => {
+    const docs = contractData?.docs || contractPublicData?.docs || [];
+    return docs.map((doc: any) => {
       let category = "real-estate";
       let categoryLabel = "Real Estate";
       let categoryIcon = <Apartment />;
@@ -144,7 +145,7 @@ const Dashboard = () => {
         tags: [{ label: "Verified", type: "verified" }],
       };
     });
-  }, [contractData?.docs]);
+  }, [contractData?.docs, contractPublicData?.docs]);
 
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = { all: apiList.length };

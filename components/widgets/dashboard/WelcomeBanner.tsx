@@ -3,6 +3,7 @@ import React from "react";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import banner from "@/banner_login/welcome_banner.png";
 import { COLORS } from "@/utils/enum";
+import Link from "next/link";
 
 const WelcomeBanner = () => {
   return (
@@ -81,55 +82,59 @@ const WelcomeBanner = () => {
               width: { xs: "100%", sm: "auto" },
             }}
           >
-            <Button
-              variant="contained"
-              endIcon={
-                <ArrowForwardIcon sx={{ fontSize: "18px !important" }} />
-              }
-              sx={{
-                backgroundColor: COLORS.PRIMARY,
-                color: "#013547", // Matching the dark teal theme color
-                borderRadius: "15px",
-                textTransform: "none",
-                fontSize: "16px",
-                fontWeight: 700,
-                px: 4,
-                py: 1.6,
-                boxShadow: "none",
-                "& .MuiButton-endIcon": {
-                  marginLeft: "8px",
-                },
-                "&:hover": {
-                  backgroundColor: "#D6A838",
+            <Link href="/dashboard/marketplace" passHref>
+              <Button
+                variant="contained"
+                endIcon={
+                  <ArrowForwardIcon sx={{ fontSize: "18px !important" }} />
+                }
+                sx={{
+                  backgroundColor: COLORS.PRIMARY,
+                  color: "#013547", // Matching the dark teal theme color
+                  borderRadius: "15px",
+                  textTransform: "none",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  px: 4,
+                  py: 1.6,
                   boxShadow: "none",
-                },
-              }}
-            >
-              Explore Contracts
-            </Button>
+                  "& .MuiButton-endIcon": {
+                    marginLeft: "8px",
+                  },
+                  "&:hover": {
+                    backgroundColor: "#D6A838",
+                    boxShadow: "none",
+                  },
+                }}
+              >
+                Explore Contracts
+              </Button>
+            </Link>
 
-            <Button
-              variant="outlined"
-              sx={{
-                borderColor: "rgba(255, 255, 255, 0.2)",
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
-                color: "#ffffff",
-                borderRadius: "15px",
-                textTransform: "none",
-                fontSize: "16px",
-                fontWeight: 700,
-                px: 4,
-                py: 1.6,
-                borderWidth: "1.5px",
-                "&:hover": {
-                  borderColor: "rgba(255, 255, 255, 0.4)",
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+            <Link href="/dashboard/contracts/create" passHref>
+              <Button
+                variant="outlined"
+                sx={{
+                  borderColor: "rgba(255, 255, 255, 0.2)",
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  color: "#ffffff",
+                  borderRadius: "15px",
+                  textTransform: "none",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  px: 4,
+                  py: 1.6,
                   borderWidth: "1.5px",
-                },
-              }}
-            >
-              Add New Contract
-            </Button>
+                  "&:hover": {
+                    borderColor: "rgba(255, 255, 255, 0.4)",
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    borderWidth: "1.5px",
+                  },
+                }}
+              >
+                Add New Contract
+              </Button>
+            </Link>
           </Box>
         </Box>
       </Box>

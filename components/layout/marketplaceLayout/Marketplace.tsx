@@ -30,6 +30,7 @@ import {
   Tune,
 } from "@mui/icons-material";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { COLORS, CONTRACT_STATUS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
 import ProductCard, {
@@ -53,8 +54,11 @@ const CATEGORIES_LIST = [
 ];
 
 const MarketplaceLayout = () => {
+  const searchParams = useSearchParams();
+  const queryType = searchParams.get("type");
+
   // Advanced filters state
-  const [contractType, setContractType] = useState<string>("all");
+  const [contractType, setContractType] = useState<string>(queryType || "all");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [priceRange, setPriceRange] = useState<number[]>([1000, 250000]);
   const [duration, setDuration] = useState<string>("all");
@@ -87,6 +91,11 @@ const MarketplaceLayout = () => {
           "real-estate": "Real Estate",
           "vehicles": "Vehicles",
           "commercial": "Commercial",
+          "labour": "Labour",
+          "offices": "Offices",
+          "maintenance": "Maintenance",
+          "subscriptions": "Subscriptions",
+          "equipment": "Equipment",
           "Real Estate": "Real Estate",
           "Vehicles": "Vehicles",
           "Commercial": "Commercial",
@@ -155,11 +164,20 @@ const MarketplaceLayout = () => {
     ]
   );
 
-  // Initial fetch on mount
+  // Sync query params when they change
   useEffect(() => {
-    const initialPayload = buildFilterPayload(1);
+    if (queryType) {
+      setContractType(queryType);
+      setCurrentPage(1);
+    }
+  }, [queryType]);
+
+  // Initial fetch on mount or when contractType changes via query params
+  useEffect(() => {
+    const initialPayload = buildFilterPayload(currentPage);
     fetchContractDetails(initialPayload);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contractType]);
 
   // Apply filters handler triggered by user clicking "Apply Filters"
   const handleApplyFilters = () => {

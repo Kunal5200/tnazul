@@ -28,42 +28,42 @@ export const SIDEBAR_LINKS: LINK_BOX[] = [
   {
     icon: CorporateFareOutlined,
     label: "Real Estate",
-    url: "/dashboard/real-estate",
+    url: "/dashboard/marketplace?type=real-estate",
   },
   {
     icon: DirectionsCarFilledOutlined,
     label: "Vehicles",
-    url: "/dashboard/vehicles",
+    url: "/dashboard/marketplace?type=vehicles",
   },
   {
     icon: BusinessCenterOutlined,
     label: "Commercial",
-    url: "/dashboard/commercial",
+    url: "/dashboard/marketplace?type=commercial",
   },
   {
     icon: PersonOutlined,
     label: "Labour",
-    url: "/dashboard/labour",
+    url: "/dashboard/marketplace?type=labour",
   },
   {
     icon: LaptopOutlined,
     label: "Offices",
-    url: "/dashboard/offices",
+    url: "/dashboard/marketplace?type=offices",
   },
   {
     icon: BuildOutlined,
     label: "Maintenance",
-    url: "/dashboard/maintenance",
+    url: "/dashboard/marketplace?type=maintenance",
   },
   {
     icon: WorkspacePremiumOutlined,
     label: "Subscriptions",
-    url: "/dashboard/subscriptions",
+    url: "/dashboard/marketplace?type=subscriptions",
   },
   {
     icon: ShowChartOutlined,
     label: "Equipment",
-    url: "/dashboard/equipment",
+    url: "/dashboard/marketplace?type=equipment",
   },
 ];
 
@@ -118,10 +118,11 @@ export const ACCOUNT_TYPE_OPTIONS = [
 ];
 
 export const CONTRACT_TYPE = [
-  "Residential Rent",
-  "Commercial Rent",
-  "Sale contract",
-  "Investment contract",
+  "Real Estate",
+  "Vehicles",
+  "Commercial",
+  "Labour",
+  "Offices",
 ];
 
 export const CONTRACT_CATEGORY = [

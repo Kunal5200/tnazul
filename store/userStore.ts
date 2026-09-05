@@ -36,6 +36,14 @@ export const useUserStore = create<UserState>((set, get) => ({
   error: null,
 
   fetchUserDetail: async (forceRefetch = false) => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        set({ loading: false, error: null });
+        return null;
+      }
+    }
+
     const { userData } = get();
 
     if (!forceRefetch && userData) {
