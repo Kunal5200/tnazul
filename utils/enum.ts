@@ -22,3 +22,14 @@ export enum CONTRACT_STATUS {
   REJECTED = "Rejected",
   SUBMITTED = "Submitted",
 }
+
+export enum CONTRACT_TYPES {
+  REAL_ESTATE = "Real Estate",
+  VEHICLES = "Vehicles",
+  COMMERCIAL = "Commercial",
+  LABOUR = "Labour",
+  OFFICES = "Offices",
+  MAINTENANCE = "Maintenance",
+  SUBSCRIPTIONS = "Subscriptions",
+  EQUIPMENT = "Equipment",
+}

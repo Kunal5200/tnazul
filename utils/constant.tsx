@@ -17,7 +17,7 @@ import {
   WorkspacePremiumOutlined,
 } from "@mui/icons-material";
 import { LINK_BOX } from "./types";
-import { ACCOUNT_TYPE } from "./enum";
+import { ACCOUNT_TYPE, CONTRACT_TYPES } from "./enum";
 
 export const SIDEBAR_LINKS: LINK_BOX[] = [
   {
@@ -27,42 +27,42 @@ export const SIDEBAR_LINKS: LINK_BOX[] = [
   },
   {
     icon: CorporateFareOutlined,
-    label: "Real Estate",
+    label: CONTRACT_TYPES.REAL_ESTATE,
     url: "/dashboard/marketplace?type=real-estate",
   },
   {
     icon: DirectionsCarFilledOutlined,
-    label: "Vehicles",
+    label: CONTRACT_TYPES.VEHICLES,
     url: "/dashboard/marketplace?type=vehicles",
   },
   {
     icon: BusinessCenterOutlined,
-    label: "Commercial",
+    label: CONTRACT_TYPES.COMMERCIAL,
     url: "/dashboard/marketplace?type=commercial",
   },
   {
     icon: PersonOutlined,
-    label: "Labour",
+    label: CONTRACT_TYPES.LABOUR,
     url: "/dashboard/marketplace?type=labour",
   },
   {
     icon: LaptopOutlined,
-    label: "Offices",
+    label: CONTRACT_TYPES.OFFICES,
     url: "/dashboard/marketplace?type=offices",
   },
   {
     icon: BuildOutlined,
-    label: "Maintenance",
+    label: CONTRACT_TYPES.MAINTENANCE,
     url: "/dashboard/marketplace?type=maintenance",
   },
   {
     icon: WorkspacePremiumOutlined,
-    label: "Subscriptions",
+    label: CONTRACT_TYPES.SUBSCRIPTIONS,
     url: "/dashboard/marketplace?type=subscriptions",
   },
   {
     icon: ShowChartOutlined,
-    label: "Equipment",
+    label: CONTRACT_TYPES.EQUIPMENT,
     url: "/dashboard/marketplace?type=equipment",
   },
 ];
@@ -118,11 +118,14 @@ export const ACCOUNT_TYPE_OPTIONS = [
 ];
 
 export const CONTRACT_TYPE = [
-  "Real Estate",
-  "Vehicles",
-  "Commercial",
-  "Labour",
-  "Offices",
+  CONTRACT_TYPES.REAL_ESTATE,
+  CONTRACT_TYPES.VEHICLES,
+  CONTRACT_TYPES.COMMERCIAL,
+  CONTRACT_TYPES.LABOUR,
+  CONTRACT_TYPES.OFFICES,
+  CONTRACT_TYPES.MAINTENANCE,
+  CONTRACT_TYPES.SUBSCRIPTIONS,
+  CONTRACT_TYPES.EQUIPMENT,
 ];
 
 export const CONTRACT_CATEGORY = [
