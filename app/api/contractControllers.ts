@@ -179,4 +179,12 @@ export const contractControllers = {
       throw error;
     }
   },
+  getPublicContractDetails: async (id: string | string[] | undefined) => {
+    try {
+      let result = await contractPublicAPI.get(`public/details/${id}`);
+      return result?.data || result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

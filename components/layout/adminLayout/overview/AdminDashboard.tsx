@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Container, Grid, Typography, Stack } from "@mui/material";
 import {
   People,
@@ -15,8 +15,14 @@ import MetricCard from "./MetricCard";
 import AttentionItem from "./AttentionItem";
 import { poppins, poppins700 } from "@/utils/fonts";
 import { COLORS } from "@/utils/enum";
+import { useDashboardCounts } from "@/hooks/admin/useDashboardCounts";
 
 const AdminDashboard = () => {
+  const { data, loading, fetchDashboard } = useDashboardCounts();
+
+  useEffect(() => {
+    fetchDashboard();
+  }, []);
   return (
     <Box
       sx={{ display: "flex", minHeight: "100vh", backgroundColor: "#F4F7F8" }}
@@ -102,15 +108,19 @@ const AdminDashboard = () => {
           <Grid container spacing={3} sx={{ mb: 6 }}>
             <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <MetricCard
-                value="1,284"
+                value={
+                  data?.userCount !== undefined
+                    ? data.userCount.toLocaleString()
+                    : "..."
+                }
                 label="Total Users"
-                subLabel="+23 this week"
+                subLabel="Total registered users"
                 icon={<People sx={{ fontSize: 24 }} />}
                 iconBgColor="#EBF3FE"
                 iconColor="#166CA9"
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            {/* <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <MetricCard
                 value="987"
                 label="Verified Users"
@@ -119,12 +129,16 @@ const AdminDashboard = () => {
                 iconBgColor="#EBF8F2"
                 iconColor="#2E7D32"
               />
-            </Grid>
+            </Grid> */}
             <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <MetricCard
-                value="412"
+                value={
+                  data?.activeContract !== undefined
+                    ? data.activeContract.toLocaleString()
+                    : "..."
+                }
                 label="Active Listings"
-                subLabel="38 added today"
+                subLabel="Contracts currently active"
                 icon={<Description sx={{ fontSize: 24 }} />}
                 iconBgColor="#F0F4F8"
                 iconColor="#475569"
@@ -132,7 +146,11 @@ const AdminDashboard = () => {
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <MetricCard
-                value="14"
+                value={
+                  data?.pendingContract !== undefined
+                    ? data.pendingContract.toLocaleString()
+                    : "..."
+                }
                 label="Pending Approval"
                 subLabel="Needs action"
                 subLabelColor="#E78B49"
@@ -141,7 +159,7 @@ const AdminDashboard = () => {
                 iconColor="#E65100"
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            {/* <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <MetricCard
                 value="SAR 18,450"
                 label="Total Revenue"
@@ -150,7 +168,7 @@ const AdminDashboard = () => {
                 iconBgColor="#FFFDE7"
                 iconColor="#F57F17"
               />
-            </Grid>
+            </Grid> */}
             <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <MetricCard
                 value="6"

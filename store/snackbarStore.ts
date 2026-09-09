@@ -36,7 +36,7 @@ export const useSnackbarStore = create<SnackbarState>((set) => ({
   message: "",
   severity: "success",
   autoHideDuration: 4000,
-  vertical: "bottom",
+  vertical: "top",
   horizontal: "right",
 
   openSnackbar: (

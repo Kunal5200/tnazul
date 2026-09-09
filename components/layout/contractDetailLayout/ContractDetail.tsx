@@ -361,7 +361,14 @@ const ContractDetailLayout = () => {
                   <RejectContractModalContent onSubmit={submitReject} />,
                 )
               }
-              onApplyForTransfer={() => setIsModalOpen(true)}
+              onApplyForTransfer={() => {
+                const token = typeof window !== "undefined" ? localStorage.getItem("token") || localStorage.getItem("accessToken") : null;
+                if (!token) {
+                  router.push("/login");
+                } else {
+                  setIsModalOpen(true);
+                }
+              }}
             />
 
             <Box

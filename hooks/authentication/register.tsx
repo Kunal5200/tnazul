@@ -15,7 +15,9 @@ export const useRegister = () => {
     try {
       const res = await Authcontrollers.register(data);
 
-      showSuccess(res?.data?.OTP);
+      if (res?.data?.OTP) {
+        showSuccess(`OTP: ${res.data.OTP}`);
+      }
       showModal(
         <VerifyOtpForm
           referenceId={res?.data?.referenceId}

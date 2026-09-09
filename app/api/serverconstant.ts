@@ -4,4 +4,5 @@ export const services = {
   auth: baseUrl + "/api/auth",
   user: baseUrl + "/api/user",
   contract: baseUrl + "/api/contract",
+  dashboard: baseUrl + "/api/dashboard",
 };

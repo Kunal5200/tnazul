@@ -1,6 +1,7 @@
 import { contractControllers } from "@/app/api/contractControllers";
 import { GET_API_REQUEST_RESPONSE } from "@/utils/types";
 import { useState } from "react";
+import { useUserStore } from "@/store/userStore";
 
 export const useContractList = () => {
   const [loading, setLoading] = useState(true);
@@ -31,19 +32,35 @@ export const useContractList = () => {
 export const useContractDetails = () => {
   const [loading, setLoading] = useState(true);
   const [contractDetails, setContractDetails] = useState<any>(null);
+  const { userData } = useUserStore();
+
   const fetchContractDetails = (id: string | string[] | undefined) => {
     setLoading(true);
-    contractControllers
-      .getContractDetailsById(id)
-      .then((res) => {
-        // console.log("res", res);
-        setContractDetails(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log("error in get contract details", err);
-        setLoading(false);
-      });
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") || localStorage.getItem("accessToken") : null;
+
+    if (token) {
+      contractControllers
+        .getContractDetailsById(id)
+        .then((res) => {
+          setContractDetails(res.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log("error in get contract details", err);
+          setLoading(false);
+        });
+    } else {
+      contractControllers
+        .getPublicContractDetails(id)
+        .then((res) => {
+          setContractDetails(res.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log("error in get contract details", err);
+          setLoading(false);
+        });
+    }
   };
   return {
     fetchContractDetails,
