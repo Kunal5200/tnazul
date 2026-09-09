@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Box, Button, Stack, Typography, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Button,
+  Stack,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import {
   DescriptionOutlined,
   ChatBubbleOutlineOutlined,
@@ -9,7 +15,7 @@ import {
   AccessTimeOutlined,
   CheckCircleOutlined,
 } from "@mui/icons-material";
-import { COLORS } from "@/utils/enum";
+import { COLORS, CONTRACT_STATUS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
 import WhatsAppButton from "@/components/layout/dashboard/contracts/WhatsAppButton";
 import { ContractCard } from "./components/ContractCard";
@@ -18,7 +24,7 @@ import { useMyContracts } from "@/hooks/contract/useMyContracts";
 
 const MyContractsLayout = () => {
   const [activeTab, setActiveTab] = useState<"active" | "draft" | "expired">(
-    "active"
+    "active",
   );
 
   const { fetchMyContracts, myContractsList, loading } = useMyContracts();
@@ -28,10 +34,10 @@ const MyContractsLayout = () => {
   useEffect(() => {
     const statusQuery =
       activeTab === "active"
-        ? "Approved"
+        ? CONTRACT_STATUS.PUBLISHED
         : activeTab === "draft"
-        ? "Draft"
-        : "Expired";
+          ? CONTRACT_STATUS.DRAFT
+          : "Expired";
 
     if (fetchedStatusRef.current === statusQuery) return;
     fetchedStatusRef.current = statusQuery;
@@ -51,8 +57,8 @@ const MyContractsLayout = () => {
       rawStatus === "approved" || rawStatus === "active"
         ? "active"
         : rawStatus === "draft" || rawStatus === "pending"
-        ? "draft"
-        : "expired";
+          ? "draft"
+          : "expired";
 
     const title =
       item?.contractTitle ||
@@ -62,7 +68,7 @@ const MyContractsLayout = () => {
       (item?.category ? `${item.category} Contract` : "Contract");
 
     const locationParts = [item?.city, item?.districtOrNeighborhood].filter(
-      Boolean
+      Boolean,
     );
     const location =
       locationParts.length > 0 ? locationParts.join(", ") : "Riyadh";
@@ -86,8 +92,8 @@ const MyContractsLayout = () => {
       typeof rawImg === "string" && rawImg.trim() !== ""
         ? rawImg
         : item?.category === "Villa"
-        ? "/images/villa_preview.png"
-        : "/images/shop_preview.png";
+          ? "/images/villa_preview.png"
+          : "/images/shop_preview.png";
 
     const timeLeft = item?.remainingDuration
       ? `${item.remainingDuration} left`
@@ -167,12 +173,9 @@ const MyContractsLayout = () => {
   // Map API list to UI items
   const apiMappedContracts = myContractsList.map(mapApiContractToItem);
 
-  const activeCount =
-    activeTab === "active" ? apiMappedContracts.length : 0;
-  const draftCount =
-    activeTab === "draft" ? apiMappedContracts.length : 0;
-  const expiredCount =
-    activeTab === "expired" ? apiMappedContracts.length : 0;
+  const activeCount = activeTab === "active" ? apiMappedContracts.length : 0;
+  const draftCount = activeTab === "draft" ? apiMappedContracts.length : 0;
+  const expiredCount = activeTab === "expired" ? apiMappedContracts.length : 0;
 
   return (
     <Box sx={{ pb: 10, maxWidth: "1200px", margin: "0 auto" }}>
