@@ -74,6 +74,7 @@ const SavedLayout = () => {
           duration:
             contractObj?.remainingDuration || contractObj?.duration || "0 mo",
           isUrgent: Boolean(contractObj?.isUrgent),
+          // contract:
         };
       });
       setSavedItems(mapped);
@@ -107,7 +108,10 @@ const SavedLayout = () => {
         }}
       >
         Saved Contracts{" "}
-        <Box component="span" sx={{ fontWeight: 500, color: "#7A9BAB", ml: 0.5 }}>
+        <Box
+          component="span"
+          sx={{ fontWeight: 500, color: "#7A9BAB", ml: 0.5 }}
+        >
           ({savedItems.length})
         </Box>
       </Typography>

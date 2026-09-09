@@ -21,6 +21,8 @@ export enum CONTRACT_STATUS {
   APPROVED = "Approved",
   REJECTED = "Rejected",
   SUBMITTED = "Submitted",
+  ACTIVE = "Active",
+  EXPIRED = "Expired",
 }
 
 export enum CONTRACT_TYPES {

@@ -5,4 +5,5 @@ export const services = {
   user: baseUrl + "/api/user",
   contract: baseUrl + "/api/contract",
   dashboard: baseUrl + "/api/dashboard",
+  messages: baseUrl + "/api/messages",
 };

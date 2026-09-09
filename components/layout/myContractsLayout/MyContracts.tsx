@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  Button,
+  Tabs,
+  Tab,
   Stack,
   Typography,
   CircularProgress,
@@ -23,8 +24,8 @@ import { ContractItem } from "./types";
 import { useMyContracts } from "@/hooks/contract/useMyContracts";
 
 const MyContractsLayout = () => {
-  const [activeTab, setActiveTab] = useState<"active" | "draft" | "expired">(
-    "active",
+  const [activeTab, setActiveTab] = useState<CONTRACT_STATUS>(
+    CONTRACT_STATUS.APPROVED
   );
 
   const { fetchMyContracts, myContractsList, loading } = useMyContracts();
@@ -33,11 +34,13 @@ const MyContractsLayout = () => {
 
   useEffect(() => {
     const statusQuery =
-      activeTab === "active"
+      activeTab === CONTRACT_STATUS.ACTIVE
         ? CONTRACT_STATUS.PUBLISHED
-        : activeTab === "draft"
+        : activeTab === CONTRACT_STATUS.DRAFT
           ? CONTRACT_STATUS.DRAFT
-          : "Expired";
+          : activeTab === CONTRACT_STATUS.APPROVED
+            ? CONTRACT_STATUS.APPROVED
+            : CONTRACT_STATUS.EXPIRED;
 
     if (fetchedStatusRef.current === statusQuery) return;
     fetchedStatusRef.current = statusQuery;
@@ -53,12 +56,12 @@ const MyContractsLayout = () => {
       "Approved"
     ).toLowerCase();
 
-    const status: "active" | "draft" | "expired" =
+    const status: CONTRACT_STATUS =
       rawStatus === "approved" || rawStatus === "active"
-        ? "active"
+        ? CONTRACT_STATUS.ACTIVE
         : rawStatus === "draft" || rawStatus === "pending"
-          ? "draft"
-          : "expired";
+          ? CONTRACT_STATUS.DRAFT
+          : CONTRACT_STATUS.EXPIRED;
 
     const title =
       item?.contractTitle ||
@@ -173,10 +176,6 @@ const MyContractsLayout = () => {
   // Map API list to UI items
   const apiMappedContracts = myContractsList.map(mapApiContractToItem);
 
-  const activeCount = activeTab === "active" ? apiMappedContracts.length : 0;
-  const draftCount = activeTab === "draft" ? apiMappedContracts.length : 0;
-  const expiredCount = activeTab === "expired" ? apiMappedContracts.length : 0;
-
   return (
     <Box sx={{ pb: 10, maxWidth: "1200px", margin: "0 auto" }}>
       {/* Title */}
@@ -192,88 +191,46 @@ const MyContractsLayout = () => {
         My Contracts
       </Typography>
 
-      {/* Tabs Row Wrapper */}
-      <Box
-        sx={{
-          backgroundColor: "#EDF1F2",
-          borderRadius: "14px",
-          p: "6px",
-          display: "inline-flex",
-          gap: 0.5,
-          mb: 5,
-        }}
-      >
-        {/* Active Tab Button */}
-        <Button
-          onClick={() => setActiveTab("active")}
-          disableElevation
+      {/* Tabs */}
+      <Box sx={{ mb: 5, borderBottom: 1, borderColor: "divider" }}>
+        <Tabs
+          value={activeTab}
+          onChange={(e, newValue) => setActiveTab(newValue)}
+          variant="scrollable"
+          scrollButtons="auto"
           sx={{
-            borderRadius: "10px",
-            py: 1.25,
-            px: 3.5,
-            fontFamily: poppins700.style.fontFamily,
-            fontWeight: 700,
-            fontSize: "14px",
-            textTransform: "none",
-            backgroundColor:
-              activeTab === "active" ? COLORS.SECONDARY : "transparent",
-            color: activeTab === "active" ? COLORS.WHITE : "#5A7A8A",
-            "&:hover": {
-              backgroundColor:
-                activeTab === "active" ? "#002432" : "rgba(1, 53, 71, 0.04)",
+            "& .MuiTabs-indicator": {
+              backgroundColor: COLORS.SECONDARY,
+            },
+            "& .MuiTab-root": {
+              fontFamily: poppins700.style.fontFamily,
+              fontWeight: 700,
+              fontSize: "14px",
+              textTransform: "none",
+              color: "#5A7A8A",
+              "&.Mui-selected": {
+                color: COLORS.SECONDARY,
+              },
             },
           }}
         >
-          {`Active (${activeTab === "active" ? apiMappedContracts.length : 0})`}
-        </Button>
-
-        {/* Draft Tab Button */}
-        <Button
-          onClick={() => setActiveTab("draft")}
-          disableElevation
-          sx={{
-            borderRadius: "10px",
-            py: 1.25,
-            px: 3.5,
-            fontFamily: poppins700.style.fontFamily,
-            fontWeight: 700,
-            fontSize: "14px",
-            textTransform: "none",
-            backgroundColor:
-              activeTab === "draft" ? COLORS.SECONDARY : "transparent",
-            color: activeTab === "draft" ? COLORS.WHITE : "#5A7A8A",
-            "&:hover": {
-              backgroundColor:
-                activeTab === "draft" ? "#002432" : "rgba(1, 53, 71, 0.04)",
-            },
-          }}
-        >
-          {`Draft (${activeTab === "draft" ? apiMappedContracts.length : 0})`}
-        </Button>
-
-        {/* Expired Tab Button */}
-        <Button
-          onClick={() => setActiveTab("expired")}
-          disableElevation
-          sx={{
-            borderRadius: "10px",
-            py: 1.25,
-            px: 3.5,
-            fontFamily: poppins700.style.fontFamily,
-            fontWeight: 700,
-            fontSize: "14px",
-            textTransform: "none",
-            backgroundColor:
-              activeTab === "expired" ? COLORS.SECONDARY : "transparent",
-            color: activeTab === "expired" ? COLORS.WHITE : "#5A7A8A",
-            "&:hover": {
-              backgroundColor:
-                activeTab === "expired" ? "#002432" : "rgba(1, 53, 71, 0.04)",
-            },
-          }}
-        >
-          {`Expired (${activeTab === "expired" ? apiMappedContracts.length : 0})`}
-        </Button>
+          <Tab
+            label={`${CONTRACT_STATUS.APPROVED} (${activeTab === CONTRACT_STATUS.APPROVED ? apiMappedContracts.length : 0})`}
+            value={CONTRACT_STATUS.APPROVED}
+          />
+          <Tab
+            label={`Active (${activeTab === CONTRACT_STATUS.ACTIVE ? apiMappedContracts.length : 0})`}
+            value={CONTRACT_STATUS.ACTIVE}
+          />
+          <Tab
+            label={`Draft (${activeTab === CONTRACT_STATUS.DRAFT ? apiMappedContracts.length : 0})`}
+            value={CONTRACT_STATUS.DRAFT}
+          />
+          <Tab
+            label={`Expired (${activeTab === CONTRACT_STATUS.EXPIRED ? apiMappedContracts.length : 0})`}
+            value={CONTRACT_STATUS.EXPIRED}
+          />
+        </Tabs>
       </Box>
 
       {/* Contracts List container */}

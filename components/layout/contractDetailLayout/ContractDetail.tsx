@@ -12,7 +12,10 @@ import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
 import WhatsAppButton from "@/components/layout/dashboard/contracts/WhatsAppButton";
 import { useParams, useRouter } from "next/navigation";
-import { useContractDetails } from "@/hooks/contract/useContractList";
+import {
+  useContractDetails,
+  useContractPublicList,
+} from "@/hooks/contract/useContractList";
 import { useUserStore } from "@/store/userStore";
 import { ACCOUNT_TYPE, CONTRACT_STATUS } from "@/utils/enum";
 import { useApproveDisapproveContract } from "@/hooks/admin/useApprovedOrdisApproveContract";
@@ -27,6 +30,11 @@ import { ContractFinancialSummary } from "./components/ContractFinancialSummary"
 import { ContractInfoSection } from "./components/ContractInfoSection";
 import { SellerOverviewCard } from "./components/SellerOverviewCard";
 import { ApplyTransferModal } from "./components/ApplyTransferModal";
+import { ContractTitleSection } from "./components/ContractTitleSection";
+import { ContractDescription } from "./components/ContractDescription";
+import { TransferConditions } from "./components/TransferConditions";
+import { TransferStatusTimeline } from "./components/TransferStatusTimeline";
+import { SimilarListings } from "./components/SimilarListings";
 
 interface VerticalStep {
   label: string;
@@ -40,6 +48,8 @@ const ContractDetailLayout = () => {
   const router = useRouter();
   const { fetchContractDetails, loading, contractDetails } =
     useContractDetails();
+  const { fetchContractPublicList, contractPublicData } =
+    useContractPublicList();
   const { userData, fetchUserDetail } = useUserStore();
   const { approveDisapproveContract } = useApproveDisapproveContract();
 
@@ -56,6 +66,18 @@ const ContractDetailLayout = () => {
       fetchContractDetails(id as string);
     }
   }, [id, fetchContractDetails]);
+
+  useEffect(() => {
+    if (contractDetails?.category) {
+      fetchContractPublicList({
+        page: 1,
+        limit: 3,
+        category: contractDetails.category,
+      });
+    } else if (contractDetails) {
+      fetchContractPublicList({ page: 1, limit: 3 });
+    }
+  }, [contractDetails, fetchContractPublicList]);
 
   const isAdmin = userData?.roleName === ACCOUNT_TYPE.ADMINISTRATOR;
 
@@ -121,84 +143,10 @@ const ContractDetailLayout = () => {
           <Stack spacing={4.5}>
             <ContractGallery images={galleryImages} />
 
-            <Box>
-              <Typography
-                sx={{
-                  fontFamily: poppins700.style.fontFamily,
-                  fontWeight: 800,
-                  fontSize: "26px",
-                  color: COLORS.SECONDARY,
-                  mb: 1.5,
-                }}
-              >
-                {contractDetails?.contractTitle || "Contract Title"}
-              </Typography>
-
-              <Stack
-                direction="row"
-                spacing={2.5}
-                sx={{ alignItems: "center", flexWrap: "wrap", gap: 1.5 }}
-              >
-                <Stack
-                  direction="row"
-                  spacing={0.75}
-                  sx={{ alignItems: "center", color: "#7A9BAB" }}
-                >
-                  <VisibilityOutlined sx={{ fontSize: 16 }} />
-                  <Typography
-                    sx={{
-                      fontFamily: poppins.style.fontFamily,
-                      fontSize: "13px",
-                      fontWeight: 600,
-                    }}
-                  >
-                    412 views
-                  </Typography>
-                </Stack>
-                <Stack
-                  direction="row"
-                  spacing={0.75}
-                  sx={{ alignItems: "center", color: "#7A9BAB" }}
-                >
-                  <AccessTimeOutlined sx={{ fontSize: 16 }} />
-                  <Typography
-                    sx={{
-                      fontFamily: poppins.style.fontFamily,
-                      fontSize: "13px",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {contractDetails?.createdAt
-                      ? new Date(contractDetails.createdAt).toLocaleDateString()
-                      : "N/A"}
-                  </Typography>
-                </Stack>
-                <Box
-                  sx={{
-                    borderRadius: "100px",
-                    py: 0.5,
-                    px: 1.5,
-                    backgroundColor: "#E8F5E9",
-                    color: "#10753E",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 0.5,
-                  }}
-                >
-                  <CheckCircle sx={{ fontSize: 13, color: "#10753E" }} />
-                  <Typography
-                    sx={{
-                      fontFamily: poppins700.style.fontFamily,
-                      fontWeight: 700,
-                      fontSize: "11px",
-                      lineHeight: 1,
-                    }}
-                  >
-                    Nafath Verified
-                  </Typography>
-                </Box>
-              </Stack>
-            </Box>
+            <ContractTitleSection
+              title={contractDetails?.contractTitle}
+              createdAt={contractDetails?.createdAt}
+            />
 
             <ContractFinancialSummary
               totalContractValue={contractDetails?.totalContractValue}
@@ -218,134 +166,11 @@ const ContractDetailLayout = () => {
               endDate={contractDetails?.endDate}
             />
 
-            <Box>
-              <Stack
-                direction="row"
-                spacing={1.5}
-                sx={{ alignItems: "center", mb: 2.5 }}
-              >
-                <Box
-                  sx={{
-                    width: 4,
-                    height: 18,
-                    backgroundColor: COLORS.PRIMARY,
-                    borderRadius: "2px",
-                  }}
-                />
-                <Typography
-                  sx={{
-                    fontFamily: poppins700.style.fontFamily,
-                    fontWeight: 700,
-                    fontSize: "16px",
-                    color: COLORS.SECONDARY,
-                  }}
-                >
-                  Description
-                </Typography>
-              </Stack>
-              <Box
-                sx={{
-                  backgroundColor: "#FFFFFF",
-                  borderRadius: "20px",
-                  p: 3.5,
-                  border: "1px solid #0135470D",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontFamily: poppins.style.fontFamily,
-                    fontWeight: 500,
-                    fontSize: "14px",
-                    color: "#5A7A8A",
-                    lineHeight: 1.7,
-                  }}
-                >
-                  {contractDetails?.contractDescription ||
-                    "No description provided."}
-                </Typography>
-              </Box>
-            </Box>
+            <ContractDescription
+              description={contractDetails?.contractDescription}
+            />
 
-            <Box>
-              <Stack
-                direction="row"
-                spacing={1.5}
-                sx={{ alignItems: "center", mb: 2.5 }}
-              >
-                <Box
-                  sx={{
-                    width: 4,
-                    height: 18,
-                    backgroundColor: COLORS.PRIMARY,
-                    borderRadius: "2px",
-                  }}
-                />
-                <Typography
-                  sx={{
-                    fontFamily: poppins700.style.fontFamily,
-                    fontWeight: 700,
-                    fontSize: "16px",
-                    color: COLORS.SECONDARY,
-                  }}
-                >
-                  Transfer Conditions
-                </Typography>
-              </Stack>
-              <Box
-                sx={{
-                  backgroundColor: "#FFFFFF",
-                  borderRadius: "20px",
-                  p: 3.5,
-                  border: "1px solid #0135470D",
-                }}
-              >
-                <Stack spacing={2.5}>
-                  {[
-                    "Buyer must pass identity verification (Nafath or manual ID review)",
-                    "Remaining lease balance to be settled within 30 days of agreement",
-                    "Transfer fee (SAR 2,500) is non-refundable once documents are submitted",
-                    "Compound management approval required — typically 5-7 business days",
-                    "Security deposit transfers to new tenant upon landlord confirmation",
-                  ].map((condition, idx) => (
-                    <Stack
-                      key={idx}
-                      direction="row"
-                      spacing={2}
-                      sx={{ alignItems: "center" }}
-                    >
-                      <Box
-                        sx={{
-                          width: 26,
-                          height: 26,
-                          borderRadius: "50%",
-                          backgroundColor: "#F4F7F8",
-                          color: COLORS.SECONDARY,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "12px",
-                          fontWeight: 700,
-                          fontFamily: poppins700.style.fontFamily,
-                          flexShrink: 0,
-                        }}
-                      >
-                        {idx + 1}
-                      </Box>
-                      <Typography
-                        sx={{
-                          fontFamily: poppins.style.fontFamily,
-                          fontWeight: 500,
-                          fontSize: "13.5px",
-                          color: "#5A7A8A",
-                        }}
-                      >
-                        {condition}
-                      </Typography>
-                    </Stack>
-                  ))}
-                </Stack>
-              </Box>
-            </Box>
+            <TransferConditions />
           </Stack>
         </Grid>
 
@@ -362,7 +187,11 @@ const ContractDetailLayout = () => {
                 )
               }
               onApplyForTransfer={() => {
-                const token = typeof window !== "undefined" ? localStorage.getItem("token") || localStorage.getItem("accessToken") : null;
+                const token =
+                  typeof window !== "undefined"
+                    ? localStorage.getItem("token") ||
+                      localStorage.getItem("accessToken")
+                    : null;
                 if (!token) {
                   router.push("/login");
                 } else {
@@ -371,252 +200,9 @@ const ContractDetailLayout = () => {
               }}
             />
 
-            <Box
-              sx={{
-                backgroundColor: "#FFFFFF",
-                borderRadius: "24px",
-                p: 3.5,
-                border: "1px solid #0135470D",
-                boxShadow: "0px 4px 20px rgba(1, 53, 71, 0.02)",
-              }}
-            >
-              <Typography
-                sx={{
-                  fontFamily: poppins700.style.fontFamily,
-                  fontWeight: 700,
-                  fontSize: "10.5px",
-                  color: "#7A9BAB",
-                  letterSpacing: "0.5px",
-                  textTransform: "uppercase",
-                  mb: 3,
-                }}
-              >
-                Transfer Status
-              </Typography>
-              <Stack spacing={2.5}>
-                {verticalSteps.map((step, idx) => (
-                  <Stack key={idx} direction="row" spacing={2}>
-                    <Box
-                      sx={{
-                        position: "relative",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        width: 24,
-                        flexShrink: 0,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 24,
-                          height: 24,
-                          borderRadius: "50%",
-                          backgroundColor:
-                            step.status === "complete"
-                              ? "#10753E"
-                              : step.status === "current"
-                                ? "rgba(16, 117, 62, 0.15)"
-                                : "transparent",
-                          border:
-                            step.status === "upcoming"
-                              ? "2px solid #EDF1F2"
-                              : "none",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color:
-                            step.status === "complete"
-                              ? "#FFFFFF"
-                              : step.status === "current"
-                                ? "#10753E"
-                                : "transparent",
-                          zIndex: 2,
-                        }}
-                      >
-                        {step.status === "complete" && (
-                          <CheckCircle sx={{ fontSize: 14 }} />
-                        )}
-                        {step.status === "current" && (
-                          <Box
-                            sx={{
-                              width: 10,
-                              height: 10,
-                              borderRadius: "50%",
-                              backgroundColor: "#10753E",
-                            }}
-                          />
-                        )}
-                      </Box>
-                      {idx !== verticalSteps.length - 1 && (
-                        <Box
-                          sx={{
-                            position: "absolute",
-                            top: 24,
-                            bottom: -20,
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            width: 2,
-                            backgroundColor:
-                              step.status === "complete"
-                                ? "#10753E"
-                                : "#EDF1F2",
-                            zIndex: 1,
-                          }}
-                        />
-                      )}
-                    </Box>
-                    <Box sx={{ pb: idx !== verticalSteps.length - 1 ? 2 : 0 }}>
-                      <Typography
-                        sx={{
-                          fontFamily: poppins700.style.fontFamily,
-                          fontWeight: 700,
-                          fontSize: "14px",
-                          color:
-                            step.status === "upcoming"
-                              ? "#A0B1B9"
-                              : COLORS.SECONDARY,
-                        }}
-                      >
-                        {step.label}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontFamily: poppins.style.fontFamily,
-                          fontWeight: 500,
-                          fontSize: "12px",
-                          color:
-                            step.status === "upcoming" ? "#C5D1D7" : "#7A9BAB",
-                        }}
-                      >
-                        {step.description}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                ))}
-              </Stack>
-            </Box>
+            <TransferStatusTimeline steps={verticalSteps as any} />
 
-            <Box
-              sx={{
-                backgroundColor: "#FFFFFF",
-                borderRadius: "24px",
-                p: 3.5,
-                border: "1px solid #0135470D",
-                boxShadow: "0px 4px 20px rgba(1, 53, 71, 0.02)",
-              }}
-            >
-              <Stack
-                direction="row"
-                sx={{
-                  justifyContent: "space-between",
-                  alignItems: "baseline",
-                  mb: 3,
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontFamily: poppins700.style.fontFamily,
-                    fontWeight: 700,
-                    fontSize: "10.5px",
-                    color: "#7A9BAB",
-                    letterSpacing: "0.5px",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Similar Listings
-                </Typography>
-                <Typography
-                  sx={{
-                    fontFamily: poppins700.style.fontFamily,
-                    fontWeight: 700,
-                    fontSize: "11px",
-                    color: COLORS.PRIMARY,
-                    cursor: "pointer",
-                    "&:hover": { opacity: 0.8 },
-                  }}
-                >
-                  View All
-                </Typography>
-              </Stack>
-              <Stack spacing={2.5}>
-                {[
-                  {
-                    title: "3BR Apartment — Al Olaya District",
-                    price: "126,000 SAR",
-                    duration: "18 mo",
-                    img: "/images/shop_preview.png",
-                  },
-                  {
-                    title: "Modern Villa — Al Narjis Compound",
-                    price: "252,000 SAR",
-                    duration: "24 mo",
-                    img: "/images/villa_preview.png",
-                  },
-                  {
-                    title: "Furnished Studio — DQ District",
-                    price: "54,000 SAR",
-                    duration: "12 mo",
-                    img: "/images/shop_preview.png",
-                  },
-                ].map((item, idx) => (
-                  <Stack
-                    key={idx}
-                    direction="row"
-                    spacing={2}
-                    sx={{ alignItems: "center" }}
-                  >
-                    <Box
-                      sx={{
-                        width: 72,
-                        height: 50,
-                        borderRadius: "10px",
-                        overflow: "hidden",
-                        position: "relative",
-                        flexShrink: 0,
-                      }}
-                    >
-                      <Image
-                        src={item.img}
-                        alt={item.title}
-                        fill
-                        sizes="72px"
-                        style={{ objectFit: "cover" }}
-                      />
-                    </Box>
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography
-                        noWrap
-                        sx={{
-                          fontFamily: poppins700.style.fontFamily,
-                          fontWeight: 700,
-                          fontSize: "13px",
-                          color: COLORS.SECONDARY,
-                          mb: 0.25,
-                        }}
-                      >
-                        {item.title}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontFamily: poppins.style.fontFamily,
-                          fontWeight: 600,
-                          fontSize: "11px",
-                          color: "#7A9BAB",
-                        }}
-                      >
-                        {item.price}{" "}
-                        <Box
-                          component="span"
-                          sx={{ fontWeight: 500, color: "#A0B1B9", ml: 0.5 }}
-                        >
-                          · {item.duration}
-                        </Box>
-                      </Typography>
-                    </Box>
-                  </Stack>
-                ))}
-              </Stack>
-            </Box>
+            <SimilarListings contractPublicData={contractPublicData} />
           </Stack>
         </Grid>
       </Grid>

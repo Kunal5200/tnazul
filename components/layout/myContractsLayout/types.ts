@@ -1,10 +1,11 @@
 import React from "react";
+import { CONTRACT_STATUS } from "@/utils/enum";
 
 export interface ContractItem {
   id: string;
   title: string;
   image: string;
-  status: "active" | "draft" | "expired";
+  status: CONTRACT_STATUS;
   contractStatus?: string;
   location: string;
   price: string;

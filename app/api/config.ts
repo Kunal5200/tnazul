@@ -80,5 +80,6 @@ export const userSecuredAPI = createSecuredApi(services.user);
 export const contractSecuredAPI = createSecuredApi(services.contract);
 export const contractPublicAPI = createPublicAPI(services.contract);
 export const dashboarSecuredAPI = createSecuredApi(services.dashboard);
+export const messageSecuredAPI = createSecuredApi(services.messages);
 
 // export { createPublicAPI, createSecuredApi };

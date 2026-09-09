@@ -143,7 +143,11 @@ export const SavedCard = ({ item, onRemove }: SavedCardProps) => {
         </Typography>
 
         {/* Location row */}
-        <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", mb: 3 }}>
+        <Stack
+          direction="row"
+          spacing={0.5}
+          sx={{ alignItems: "center", mb: 3 }}
+        >
           <PlaceOutlined sx={{ color: "#7A9BAB", fontSize: 16 }} />
           <Typography
             sx={{
@@ -158,7 +162,10 @@ export const SavedCard = ({ item, onRemove }: SavedCardProps) => {
         </Stack>
 
         {/* Price & Monthly conversion row */}
-        <Stack direction="row" sx={{ alignItems: "flex-end", justifyContent: "space-between" }}>
+        <Stack
+          direction="row"
+          sx={{ alignItems: "flex-end", justifyContent: "space-between" }}
+        >
           <Typography
             sx={{
               fontFamily: poppins700.style.fontFamily,

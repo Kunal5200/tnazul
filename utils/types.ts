@@ -141,3 +141,8 @@ export interface APPLY_TRANSFER {
   documents: File[];
   signtaure: File;
 }
+
+export interface SENDMESSAGE {
+  receiverId: string;
+  message: string;
+}

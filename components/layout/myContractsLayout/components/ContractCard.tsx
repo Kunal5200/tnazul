@@ -9,7 +9,7 @@ import {
   VisibilityOutlined,
 } from "@mui/icons-material";
 import Image from "next/image";
-import { COLORS } from "@/utils/enum";
+import { COLORS, CONTRACT_STATUS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
 import { ContractItem } from "../types";
 
@@ -103,7 +103,11 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
       {/* Content Box */}
       <Box sx={{ flexGrow: 1, width: "100%" }}>
         {/* Title & Status Row */}
-        <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", mb: 0.75, flexWrap: "wrap" }}>
+        <Stack
+          direction="row"
+          spacing={1.5}
+          sx={{ alignItems: "center", mb: 0.75, flexWrap: "wrap" }}
+        >
           <Typography
             sx={{
               fontFamily: poppins700.style.fontFamily,
@@ -126,20 +130,22 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
               fontFamily: poppins700.style.fontFamily,
               textTransform: "capitalize",
               backgroundColor:
-                contract.status === "active"
+                contract.status === CONTRACT_STATUS.ACTIVE
                   ? "#E8F5E9"
-                  : contract.status === "draft"
-                  ? "#F4F7F8"
-                  : "#FFEBEE",
+                  : contract.status === CONTRACT_STATUS.DRAFT
+                    ? "#F4F7F8"
+                    : "#FFEBEE",
               color:
-                contract.status === "active"
+                contract.status === CONTRACT_STATUS.ACTIVE
                   ? "#10753E"
-                  : contract.status === "draft"
-                  ? "#5A7A8A"
-                  : "#FF5C5C",
+                  : contract.status === CONTRACT_STATUS.DRAFT
+                    ? "#5A7A8A"
+                    : "#FF5C5C",
             }}
           >
-            {contract.contractStatus || contract.status}
+            {contract.contractStatus === CONTRACT_STATUS.PUBLISHED
+              ? "PENDING"
+              : contract.contractStatus || contract.status}
           </Box>
         </Stack>
 
@@ -161,11 +167,15 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
           <Typography sx={{ color: "#7A9BAB", fontSize: "13px" }}>
             {contract.location}
           </Typography>
-          <Typography sx={{ color: COLORS.SECONDARY, fontWeight: 700, fontSize: "13px" }}>
+          <Typography
+            sx={{ color: COLORS.SECONDARY, fontWeight: 700, fontSize: "13px" }}
+          >
             Total: {contract.price}
           </Typography>
           {contract.monthlyAmount && (
-            <Typography sx={{ color: "#166CA9", fontWeight: 600, fontSize: "13px" }}>
+            <Typography
+              sx={{ color: "#166CA9", fontWeight: 600, fontSize: "13px" }}
+            >
               Monthly: {contract.monthlyAmount}
             </Typography>
           )}
@@ -182,7 +192,7 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
             color: "#7A9BAB",
             fontFamily: poppins.style.fontFamily,
             fontSize: "13px",
-            mb: contract.status === "active" ? 2 : 0,
+            mb: contract.status === CONTRACT_STATUS.ACTIVE ? 2 : 0,
           }}
         >
           {contract.contractNumber && (
@@ -236,20 +246,26 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
             </Box>
           )}
 
-          <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", ml: 0.5 }}>
+          <Stack
+            direction="row"
+            spacing={0.5}
+            sx={{ alignItems: "center", ml: 0.5 }}
+          >
             <VisibilityOutlined sx={{ fontSize: 15 }} />
             <Typography sx={{ fontSize: "13px" }}>{contract.views}</Typography>
           </Stack>
           {contract.timeLeft && (
             <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
               <AccessTimeOutlined sx={{ fontSize: 15 }} />
-              <Typography sx={{ fontSize: "13px" }}>{contract.timeLeft}</Typography>
+              <Typography sx={{ fontSize: "13px" }}>
+                {contract.timeLeft}
+              </Typography>
             </Stack>
           )}
         </Stack>
 
         {/* Progress Stepper (Only active contracts) */}
-        {contract.status === "active" && contract.steps && (
+        {contract.status === CONTRACT_STATUS.ACTIVE && contract.steps && (
           <Stack spacing={1.5} sx={{ mt: 2 }}>
             {/* Stepper Steps Flexbox list */}
             <Stack

@@ -7,4 +7,7 @@ export interface SavedItem {
   monthlyPrice: string;
   duration: string;
   isUrgent?: boolean;
+  // contract: {
+  //   _id: string;
+  // };
 }

@@ -187,4 +187,14 @@ export const contractControllers = {
       throw error;
     }
   },
+  getTransferRequest: async (data: GET_API_REQUEST_RESPONSE) => {
+    try {
+      let result = await contractSecuredAPI.get(
+        `transfer/getTransferRequests?page=${data.page}&pageSize=${data.limit}`,
+      );
+      return result?.data || result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
