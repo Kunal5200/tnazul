@@ -10,4 +10,23 @@ export const messageControllers = {
       throw error;
     }
   },
+  getMessageList: async ({ page, limit }: { page: number; limit: number }) => {
+    try {
+      let result = await messageSecuredAPI.get(
+        `/getMessageList?page=${page}&limit=${limit}`,
+      );
+      return result.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getMessages: async (id: string) => {
+    try {
+      let result = await messageSecuredAPI.get(`/getMessages?receiverId=${id}`);
+      return result.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, Avatar, Divider, Stack } from "@mui/material";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
@@ -15,7 +15,8 @@ export const ChatsSidebar: React.FC<ChatsSidebarProps> = ({
   activeChatId,
   onSelectChat,
 }) => {
-  const totalUnread = chats.reduce((acc, c) => acc + c.unreadCount, 0);
+  const displayChats = chats;
+  const totalUnread = displayChats.reduce((acc: number, c: any) => acc + (c.unreadCount || 0), 0);
 
   return (
     <Box
@@ -70,7 +71,7 @@ export const ChatsSidebar: React.FC<ChatsSidebarProps> = ({
           },
         }}
       >
-        {chats.map((chat) => {
+        {displayChats.map((chat: Chat) => {
           const isSelected = chat.id === activeChatId;
           return (
             <Box
@@ -140,18 +141,20 @@ export const ChatsSidebar: React.FC<ChatsSidebarProps> = ({
                   </Typography>
                 </Stack>
 
-                <Typography
-                  noWrap
-                  sx={{
-                    fontFamily: poppins.style.fontFamily,
-                    fontSize: "12px",
-                    color: "#7A9BAB",
-                    mt: 0.2,
-                    fontWeight: 500,
-                  }}
-                >
-                  {chat.propertyTitle}
-                </Typography>
+                {chat.propertyTitle && (
+                  <Typography
+                    noWrap
+                    sx={{
+                      fontFamily: poppins.style.fontFamily,
+                      fontSize: "12px",
+                      color: "#7A9BAB",
+                      mt: 0.2,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {chat.propertyTitle}
+                  </Typography>
+                )}
 
                 <Typography
                   noWrap

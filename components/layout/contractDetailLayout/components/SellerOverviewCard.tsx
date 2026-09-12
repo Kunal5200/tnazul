@@ -14,6 +14,7 @@ export interface SellerOverviewCardProps {
   onApprove?: () => void;
   onReject?: () => void;
   onApplyForTransfer?: () => void;
+  onMessage?: () => void;
 }
 
 export const SellerOverviewCard: React.FC<SellerOverviewCardProps> = ({
@@ -23,6 +24,7 @@ export const SellerOverviewCard: React.FC<SellerOverviewCardProps> = ({
   onApprove,
   onReject,
   onApplyForTransfer,
+  onMessage,
 }) => {
   return (
     <Box
@@ -226,6 +228,7 @@ export const SellerOverviewCard: React.FC<SellerOverviewCardProps> = ({
               <Button
                 fullWidth
                 variant="outlined"
+                onClick={onMessage}
                 startIcon={<ChatBubbleOutlineOutlined sx={{ fontSize: 15 }} />}
                 sx={{
                   borderRadius: "100px",

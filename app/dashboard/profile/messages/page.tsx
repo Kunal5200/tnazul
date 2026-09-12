@@ -1,8 +1,12 @@
 import MessagesLayout from "@/components/layout/messagesLayout/Messages";
-import React from "react";
+import React, { Suspense } from "react";
 
 const MessagesPage = () => {
-  return <MessagesLayout />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MessagesLayout />
+    </Suspense>
+  );
 };
 
 export default MessagesPage;

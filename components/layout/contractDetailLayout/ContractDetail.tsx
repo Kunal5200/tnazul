@@ -198,6 +198,14 @@ const ContractDetailLayout = () => {
                   setIsModalOpen(true);
                 }
               }}
+              onMessage={() => {
+                const receiverId = contractDetails?.createdBy?._id;
+                if (receiverId) {
+                  router.push(`/dashboard/profile/messages?receiverId=${receiverId}`);
+                } else {
+                  router.push(`/dashboard/profile/messages`);
+                }
+              }}
             />
 
             <TransferStatusTimeline steps={verticalSteps as any} />

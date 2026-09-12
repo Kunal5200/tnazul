@@ -1,9 +1,17 @@
-import React from "react";
-import { Box, Typography, Avatar, IconButton, InputBase, Stack } from "@mui/material";
+import React, { useEffect } from "react";
+import {
+  Box,
+  Typography,
+  Avatar,
+  IconButton,
+  InputBase,
+  Stack,
+} from "@mui/material";
 import { Send, DoneAll } from "@mui/icons-material";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
 import { Chat } from "../types";
+import { useGetMessages } from "@/hooks/messages/useGetMessagesList";
 
 interface ChatWindowProps {
   activeChat: Chat;
@@ -12,6 +20,7 @@ interface ChatWindowProps {
   onSendMessage: () => void;
   onKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   threadContainerRef: React.RefObject<HTMLDivElement | null>;
+  refreshTrigger?: number;
 }
 
 export const ChatWindow: React.FC<ChatWindowProps> = ({
@@ -21,7 +30,51 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   onSendMessage,
   onKeyPress,
   threadContainerRef,
+  refreshTrigger,
 }) => {
+  const { getMessages, loading, data } = useGetMessages();
+
+  useEffect(() => {
+    if (activeChat?.id) {
+      getMessages(activeChat.id);
+    }
+  }, [activeChat?.id, refreshTrigger]);
+
+  const apiMessages = React.useMemo(() => {
+    if (!data) return [];
+    
+    // Attempt to safely extract the messages array from various possible API response structures
+    let messagesList: any[] = [];
+    
+    // Deep search for an array in the data object
+    const findArray = (obj: any): any[] | null => {
+      if (Array.isArray(obj)) return obj;
+      if (typeof obj === "object" && obj !== null) {
+        for (const key in obj) {
+          if (Array.isArray(obj[key])) return obj[key];
+        }
+        for (const key in obj) {
+          const found = findArray(obj[key]);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    messagesList = findArray(data) || [];
+    
+    return messagesList.map((msg: any) => ({
+      id: msg._id || Math.random().toString(),
+      // Assume if the sender ID matches activeChat.id, it's from the other person
+      sender: msg.sender?._id === activeChat.id || msg.sender === activeChat.id ? "other" : "me",
+      text: msg.message || msg.text || JSON.stringify(msg),
+      time: msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Just now",
+      status: msg.status || "sent"
+    }));
+  }, [data, activeChat.id]);
+
+  const displayMessages = apiMessages.length > 0 ? apiMessages : activeChat.messages;
+
   return (
     <Box
       sx={{
@@ -99,7 +152,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           },
         }}
       >
-        {activeChat.messages.map((message) => {
+        {displayMessages.map((message: any) => {
           const isMe = message.sender === "me";
           return (
             <Box
@@ -117,7 +170,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                 sx={{
                   backgroundColor: isMe ? COLORS.SECONDARY : "#F4F7F8",
                   color: isMe ? COLORS.WHITE : COLORS.SECONDARY,
-                  borderRadius: isMe ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+                  borderRadius: isMe
+                    ? "16px 16px 4px 16px"
+                    : "16px 16px 16px 4px",
                   px: 2.5,
                   py: 1.8,
                   boxShadow: "none",
@@ -162,7 +217,6 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
             </Box>
           );
         })}
-
       </Box>
 
       {/* Bottom Input Area */}
