@@ -1,5 +1,6 @@
-import { Button, SvgIcon, SvgIconProps } from "@mui/material";
-import React from "react";
+import { Button, SvgIcon, SvgIconProps, Box } from "@mui/material";
+import { Close } from "@mui/icons-material";
+import React, { useState } from "react";
 import { poppins700 } from "@/utils/fonts";
 
 const WhatsAppIcon = (props: SvgIconProps) => (
@@ -12,19 +13,23 @@ const WhatsAppIcon = (props: SvgIconProps) => (
 );
 
 const WhatsAppButton = () => {
+  const [isExpanded, setIsExpanded] = useState(true);
+
   return (
     <Button
       variant="contained"
-      startIcon={<WhatsAppIcon sx={{ width: 20, height: 20 }} />}
       sx={{
         position: "fixed",
         bottom: 24,
         right: 24,
         backgroundColor: "#25D366",
         color: "#ffffff",
-        borderRadius: "30px",
-        px: 3,
-        py: 1.5,
+        borderRadius: isExpanded ? "30px" : "50%",
+        minWidth: isExpanded ? "auto" : "56px",
+        width: isExpanded ? "auto" : "56px",
+        height: isExpanded ? "auto" : "56px",
+        px: isExpanded ? 3 : 0,
+        py: isExpanded ? 1.5 : 0,
         textTransform: "none",
         fontFamily: poppins700.style.fontFamily,
         fontWeight: 700,
@@ -35,9 +40,45 @@ const WhatsAppButton = () => {
           backgroundColor: "#20ba56",
           boxShadow: "0px 10px 28px rgba(37, 211, 102, 0.4)",
         },
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden", // Keep contents tidy during transition
       }}
     >
-      Chat with Us
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <WhatsAppIcon sx={{ width: 24, height: 24, mr: isExpanded ? 1 : 0, transition: "margin 0.3s ease" }} />
+        
+        {isExpanded && (
+          <span style={{ whiteSpace: "nowrap" }}>Chat with Us</span>
+        )}
+      </Box>
+
+      {isExpanded && (
+        <Box
+          component="span"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsExpanded(false);
+          }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            ml: 2,
+            mr: -1, // Pull it slightly to the right to balance padding
+            p: 0.5,
+            borderRadius: "50%",
+            transition: "background-color 0.2s",
+            "&:hover": {
+              backgroundColor: "rgba(255, 255, 255, 0.2)",
+            },
+          }}
+        >
+          <Close sx={{ fontSize: 18 }} />
+        </Box>
+      )}
     </Button>
   );
 };

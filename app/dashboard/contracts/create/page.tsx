@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Container, Grid } from "@mui/material";
 import ContractHeader from "@/components/layout/dashboard/contracts/Header";
 import StepperSidebar from "@/components/layout/dashboard/contracts/StepperSidebar";
@@ -109,6 +109,51 @@ const CreateContractPage = () => {
   const updateFormData = (fields: Partial<ContractFormData>) => {
     setFormData((prev) => ({ ...prev, ...fields }));
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    
+    if (id) {
+      const fetchContractDetails = async () => {
+        try {
+          const { contractControllers } = await import("@/app/api/contractControllers");
+          const res = await contractControllers.getContractDetailsById(id);
+          const data = res?.data || res || {};
+          
+          const mappedValues: ContractFormData = {
+            contractType: data.contractType || "",
+            contractTitle: data.contractTitle || data.title || "",
+            contractNumber: data.contractNumber || "",
+            category: data.category || "",
+            city: data.city || "",
+            district: data.districtOrNeighborhood || data.district || "",
+            description: data.contractDescription || data.description || "",
+            totalValue: data.totalContractValue?.toString() || data.totalValue?.toString() || data.price?.toString() || "",
+            monthlyAmount: data.monthlyAmount?.toString() || "",
+            transferFee: data.transferFee?.toString() || "",
+            securityDeposit: data.securityDeposit?.toString() || "",
+            negotiable: data.negotiable || false,
+            contractStartDate: (data.contractStartDate || data.startDate) ? new Date(data.contractStartDate || data.startDate).toISOString().split('T')[0] : "",
+            contractEndDate: (data.contractEndDate || data.endDate) ? new Date(data.contractEndDate || data.endDate).toISOString().split('T')[0] : "",
+            transferExpiryDate: data.transferExpiryDate ? new Date(data.transferExpiryDate).toISOString().split('T')[0] : "",
+            reasonForTransfer: data.reasonForTransfer || data.transferReason || "",
+            transferTerms: data.transferTerms || data.TransferTermsConditions || "",
+            contract: null,
+            asset: [],
+            listingType: data.listingType || "Standard",
+          };
+
+          formik.setValues(mappedValues);
+          setFormData(mappedValues);
+        } catch (error) {
+          console.error("Failed to fetch contract details for editing", error);
+        }
+      };
+
+      fetchContractDetails();
+    }
+  }, []);
 
   const renderFormStep = () => {
     switch (currentStep) {

@@ -25,7 +25,7 @@ import { useMyContracts } from "@/hooks/contract/useMyContracts";
 
 const MyContractsLayout = () => {
   const [activeTab, setActiveTab] = useState<CONTRACT_STATUS>(
-    CONTRACT_STATUS.APPROVED
+    CONTRACT_STATUS.APPROVED,
   );
 
   const { fetchMyContracts, myContractsList, loading } = useMyContracts();
@@ -215,21 +215,12 @@ const MyContractsLayout = () => {
           }}
         >
           <Tab
-            label={`${CONTRACT_STATUS.APPROVED} (${activeTab === CONTRACT_STATUS.APPROVED ? apiMappedContracts.length : 0})`}
+            label={`${CONTRACT_STATUS.APPROVED}`}
             value={CONTRACT_STATUS.APPROVED}
           />
-          <Tab
-            label={`Active (${activeTab === CONTRACT_STATUS.ACTIVE ? apiMappedContracts.length : 0})`}
-            value={CONTRACT_STATUS.ACTIVE}
-          />
-          <Tab
-            label={`Draft (${activeTab === CONTRACT_STATUS.DRAFT ? apiMappedContracts.length : 0})`}
-            value={CONTRACT_STATUS.DRAFT}
-          />
-          <Tab
-            label={`Expired (${activeTab === CONTRACT_STATUS.EXPIRED ? apiMappedContracts.length : 0})`}
-            value={CONTRACT_STATUS.EXPIRED}
-          />
+          <Tab label={`Pending`} value={CONTRACT_STATUS.ACTIVE} />
+          <Tab label={`Draft`} value={CONTRACT_STATUS.DRAFT} />
+          <Tab label={`Expired`} value={CONTRACT_STATUS.EXPIRED} />
         </Tabs>
       </Box>
 

@@ -17,7 +17,7 @@ import {
 import React, { SyntheticEvent, useState } from "react";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
-import { CONTRACT_CATEGORY, CONTRACT_TYPE } from "@/utils/constant";
+import { CONTRACT_CATEGORIES_MAP, CONTRACT_TYPE } from "@/utils/constant";
 import { FormikProps, FormikState } from "formik";
 import { ContractFormData } from "@/app/dashboard/contracts/create/page";
 
@@ -125,9 +125,10 @@ const ContractForm = ({ onNext, formik }: ContractFormProps) => {
               )}
               options={CONTRACT_TYPE}
               value={formik.values.contractType}
-              onChange={(_, value) =>
-                formik.setFieldValue("contractType", value)
-              }
+              onChange={(_, value) => {
+                formik.setFieldValue("contractType", value);
+                formik.setFieldValue("category", "");
+              }}
             />
           </Grid>
           <Grid size={12}>
@@ -160,7 +161,7 @@ const ContractForm = ({ onNext, formik }: ContractFormProps) => {
                   placeholder="Select category"
                 />
               )}
-              options={CONTRACT_CATEGORY}
+              options={formik.values.contractType ? (CONTRACT_CATEGORIES_MAP[formik.values.contractType] || []) : []}
               value={formik.values.category}
               onChange={(_, value) => formik.setFieldValue("category", value)}
             />

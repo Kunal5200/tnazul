@@ -1,7 +1,8 @@
 import React from "react";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography, Button } from "@mui/material";
 import {
   DescriptionOutlined,
+  EditOutlined,
   ChatBubbleOutlineOutlined,
   ShareOutlined,
   AccessTimeOutlined,
@@ -9,6 +10,7 @@ import {
   VisibilityOutlined,
 } from "@mui/icons-material";
 import Image from "next/image";
+import Link from "next/link";
 import { COLORS, CONTRACT_STATUS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
 import { ContractItem } from "../types";
@@ -106,47 +108,75 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
         <Stack
           direction="row"
           spacing={1.5}
-          sx={{ alignItems: "center", mb: 0.75, flexWrap: "wrap" }}
+          sx={{ alignItems: "center", mb: 0.75, flexWrap: "wrap", justifyContent: "space-between" }}
         >
-          <Typography
-            sx={{
-              fontFamily: poppins700.style.fontFamily,
-              fontWeight: 700,
-              fontSize: "17px",
-              color: COLORS.SECONDARY,
-            }}
-          >
-            {contract.title}
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
+            <Typography
+              sx={{
+                fontFamily: poppins700.style.fontFamily,
+                fontWeight: 700,
+                fontSize: "17px",
+                color: COLORS.SECONDARY,
+              }}
+            >
+              {contract.title}
+            </Typography>
 
-          {/* Status Badging */}
-          <Box
-            sx={{
-              borderRadius: "6px",
-              px: 1.25,
-              py: 0.4,
-              fontSize: "10.5px",
-              fontWeight: 700,
-              fontFamily: poppins700.style.fontFamily,
-              textTransform: "capitalize",
-              backgroundColor:
-                contract.status === CONTRACT_STATUS.ACTIVE
-                  ? "#E8F5E9"
-                  : contract.status === CONTRACT_STATUS.DRAFT
-                    ? "#F4F7F8"
-                    : "#FFEBEE",
-              color:
-                contract.status === CONTRACT_STATUS.ACTIVE
-                  ? "#10753E"
-                  : contract.status === CONTRACT_STATUS.DRAFT
-                    ? "#5A7A8A"
-                    : "#FF5C5C",
-            }}
-          >
-            {contract.contractStatus === CONTRACT_STATUS.PUBLISHED
-              ? "PENDING"
-              : contract.contractStatus || contract.status}
+            {/* Status Badging */}
+            <Box
+              sx={{
+                borderRadius: "6px",
+                px: 1.25,
+                py: 0.4,
+                fontSize: "10.5px",
+                fontWeight: 700,
+                fontFamily: poppins700.style.fontFamily,
+                textTransform: "capitalize",
+                backgroundColor:
+                  contract.status === CONTRACT_STATUS.ACTIVE
+                    ? "#E8F5E9"
+                    : contract.status === CONTRACT_STATUS.DRAFT
+                      ? "#F4F7F8"
+                      : "#FFEBEE",
+                color:
+                  contract.status === CONTRACT_STATUS.ACTIVE
+                    ? "#10753E"
+                    : contract.status === CONTRACT_STATUS.DRAFT
+                      ? "#5A7A8A"
+                      : "#FF5C5C",
+              }}
+            >
+              {contract.contractStatus === CONTRACT_STATUS.PUBLISHED
+                ? "PENDING"
+                : contract.contractStatus || contract.status}
+            </Box>
           </Box>
+
+          {contract.status === CONTRACT_STATUS.DRAFT && (
+            <Button
+              component={Link}
+              href={`/dashboard/contracts/create?id=${contract.id}`}
+              startIcon={<EditOutlined sx={{ fontSize: 16 }} />}
+              variant="outlined"
+              size="small"
+              sx={{
+                borderRadius: "8px",
+                textTransform: "none",
+                fontFamily: poppins700.style.fontFamily,
+                fontSize: "12px",
+                color: COLORS.SECONDARY,
+                borderColor: "#E4E7EC",
+                px: 2,
+                py: 0.5,
+                "&:hover": {
+                  backgroundColor: "#F9FAFB",
+                  borderColor: "#D0D5DD",
+                },
+              }}
+            >
+              Edit
+            </Button>
+          )}
         </Stack>
 
         {/* Specs Details Row 1: Location & Financials */}

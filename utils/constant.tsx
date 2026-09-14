@@ -128,13 +128,58 @@ export const CONTRACT_TYPE = [
   CONTRACT_TYPES.EQUIPMENT,
 ];
 
-export const CONTRACT_CATEGORY = [
-  "Apartment",
-  "Villa",
-  "Land",
-  "Building",
-  "Office",
-];
+export const CONTRACT_CATEGORIES_MAP: Record<string, string[]> = {
+  [CONTRACT_TYPES.REAL_ESTATE]: [
+    "Apartment",
+    "Villa",
+    "Land",
+    "Building",
+    "Office",
+  ],
+  [CONTRACT_TYPES.VEHICLES]: [
+    "Car",
+    "Truck",
+    "Motorcycle",
+    "Bus",
+    "Heavy Equipment",
+  ],
+  [CONTRACT_TYPES.COMMERCIAL]: [
+    "Retail",
+    "Warehouse",
+    "Industrial",
+    "Shopping Center",
+  ],
+  [CONTRACT_TYPES.LABOUR]: [
+    "Construction",
+    "Maintenance",
+    "Cleaning",
+    "Security",
+  ],
+  [CONTRACT_TYPES.OFFICES]: [
+    "Private Office",
+    "Co-working",
+    "Virtual Office",
+    "Meeting Room",
+  ],
+  [CONTRACT_TYPES.MAINTENANCE]: [
+    "Plumbing",
+    "Electrical",
+    "HVAC",
+    "General Repairs",
+  ],
+  [CONTRACT_TYPES.SUBSCRIPTIONS]: [
+    "Software",
+    "Gym",
+    "Magazine",
+    "Service",
+  ],
+  [CONTRACT_TYPES.EQUIPMENT]: [
+    "Construction",
+    "Medical",
+    "IT",
+    "Industrial",
+  ],
+};
 
 export const TRANSER_REASON = [
   "Financial Reasons",
