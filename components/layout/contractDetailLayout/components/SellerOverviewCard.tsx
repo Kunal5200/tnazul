@@ -81,16 +81,7 @@ export const SellerOverviewCard: React.FC<SellerOverviewCardProps> = ({
           >
             {sellerName || "Seller"}
           </Typography>
-          <Typography
-            sx={{
-              fontFamily: poppins.style.fontFamily,
-              fontWeight: 500,
-              fontSize: "11.5px",
-              color: "#7A9BAB",
-            }}
-          >
-            Member since Jan 2024
-          </Typography>
+
         </Box>
       </Stack>
 

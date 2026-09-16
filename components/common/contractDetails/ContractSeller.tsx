@@ -23,9 +23,7 @@ const ContractSeller = ({ contractDetails }: ContractSellerProps) => {
           <Typography sx={{ fontFamily: poppins700.style.fontFamily, fontSize: "16px", color: COLORS.SECONDARY }}>
             {contractDetails?.createdBy?.name || "Unknown User"}
           </Typography>
-          <Typography sx={{ fontFamily: poppins.style.fontFamily, fontSize: "13px", color: "#7A9BAB", fontWeight: 500 }}>
-            Member since {contractDetails?.createdAt ? new Date(contractDetails.createdAt).getFullYear() : "N/A"}
-          </Typography>
+
         </Box>
       </Stack>
 

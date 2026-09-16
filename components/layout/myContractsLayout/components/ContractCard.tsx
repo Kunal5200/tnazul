@@ -8,6 +8,7 @@ import {
   AccessTimeOutlined,
   CheckCircleOutlined,
   VisibilityOutlined,
+  DeleteOutlined,
 } from "@mui/icons-material";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,7 +16,6 @@ import { COLORS, CONTRACT_STATUS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
 import { ContractItem } from "../types";
 
-// Stepper item component
 const StepperPill = ({
   label,
   icon,
@@ -64,9 +64,10 @@ const StepperPill = ({
 
 interface ContractCardProps {
   contract: ContractItem;
+  onDelete?: (id: string) => void;
 }
 
-export const ContractCard = ({ contract }: ContractCardProps) => {
+export const ContractCard = ({ contract, onDelete }: ContractCardProps) => {
   return (
     <Box
       sx={{
@@ -108,9 +109,21 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
         <Stack
           direction="row"
           spacing={1.5}
-          sx={{ alignItems: "center", mb: 0.75, flexWrap: "wrap", justifyContent: "space-between" }}
+          sx={{
+            alignItems: "center",
+            mb: 0.75,
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+          }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+              flexWrap: "wrap",
+            }}
+          >
             <Typography
               sx={{
                 fontFamily: poppins700.style.fontFamily,
@@ -152,11 +165,35 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
             </Box>
           </Box>
 
-          {contract.status === CONTRACT_STATUS.DRAFT && (
+          <Stack direction="row" spacing={1}>
+            {(contract.status === CONTRACT_STATUS.DRAFT || contract.status === CONTRACT_STATUS.REJECTED) && (
+              <Button
+                component={Link}
+                href={`/dashboard/contracts/create?id=${contract.id}`}
+                startIcon={<EditOutlined sx={{ fontSize: 16 }} />}
+                variant="outlined"
+                size="small"
+                sx={{
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  fontFamily: poppins700.style.fontFamily,
+                  fontSize: "12px",
+                  color: COLORS.SECONDARY,
+                  borderColor: "#E4E7EC",
+                  px: 2,
+                  py: 0.5,
+                  "&:hover": {
+                    backgroundColor: "#F9FAFB",
+                    borderColor: "#D0D5DD",
+                  },
+                }}
+              >
+                Edit
+              </Button>
+            )}
+            
             <Button
-              component={Link}
-              href={`/dashboard/contracts/create?id=${contract.id}`}
-              startIcon={<EditOutlined sx={{ fontSize: 16 }} />}
+              startIcon={<DeleteOutlined sx={{ fontSize: 16 }} />}
               variant="outlined"
               size="small"
               sx={{
@@ -164,19 +201,24 @@ export const ContractCard = ({ contract }: ContractCardProps) => {
                 textTransform: "none",
                 fontFamily: poppins700.style.fontFamily,
                 fontSize: "12px",
-                color: COLORS.SECONDARY,
-                borderColor: "#E4E7EC",
+                color: "#E53935",
+                borderColor: "#FFCDD2",
                 px: 2,
                 py: 0.5,
                 "&:hover": {
-                  backgroundColor: "#F9FAFB",
-                  borderColor: "#D0D5DD",
+                  backgroundColor: "#FFEBEE",
+                  borderColor: "#E53935",
                 },
               }}
+              onClick={() => {
+                if (onDelete) {
+                  onDelete(contract.id);
+                }
+              }}
             >
-              Edit
+              Delete
             </Button>
-          )}
+          </Stack>
         </Stack>
 
         {/* Specs Details Row 1: Location & Financials */}

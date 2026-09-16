@@ -8,7 +8,7 @@ import {
   Stack,
   Button,
 } from "@mui/material";
-import SearchBar from "./SearchBar";
+
 import { COLORS, ACCOUNT_TYPE } from "@/utils/enum";
 import { poppins700 } from "@/utils/fonts";
 import Link from "next/link";
@@ -54,13 +54,10 @@ const Header = () => {
         direction={"row"}
         sx={{
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
           width: "100%",
         }}
       >
-        {/* Search Bar on the Left */}
-        <SearchBar />
-
         {/* Action Buttons Group on the Right */}
         <Stack direction={"row"} spacing={1.2} sx={{ alignItems: "center", flexShrink: 0 }}>
           {/* Action Button based on Role */}

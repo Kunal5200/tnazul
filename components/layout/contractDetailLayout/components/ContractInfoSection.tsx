@@ -27,6 +27,36 @@ export const ContractInfoSection: React.FC<ContractInfoSectionProps> = ({
 }) => {
   const locationText = `${districtOrNeighborhood || ""}, ${city || ""}`.replace(/^, | , $/g, "");
 
+  let progressPercentage = 0;
+  let calculatedTotalDuration = totalDuration;
+
+  if (startDate && endDate) {
+    const start = new Date(startDate).getTime();
+    const end = new Date(endDate).getTime();
+    const now = new Date().getTime();
+
+    if (end > start) {
+      if (now >= end) {
+        progressPercentage = 100;
+      } else if (now <= start) {
+        progressPercentage = 0;
+      } else {
+        progressPercentage = ((now - start) / (end - start)) * 100;
+      }
+    }
+
+    if (!calculatedTotalDuration) {
+      const diffTime = Math.abs(end - start);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      if (diffDays >= 30) {
+        const months = Math.round(diffDays / 30);
+        calculatedTotalDuration = `${months} month${months !== 1 ? "s" : ""}`;
+      } else {
+        calculatedTotalDuration = `${diffDays} day${diffDays !== 1 ? "s" : ""}`;
+      }
+    }
+  }
+
   return (
     <Box>
       <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", mb: 3 }}>
@@ -112,7 +142,7 @@ export const ContractInfoSection: React.FC<ContractInfoSectionProps> = ({
 
         {/* Progress bar line */}
         <Box sx={{ height: 7, width: "100%", backgroundColor: "#EDF1F2", borderRadius: "4px", overflow: "hidden", mb: 2.5 }}>
-          <Box sx={{ width: "25%", height: "100%", backgroundColor: COLORS.SECONDARY, borderRadius: "4px" }} />
+          <Box sx={{ width: `${progressPercentage}%`, height: "100%", backgroundColor: COLORS.SECONDARY, borderRadius: "4px" }} />
         </Box>
 
         {/* Start, duration, end markers */}
@@ -122,7 +152,7 @@ export const ContractInfoSection: React.FC<ContractInfoSectionProps> = ({
               Start Date
             </Typography>
             <Typography sx={{ fontFamily: poppins700.style.fontFamily, fontSize: "12.5px", color: COLORS.SECONDARY, fontWeight: 700 }}>
-              {startDate ? new Date(startDate).toLocaleDateString() : "N/A"}
+              {startDate ? new Date(startDate).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : "N/A"}
             </Typography>
           </Box>
           <Box sx={{ textAlign: "center" }}>
@@ -130,7 +160,7 @@ export const ContractInfoSection: React.FC<ContractInfoSectionProps> = ({
               Total Duration
             </Typography>
             <Typography sx={{ fontFamily: poppins700.style.fontFamily, fontSize: "12.5px", color: COLORS.SECONDARY, fontWeight: 700 }}>
-              {totalDuration || "N/A"}
+              {calculatedTotalDuration || "N/A"}
             </Typography>
           </Box>
           <Box sx={{ textAlign: "right" }}>
@@ -138,7 +168,7 @@ export const ContractInfoSection: React.FC<ContractInfoSectionProps> = ({
               End Date
             </Typography>
             <Typography sx={{ fontFamily: poppins700.style.fontFamily, fontSize: "12.5px", color: COLORS.SECONDARY, fontWeight: 700 }}>
-              {endDate ? new Date(endDate).toLocaleDateString() : "N/A"}
+              {endDate ? new Date(endDate).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : "N/A"}
             </Typography>
           </Box>
         </Stack>

@@ -197,4 +197,12 @@ export const contractControllers = {
       throw error;
     }
   },
+  deleteContract: async (id: string) => {
+    try {
+      let result = await contractSecuredAPI.delete(`/delete/${id}`);
+      return result?.data || result;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

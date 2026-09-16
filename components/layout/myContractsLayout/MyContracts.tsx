@@ -22,6 +22,7 @@ import WhatsAppButton from "@/components/layout/dashboard/contracts/WhatsAppButt
 import { ContractCard } from "./components/ContractCard";
 import { ContractItem } from "./types";
 import { useMyContracts } from "@/hooks/contract/useMyContracts";
+import { useDeleteContract } from "@/hooks/contract/useDeleteContract";
 
 const MyContractsLayout = () => {
   const [activeTab, setActiveTab] = useState<CONTRACT_STATUS>(
@@ -29,6 +30,7 @@ const MyContractsLayout = () => {
   );
 
   const { fetchMyContracts, myContractsList, loading } = useMyContracts();
+  const { deleteContract } = useDeleteContract();
 
   const fetchedStatusRef = React.useRef<string | null>(null);
 
@@ -40,13 +42,34 @@ const MyContractsLayout = () => {
           ? CONTRACT_STATUS.DRAFT
           : activeTab === CONTRACT_STATUS.APPROVED
             ? CONTRACT_STATUS.APPROVED
-            : CONTRACT_STATUS.EXPIRED;
+            : activeTab === CONTRACT_STATUS.REJECTED
+              ? CONTRACT_STATUS.REJECTED
+              : CONTRACT_STATUS.EXPIRED;
 
     if (fetchedStatusRef.current === statusQuery) return;
     fetchedStatusRef.current = statusQuery;
 
     fetchMyContracts({ page: 1, limit: 10, status: statusQuery });
   }, [activeTab, fetchMyContracts]);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteContract(id);
+      const statusQuery =
+        activeTab === CONTRACT_STATUS.ACTIVE
+          ? CONTRACT_STATUS.PUBLISHED
+          : activeTab === CONTRACT_STATUS.DRAFT
+            ? CONTRACT_STATUS.DRAFT
+            : activeTab === CONTRACT_STATUS.APPROVED
+              ? CONTRACT_STATUS.APPROVED
+              : activeTab === CONTRACT_STATUS.REJECTED
+                ? CONTRACT_STATUS.REJECTED
+                : CONTRACT_STATUS.EXPIRED;
+      fetchMyContracts({ page: 1, limit: 10, status: statusQuery });
+    } catch (error) {
+      console.error("Failed to delete contract", error);
+    }
+  };
 
   // Helper to map API contract object to UI ContractItem using exact API schema keys
   const mapApiContractToItem = (item: any): ContractItem => {
@@ -61,7 +84,9 @@ const MyContractsLayout = () => {
         ? CONTRACT_STATUS.ACTIVE
         : rawStatus === "draft" || rawStatus === "pending"
           ? CONTRACT_STATUS.DRAFT
-          : CONTRACT_STATUS.EXPIRED;
+          : rawStatus === "rejected"
+            ? CONTRACT_STATUS.REJECTED
+            : CONTRACT_STATUS.EXPIRED;
 
     const title =
       item?.contractTitle ||
@@ -220,6 +245,7 @@ const MyContractsLayout = () => {
           />
           <Tab label={`Pending`} value={CONTRACT_STATUS.ACTIVE} />
           <Tab label={`Draft`} value={CONTRACT_STATUS.DRAFT} />
+          <Tab label={`Rejected`} value={CONTRACT_STATUS.REJECTED} />
           <Tab label={`Expired`} value={CONTRACT_STATUS.EXPIRED} />
         </Tabs>
       </Box>
@@ -232,7 +258,7 @@ const MyContractsLayout = () => {
       ) : apiMappedContracts.length > 0 ? (
         <Stack spacing={4}>
           {apiMappedContracts.map((contract) => (
-            <ContractCard key={contract.id} contract={contract} />
+            <ContractCard key={contract.id} contract={contract} onDelete={handleDelete} />
           ))}
         </Stack>
       ) : (

@@ -208,9 +208,12 @@ const ContractDetailLayout = () => {
               }}
             />
 
-            <TransferStatusTimeline steps={verticalSteps as any} />
-
-            <SimilarListings contractPublicData={contractPublicData} />
+            {!isAdmin && (
+              <>
+                <TransferStatusTimeline steps={verticalSteps as any} />
+                <SimilarListings contractPublicData={contractPublicData} />
+              </>
+            )}
           </Stack>
         </Grid>
       </Grid>

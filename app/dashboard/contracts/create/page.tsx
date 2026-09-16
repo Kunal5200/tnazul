@@ -139,8 +139,18 @@ const CreateContractPage = () => {
             transferExpiryDate: data.transferExpiryDate ? new Date(data.transferExpiryDate).toISOString().split('T')[0] : "",
             reasonForTransfer: data.reasonForTransfer || data.transferReason || "",
             transferTerms: data.transferTerms || data.TransferTermsConditions || "",
-            contract: null,
-            asset: [],
+            contract: data.contractDocuments?.[0] ? {
+              name: data.contractDocuments[0].split('/').pop() || "contract.jpg",
+              size: 0,
+              type: "image/jpeg",
+              content: data.contractDocuments[0]
+            } : null,
+            asset: (data.assetImages || []).map((url: string) => ({
+              name: url.split('/').pop() || "asset.jpg",
+              size: 0,
+              type: "image/jpeg",
+              content: url
+            })),
             listingType: data.listingType || "Standard",
           };
 
