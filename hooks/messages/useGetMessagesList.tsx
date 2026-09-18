@@ -9,7 +9,7 @@ export const useGetMessagesList = () => {
     messageControllers
       .getMessageList({ page, limit })
       .then((res) => {
-        console.log("res", res);
+        console.log("response", res);
         setData(res.data);
         setLoading(false);
       })
@@ -26,7 +26,7 @@ export const useGetMessagesList = () => {
 
 export const useGetMessages = () => {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState();
+  const [data, setData] = useState<any>();
 
   const getMessages = (id: string) => {
     setLoading(true);

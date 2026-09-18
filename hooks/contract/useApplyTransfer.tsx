@@ -25,13 +25,13 @@ export const useApplyTransfer = () => {
 
 export const useGetContractTransferRequests = () => {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState();
+  const [data, setData] = useState<any>();
 
-  const getTransferRequests = async (data: GET_API_REQUEST_RESPONSE) => {
+  const getTransferRequests = async (params: any) => {
     setLoading(true);
     try {
-      const res = await contractControllers.getTransferRequest(data);
-      console.log("res", res);
+      const res = await contractControllers.getTransferRequest(params);
+      setData(res?.data || res);
     } catch (err) {
       console.log("error in get transfer requests", err);
       throw err;

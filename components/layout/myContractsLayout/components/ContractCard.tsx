@@ -12,6 +12,7 @@ import {
 } from "@mui/icons-material";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { COLORS, CONTRACT_STATUS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
 import { ContractItem } from "../types";
@@ -68,8 +69,11 @@ interface ContractCardProps {
 }
 
 export const ContractCard = ({ contract, onDelete }: ContractCardProps) => {
+  const router = useRouter();
+
   return (
     <Box
+      onClick={() => router.push(`/dashboard/contracts/detail/${contract.id}`)}
       sx={{
         backgroundColor: "#FFFFFF",
         borderRadius: "24px",
@@ -80,6 +84,11 @@ export const ContractCard = ({ contract, onDelete }: ContractCardProps) => {
         flexDirection: { xs: "column", sm: "row" },
         alignItems: { xs: "flex-start", sm: "center" },
         gap: 3.5,
+        cursor: "pointer",
+        transition: "box-shadow 0.2s ease",
+        "&:hover": {
+          boxShadow: "0px 4px 24px rgba(1, 53, 71, 0.06)",
+        },
       }}
     >
       {/* Image Box */}
@@ -170,6 +179,7 @@ export const ContractCard = ({ contract, onDelete }: ContractCardProps) => {
               <Button
                 component={Link}
                 href={`/dashboard/contracts/create?id=${contract.id}`}
+                onClick={(e) => e.stopPropagation()}
                 startIcon={<EditOutlined sx={{ fontSize: 16 }} />}
                 variant="outlined"
                 size="small"
@@ -210,7 +220,8 @@ export const ContractCard = ({ contract, onDelete }: ContractCardProps) => {
                   borderColor: "#E53935",
                 },
               }}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 if (onDelete) {
                   onDelete(contract.id);
                 }

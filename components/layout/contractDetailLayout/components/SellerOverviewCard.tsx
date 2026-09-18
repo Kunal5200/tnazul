@@ -85,25 +85,6 @@ export const SellerOverviewCard: React.FC<SellerOverviewCardProps> = ({
         </Box>
       </Stack>
 
-      {/* Nafath status pill */}
-      <Box
-        sx={{
-          borderRadius: "100px",
-          py: 0.6,
-          px: 1.5,
-          backgroundColor: "#E8F5E9",
-          color: "#10753E",
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 0.5,
-          mb: 3.5,
-        }}
-      >
-        <CheckCircle sx={{ fontSize: 13, color: "#10753E" }} />
-        <Typography sx={{ fontFamily: poppins700.style.fontFamily, fontWeight: 700, fontSize: "11px", lineHeight: 1 }}>
-          Nafath Verified
-        </Typography>
-      </Box>
 
       {/* Profile stats row */}
       <Stack
@@ -131,15 +112,7 @@ export const SellerOverviewCard: React.FC<SellerOverviewCardProps> = ({
             Reply in
           </Typography>
         </Box>
-        <Divider orientation="vertical" flexItem sx={{ borderColor: "#0135470D" }} />
-        <Box>
-          <Typography sx={{ fontFamily: poppins700.style.fontFamily, fontWeight: 700, fontSize: "16px", color: COLORS.SECONDARY }}>
-            3
-          </Typography>
-          <Typography sx={{ fontFamily: poppins.style.fontFamily, fontWeight: 500, fontSize: "11px", color: "#7A9BAB", mt: 0.2 }}>
-            Listings
-          </Typography>
-        </Box>
+
       </Stack>
 
       {/* Call to Actions stack */}

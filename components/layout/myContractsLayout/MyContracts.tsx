@@ -23,6 +23,7 @@ import { ContractCard } from "./components/ContractCard";
 import { ContractItem } from "./types";
 import { useMyContracts } from "@/hooks/contract/useMyContracts";
 import { useDeleteContract } from "@/hooks/contract/useDeleteContract";
+import { useGetContractTransferRequests } from "@/hooks/contract/useApplyTransfer";
 
 const MyContractsLayout = () => {
   const [activeTab, setActiveTab] = useState<CONTRACT_STATUS>(
@@ -31,8 +32,13 @@ const MyContractsLayout = () => {
 
   const { fetchMyContracts, myContractsList, loading } = useMyContracts();
   const { deleteContract } = useDeleteContract();
+  const { getTransferRequests, data: transferData, loading: transferLoading } = useGetContractTransferRequests();
 
   const fetchedStatusRef = React.useRef<string | null>(null);
+
+  useEffect(() => {
+    getTransferRequests({ page: 1, limit: 10 });
+  }, []);
 
   useEffect(() => {
     const statusQuery =
@@ -198,7 +204,6 @@ const MyContractsLayout = () => {
     };
   };
 
-  // Map API list to UI items
   const apiMappedContracts = myContractsList.map(mapApiContractToItem);
 
   return (
@@ -258,7 +263,11 @@ const MyContractsLayout = () => {
       ) : apiMappedContracts.length > 0 ? (
         <Stack spacing={4}>
           {apiMappedContracts.map((contract) => (
-            <ContractCard key={contract.id} contract={contract} onDelete={handleDelete} />
+            <ContractCard
+              key={contract.id}
+              contract={contract}
+              onDelete={handleDelete}
+            />
           ))}
         </Stack>
       ) : (
@@ -283,6 +292,72 @@ const MyContractsLayout = () => {
           </Typography>
         </Box>
       )}
+
+      {/* Transfer Requests Section */}
+      <Box sx={{ mt: 8 }}>
+        <Typography
+          sx={{
+            fontFamily: poppins700.style.fontFamily,
+            fontWeight: 700,
+            fontSize: "22px",
+            color: COLORS.SECONDARY,
+            mb: 4,
+          }}
+        >
+          Transfer Requests
+        </Typography>
+
+        {transferLoading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+            <CircularProgress sx={{ color: COLORS.SECONDARY }} />
+          </Box>
+        ) : transferData && transferData.length > 0 ? (
+          <Stack spacing={3}>
+            {transferData.map((req: any, index: number) => (
+              <Box
+                key={req._id || index}
+                sx={{
+                  backgroundColor: "#FFFFFF",
+                  borderRadius: "16px",
+                  p: 3,
+                  border: "1px solid #0135470D",
+                  boxShadow: "0px 4px 20px rgba(1, 53, 71, 0.02)",
+                }}
+              >
+                <Typography sx={{ fontWeight: 600, color: COLORS.SECONDARY, fontFamily: poppins700.style.fontFamily }}>
+                  Request ID: {req._id || "N/A"}
+                </Typography>
+                <Typography sx={{ color: "#7A9BAB", fontSize: "14px", mt: 1, fontFamily: poppins.style.fontFamily }}>
+                  Status: {req.status || req.transferStatus || "Pending"}
+                </Typography>
+                <Typography sx={{ color: "#7A9BAB", fontSize: "14px", mt: 0.5, fontFamily: poppins.style.fontFamily }}>
+                  Date: {req.createdAt ? new Date(req.createdAt).toLocaleDateString() : "N/A"}
+                </Typography>
+              </Box>
+            ))}
+          </Stack>
+        ) : (
+          <Box
+            sx={{
+              textAlign: "center",
+              py: 6,
+              backgroundColor: "#FFFFFF",
+              borderRadius: "16px",
+              border: "1px solid #0135470D",
+            }}
+          >
+            <Typography
+              sx={{
+                fontFamily: poppins.style.fontFamily,
+                color: "#7A9BAB",
+                fontSize: "14px",
+              }}
+            >
+              No transfer requests found.
+            </Typography>
+          </Box>
+        )}
+      </Box>
 
       {/* Floating Action WhatsApp trigger */}
       <WhatsAppButton />

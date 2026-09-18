@@ -16,7 +16,12 @@ export const ChatsSidebar: React.FC<ChatsSidebarProps> = ({
   onSelectChat,
 }) => {
   const displayChats = chats;
-  const totalUnread = displayChats.reduce((acc: number, c: any) => acc + (c.unreadCount || 0), 0);
+  const totalUnread = displayChats.reduce(
+    (acc: number, c: any) => acc + (c.unreadCount || 0),
+    0,
+  );
+
+  console.log("displauChats", displayChats);
 
   return (
     <Box

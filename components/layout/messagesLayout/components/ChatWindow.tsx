@@ -7,11 +7,12 @@ import {
   InputBase,
   Stack,
 } from "@mui/material";
-import { Send, DoneAll } from "@mui/icons-material";
+import { Send, DoneAll, Refresh } from "@mui/icons-material";
 import { COLORS } from "@/utils/enum";
 import { poppins, poppins700 } from "@/utils/fonts";
 import { Chat } from "../types";
 import { useGetMessages } from "@/hooks/messages/useGetMessagesList";
+import { useUserDetail } from "@/hooks/user/useUserDetail";
 
 interface ChatWindowProps {
   activeChat: Chat;
@@ -33,6 +34,8 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   refreshTrigger,
 }) => {
   const { getMessages, loading, data } = useGetMessages();
+  const { userData } = useUserDetail();
+  const currentUserId = userData?._id;
 
   useEffect(() => {
     if (activeChat?.id) {
@@ -42,10 +45,10 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
   const apiMessages = React.useMemo(() => {
     if (!data) return [];
-    
+
     // Attempt to safely extract the messages array from various possible API response structures
     let messagesList: any[] = [];
-    
+
     // Deep search for an array in the data object
     const findArray = (obj: any): any[] | null => {
       if (Array.isArray(obj)) return obj;
@@ -61,19 +64,32 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       return null;
     };
 
-    messagesList = findArray(data) || [];
-    
-    return messagesList.map((msg: any) => ({
-      id: msg._id || Math.random().toString(),
-      // Assume if the sender ID matches activeChat.id, it's from the other person
-      sender: msg.sender?._id === activeChat.id || msg.sender === activeChat.id ? "other" : "me",
-      text: msg.message || msg.text || JSON.stringify(msg),
-      time: msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Just now",
-      status: msg.status || "sent"
-    }));
-  }, [data, activeChat.id]);
+    messagesList = data?.messages || findArray(data) || [];
 
-  const displayMessages = apiMessages.length > 0 ? apiMessages : activeChat.messages;
+    return messagesList.map((msg: any) => {
+      const senderId = msg.userId || msg.sender?._id || msg.sender;
+      const isSenderMe = Boolean(
+        senderId && currentUserId && senderId === currentUserId,
+      );
+
+      return {
+        id: msg._id || Math.random().toString(),
+        sender: isSenderMe ? "me" : "other",
+        text: msg.message || msg.text || JSON.stringify(msg),
+        time:
+          msg.messageAt || msg.createdAt
+            ? new Date(msg.messageAt || msg.createdAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "Just now",
+        status: msg.status || "sent",
+      };
+    });
+  }, [data, currentUserId]);
+
+  const displayMessages =
+    apiMessages.length > 0 ? apiMessages : activeChat.messages;
 
   return (
     <Box
@@ -92,44 +108,67 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           px: 3,
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
           borderBottom: "1px solid #01354714",
         }}
       >
-        <Avatar
-          sx={{
-            width: 48,
-            height: 48,
-            backgroundColor: activeChat.avatarColor,
-            fontSize: "14px",
-            fontFamily: poppins700.style.fontFamily,
-            fontWeight: 700,
-            mr: 2,
-          }}
-        >
-          {activeChat.avatarInitials}
-        </Avatar>
-        <Box>
-          <Typography
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Avatar
             sx={{
+              width: 48,
+              height: 48,
+              backgroundColor: activeChat.avatarColor,
+              fontSize: "14px",
               fontFamily: poppins700.style.fontFamily,
               fontWeight: 700,
-              fontSize: "16px",
-              color: COLORS.SECONDARY,
+              mr: 2,
             }}
           >
-            {activeChat.name}
-          </Typography>
-          <Typography
-            sx={{
-              fontFamily: poppins.style.fontFamily,
-              fontSize: "12px",
-              color: "#7A9BAB",
-              fontWeight: 500,
-            }}
-          >
-            {activeChat.propertyTitle}
-          </Typography>
+            {activeChat.avatarInitials}
+          </Avatar>
+          <Box>
+            <Typography
+              sx={{
+                fontFamily: poppins700.style.fontFamily,
+                fontWeight: 700,
+                fontSize: "16px",
+                color: COLORS.SECONDARY,
+              }}
+            >
+              {activeChat.name}
+            </Typography>
+            <Typography
+              sx={{
+                fontFamily: poppins.style.fontFamily,
+                fontSize: "12px",
+                color: "#7A9BAB",
+                fontWeight: 500,
+              }}
+            >
+              {activeChat.propertyTitle}
+            </Typography>
+          </Box>
         </Box>
+
+        {/* Refresh Button */}
+        <IconButton
+          onClick={() => {
+            if (activeChat?.id) {
+              getMessages(activeChat.id);
+            }
+          }}
+          disabled={loading}
+          sx={{
+            color: COLORS.SECONDARY,
+            backgroundColor: "#F4F7F8",
+            border: "1px solid #0135470D",
+            "&:hover": {
+              backgroundColor: "#EEF6FA",
+            },
+          }}
+        >
+          <Refresh />
+        </IconButton>
       </Box>
 
       {/* Message Thread */}
@@ -168,8 +207,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
               {/* Bubble */}
               <Box
                 sx={{
-                  backgroundColor: isMe ? COLORS.SECONDARY : "#F4F7F8",
+                  backgroundColor: isMe ? COLORS.SECONDARY : "#FFFFFF",
                   color: isMe ? COLORS.WHITE : COLORS.SECONDARY,
+                  border: isMe
+                    ? "1px solid transparent"
+                    : "1px solid #01354726",
                   borderRadius: isMe
                     ? "16px 16px 4px 16px"
                     : "16px 16px 16px 4px",
